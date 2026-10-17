@@ -12,8 +12,8 @@ def main():
     with tempfile.TemporaryDirectory(prefix='megadev skills install ') as folder:
         cwd=Path(folder);env={**os.environ,'DO_NOT_TRACK':'1','DISABLE_TELEMETRY':'1'}
         subprocess.run(['git','init','-q',str(cwd)],check=True)
-        subprocess.run(['npx','--yes','skills@1.7.2','add',str(ROOT),'--skill','megadev-project','megadev-planning','--agent','codex','--yes','--copy'],cwd=cwd,env=env,check=True,stdout=subprocess.PIPE,stderr=subprocess.STDOUT,text=True,timeout=180)
-        for skill_name in ['megadev-project', 'megadev-planning']:
+        subprocess.run(['npx','--yes','skills@1.7.2','add',str(ROOT),'--skill','megadev-project','megadev-planning','megadev-hardware','--agent','codex','--yes','--copy'],cwd=cwd,env=env,check=True,stdout=subprocess.PIPE,stderr=subprocess.STDOUT,text=True,timeout=180)
+        for skill_name in ['megadev-project', 'megadev-planning', 'megadev-hardware']:
             installed=cwd/'.agents/skills'/skill_name
             if not installed.exists():raise AssertionError('Installed skill missing: '+skill_name)
             source=ROOT/'skills'/skill_name
@@ -27,5 +27,8 @@ def main():
         planning=cwd/'.agents/skills/megadev-planning'
         report=subprocess.run([sys.executable,str(planning/'scripts/budget_check.py'),str(planning/'assets/budget-example.json'),'--json'],check=True,cwd=cwd,capture_output=True,text=True)
         assert json.loads(report.stdout)['ok']
-        print('Telemetry-disabled install: both skills, standalone generator and planning checker passed')
+        hardware=cwd/'.agents/skills/megadev-hardware'
+        subprocess.run([sys.executable,str(hardware/'scripts/create_project.py'),str(cwd/'hardware game')],check=True,cwd=cwd,stdout=subprocess.PIPE)
+        assert (cwd/'hardware game/src/probe.c').is_file()
+        print('Telemetry-disabled install: all three skills, generators and planning checker passed')
 if __name__=='__main__':main()

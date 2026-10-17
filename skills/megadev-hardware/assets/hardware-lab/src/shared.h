@@ -1,0 +1,13 @@
+#ifndef PROJECT_SHARED_H
+#define PROJECT_SHARED_H
+#define CMD_LOAD_FILE 1
+#define CMD_PING 2
+#define CMD_WORD_CHECK 3
+#define HW_WORD_COUNT 512
+#define HW_LOCAL_WORDS 128
+#define HW_RETURN_XOR 0xA55A
+#define FILE_IPX_MMD 0
+#define FILE_ROOM_MMD 1
+#define LAB_MAIN_STACK_TOP 0xFFE000
+#define LAB_SUB_STACK_TOP 0x20000
+#endif

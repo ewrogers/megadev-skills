@@ -4,7 +4,7 @@ import ctypes
 def symbols(text):
     return {v[2]:int(v[0],16) for line in text.splitlines() if len(v:=line.split())==3}
 
-def check(data,sym,kind):
+def check(data,sym,kind,extra_check=None):
     from unicorn import Uc,UC_ARCH_M68K,UC_MODE_BIG_ENDIAN,UC_PROT_ALL
     from unicorn.m68k_const import UC_CPU_M68K_M68000,UC_M68K_REG_SR,UC_M68K_REG_A7,UC_M68K_REG_PC
     u=Uc(UC_ARCH_M68K,UC_MODE_BIG_ENDIAN);u.ctl_set_cpu_model(UC_CPU_M68K_M68000)
@@ -34,7 +34,11 @@ def check(data,sym,kind):
     assert bytes(u.mem_read(ram,size))==expected,'initialized data not copied'
     assert bytes(u.mem_read(bss-4,4))==b'\xA5'*4,'startup wrote below BSS'
     assert bytes(u.mem_read(ram+size,4))==b'\xA5'*4,'startup wrote past data'
-    return {'bss_bytes':length,'data_bytes':size,'stack_top':stack,'main':sym['main']}
+    result={'bss_bytes':length,'data_bytes':size,'stack_top':stack,'main':sym['main']}
+    if extra_check:
+        assert extra_check(u,sym),'extra target check failed'
+        result['probe_execution']=True
+    return result
 
 def check_sub_callback(data,sym):
     from unicorn import Uc,UC_ARCH_M68K,UC_MODE_BIG_ENDIAN
