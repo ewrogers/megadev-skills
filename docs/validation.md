@@ -84,3 +84,45 @@ The actual compiled original-68000 model runs clipping, rejection and PAL/NTSC c
 The Lab caps submitted sprites at 24 and transfers at most 484 data-port bytes per update. `UPLOAD` is a byte tally, not FPS, CPU usage or a promised general-purpose allowance. BIOS overhead and control-port writes are additional. Palette effects preserve the HUD, derive from an immutable base and update only through the frame owner; the BIOS's independent sprite/palette copy paths are not enabled alongside it.
 
 In ares v148 with the configured US BIOS, the automatic tour completed with AUTO PASS, and the scrolling planes, animated/flipped ships, occlusion and steady Window HUD render correctly. The user also confirmed that testing the restored normal build looked good, covering the interactive movement, parallax, effects, priority and pause check. The automatic tour intentionally ends paused and labels that behavior on screen. Physical hardware, BIOS/model variation, actual Word RAM DMA behavior, PAL display timing, maximum sprite load, FIFO deadlines and CD/audio coexistence remain unqualified. The automatic tour separates runtime operations from unreliable synthetic controller input.
+
+
+## Input Lab
+
+`megadev-input` adds direct three/six-button pad, Mega Mouse, Team Player and
+explicit two-port EA multitap readers. These are example implementations around
+Megadev's hardware definitions, not newly discovered SDK driver APIs. The source
+audit found a three-button macro, but no complete reader for the other devices.
+
+Run the integration helper with `--skill megadev-input`. Six cases per architecture
+cover US/JP/EU release, US debug, a scripted tour and explicit EA mode. Local
+native ARM64 and emulated AMD64 builds pass and produce identical target payloads.
+CI repeats them on native runners. Reports record the selected image and revisions.
+
+Host tests cover all six-button masks, mouse signs/overflow, all supported mixed
+Team Player type combinations, malformed/truncated packets, bounded acknowledgments,
+idle-line restoration, EA selector/phase order, baseline suppression, failure release,
+joining and equal-time PAL/NTSC repeat. Fixtures execute at O0/O3, with undefined
+behavior checking where supported. Distribution installs all six skills with
+telemetry disabled and reproduces the standalone Input Lab font.
+
+Actual compiled 68000 code executes both port modes with scripted MMIO responses,
+bus ownership/failure handling, IRQ-mask restoration and the bounded UI publisher.
+The ISR's saved registers, Sub-interrupt call and exception frame are checked up
+to its RTE instruction; the CPU harness cannot execute RTE. Ares exercises the
+complete interrupt return. Mocked MMIO does not measure real peripheral timing.
+
+In ares v148, the scripted tour reached AUTO PASS with six joined simulated
+players and continued running. The user confirmed live D-pad/A/B/C/Start and a
+steady display.
+Port 2 was also recognized as a six-button pad and then a Mega Mouse; its original
+Control Pad selection was restored. Physical X/Y/Z/Mode key checks were skipped
+at the user's request. Mouse motion/button decoding has automated coverage, but
+live mouse motion/button operation has not been qualified. Ares exposes no Team
+Player or EA adapter option, so multitap runtime checks remain scripted.
+
+Replacing BIOS joypad polling requires preserving the Sub interrupt service.
+The Lab installs one input/frame owner and explicitly triggers Sub interrupt 2.
+Its small IRQ-masked polling section preserves the previous SR and Z80 bus state;
+it includes no audio driver. Real pads/mice/adapters, electrical timing, other BIOS
+models, PAL display operation and concurrent Z80 audio remain hardware/integration
+checks. The on-screen scripted mode is labeled and never presented as live input.

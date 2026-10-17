@@ -16,7 +16,7 @@ from disc import digest
 
 def main():
     parser=argparse.ArgumentParser(description=__doc__)
-    parser.add_argument('--skill',default='megadev-project',choices=['megadev-project','megadev-hardware','megadev-assets','megadev-graphics'])
+    parser.add_argument('--skill',default='megadev-project',choices=['megadev-project','megadev-hardware','megadev-assets','megadev-graphics','megadev-input'])
     parser.add_argument('--image',default='ewrogers/megadev:latest')
     parser.add_argument('--platform',required=True,choices=['linux/arm64','linux/amd64'])
     parser.add_argument('--output',type=Path,required=True);args=parser.parse_args()
@@ -41,7 +41,8 @@ def main():
             os.utime(path,(946684800,946684800),follow_symlinks=False)
     matrix=[('us-release','US','NTSC',[]),('jp-release','JP','NTSC',[]),
                                   ('eu-release','EU','PAL',[]),('us-debug','US','NTSC',['OPT_FLAGS=-Og -g -fconserve-stack -fomit-frame-pointer','DEBUG=1'])]
-    if args.skill in ('megadev-hardware','megadev-assets','megadev-graphics'):matrix.append(('us-tour','US','NTSC',['TOUR=1']))
+    if args.skill in ('megadev-hardware','megadev-assets','megadev-graphics','megadev-input'):matrix.append(('us-tour','US','NTSC',['TOUR=1']))
+    if args.skill=='megadev-input':matrix.append(('us-ea','US','NTSC',['EA_MODE=1']))
     for key,region,video,flags in matrix:
         project=creator(output/(key+' game'),project_id='project_lab')
         relative=str(project.relative_to(output))
@@ -86,6 +87,9 @@ def main():
             if args.skill=='megadev-graphics' and kind=='main':
                 from graphics_cpu import check_graphics
                 extra=check_graphics
+            if args.skill=='megadev-input' and kind=='main':
+                from input_cpu import check_input
+                extra=lambda u,sym:check_input(u,sym,key=='us-ea')
             startup[kind]=check((project/'disc'/file).read_bytes(),table,kind,extra)
         sp=symbols((project/'build/sp.bin.elf.sym').read_text())
         assert check_sub_callback((project/'build/sp.bin').read_bytes(),sp)

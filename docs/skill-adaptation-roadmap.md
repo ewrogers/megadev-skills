@@ -37,8 +37,7 @@ we do not defer QA until the debugging/testing group is written.
 ### 1. Foundations
 
 Implemented foundations: `megadev-project`, `megadev-planning` and
-`megadev-hardware`, `megadev-assets` and `megadev-graphics`. Next consider
-`megadev-input`. Add C best practices and math
+`megadev-hardware`, `megadev-assets` and `megadev-graphics`, plus `megadev-input`. Add C best practices and math
 as the foundation becomes executable. PixelLab integration is optional asset
 production guidance, not a requirement to use generated art.
 

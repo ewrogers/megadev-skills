@@ -10,7 +10,8 @@
         "megadev-planning",
         "megadev-hardware",
         "megadev-assets",
-        "megadev-graphics"
+        "megadev-graphics",
+        "megadev-input"
       ]
     }
   ]
