@@ -6,7 +6,8 @@
       "title": "Foundations",
       "description": "Set up a Megadev project and understand its hardware contracts.",
       "skills": [
-        "megadev-project"
+        "megadev-project",
+        "megadev-planning"
       ]
     }
   ]

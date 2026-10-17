@@ -1,0 +1,266 @@
+{
+  "version": 1,
+  "display": {
+    "mode": "H40",
+    "refresh_hz": 60
+  },
+  "phases": [
+    {
+      "name": "play",
+      "word_mode": "2m",
+      "word_owner": "main",
+      "graphics": {
+        "palette_lines": 3,
+        "sprites": 36,
+        "peak_line_sprites": 12,
+        "peak_line_pixels": 192
+      }
+    },
+    {
+      "name": "load",
+      "word_mode": "2m",
+      "word_owner": "sub",
+      "graphics": {
+        "palette_lines": 2,
+        "sprites": 8,
+        "peak_line_sprites": 4,
+        "peak_line_pixels": 64
+      }
+    },
+    {
+      "name": "stream",
+      "word_mode": "1m",
+      "graphics": {
+        "palette_lines": 3,
+        "sprites": 36,
+        "peak_line_sprites": 12,
+        "peak_line_pixels": 192
+      }
+    }
+  ],
+  "allocations": [
+    {
+      "name": "Main BIOS workspace",
+      "pool": "work",
+      "bytes": 2304,
+      "owner": "main",
+      "phases": [
+        "play",
+        "load",
+        "stream"
+      ],
+      "evidence": "reservation"
+    },
+    {
+      "name": "Main stack allowance",
+      "pool": "work",
+      "bytes": 4096,
+      "owner": "main",
+      "phases": [
+        "play",
+        "load",
+        "stream"
+      ],
+      "evidence": "reservation"
+    },
+    {
+      "name": "Resident code and data",
+      "pool": "work",
+      "bytes": 24576,
+      "owner": "main",
+      "phases": [
+        "play",
+        "load",
+        "stream"
+      ],
+      "evidence": "estimate"
+    },
+    {
+      "name": "Objects and game state",
+      "pool": "work",
+      "bytes": 8192,
+      "owner": "main",
+      "phases": [
+        "play",
+        "load",
+        "stream"
+      ],
+      "evidence": "estimate"
+    },
+    {
+      "name": "Upload staging and queues",
+      "pool": "work",
+      "bytes": 8192,
+      "owner": "main",
+      "phases": [
+        "play",
+        "load",
+        "stream"
+      ],
+      "evidence": "estimate"
+    },
+    {
+      "name": "Sub BIOS",
+      "pool": "program",
+      "bytes": 24576,
+      "owner": "sub",
+      "phases": [
+        "play",
+        "load",
+        "stream"
+      ],
+      "evidence": "reservation"
+    },
+    {
+      "name": "Sub stack allowance",
+      "pool": "program",
+      "bytes": 8192,
+      "owner": "sub",
+      "phases": [
+        "play",
+        "load",
+        "stream"
+      ],
+      "evidence": "reservation"
+    },
+    {
+      "name": "Sub resident services",
+      "pool": "program",
+      "bytes": 49152,
+      "owner": "sub",
+      "phases": [
+        "play",
+        "load",
+        "stream"
+      ],
+      "evidence": "estimate"
+    },
+    {
+      "name": "Compressed next-room package",
+      "pool": "program",
+      "bytes": 98304,
+      "owner": "sub",
+      "phases": [
+        "play",
+        "load",
+        "stream"
+      ],
+      "evidence": "estimate"
+    },
+    {
+      "name": "Current room module and data",
+      "pool": "word",
+      "bytes": 98304,
+      "owner": "main",
+      "phases": [
+        "play"
+      ],
+      "evidence": "estimate"
+    },
+    {
+      "name": "Loading package and decode workspace",
+      "pool": "word",
+      "bytes": 196608,
+      "owner": "sub",
+      "phases": [
+        "load"
+      ],
+      "evidence": "estimate"
+    },
+    {
+      "name": "Current streaming bank",
+      "pool": "word",
+      "bytes": 98304,
+      "owner": "main",
+      "phases": [
+        "stream"
+      ],
+      "evidence": "estimate"
+    },
+    {
+      "name": "Next streaming bank",
+      "pool": "word",
+      "bytes": 114688,
+      "owner": "sub",
+      "phases": [
+        "stream"
+      ],
+      "evidence": "estimate"
+    },
+    {
+      "name": "PCM samples including terminators",
+      "pool": "pcm",
+      "bytes": 32768,
+      "owner": "pcm",
+      "phases": [
+        "play",
+        "load",
+        "stream"
+      ],
+      "evidence": "estimate"
+    },
+    {
+      "name": "VDP tables and reserved patterns",
+      "pool": "vram",
+      "bytes": 12288,
+      "owner": "vdp",
+      "phases": [
+        "play",
+        "load",
+        "stream"
+      ],
+      "evidence": "reservation"
+    },
+    {
+      "name": "Shared UI and hero patterns",
+      "pool": "vram",
+      "bytes": 32,
+      "owner": "vdp",
+      "phases": [
+        "play",
+        "load",
+        "stream"
+      ],
+      "evidence": "estimate",
+      "count": 384
+    },
+    {
+      "name": "Location patterns",
+      "pool": "vram",
+      "bytes": 32,
+      "owner": "vdp",
+      "phases": [
+        "play",
+        "load",
+        "stream"
+      ],
+      "evidence": "estimate",
+      "count": 896
+    },
+    {
+      "name": "Optional FM driver footprint",
+      "pool": "z80",
+      "bytes": 6144,
+      "owner": "z80",
+      "phases": [
+        "play",
+        "load",
+        "stream"
+      ],
+      "evidence": "estimate"
+    }
+  ],
+  "loads": [
+    {
+      "name": "next-room preload",
+      "packed_bytes": 98304,
+      "assumed_seek_ms": 250,
+      "assumed_bytes_per_second": 153600,
+      "assumed_decode_ms": 40,
+      "upload_frames": 8,
+      "available_ms": 1500,
+      "notes": "Teaching assumptions, not measured timings or a guaranteed drive rate."
+    }
+  ],
+  "notes": "Three alternative operating phases illustrate lifetimes. This is not a game architecture requirement or a hardware-verified allocation map."
+}

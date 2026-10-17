@@ -1,4 +1,4 @@
-# Project foundation validation
+# Skill validation
 
 ## Run locally
 
@@ -36,3 +36,13 @@ The framework's ordinary make flag additions can be suppressed by command-line C
 The first emulator pass exposed a font palette mismatch and separate Mega CD input bindings. The corrected pass shows readable white text and advancing Main/Sub counters. The user also confirmed that module loading and return, Sub ping and marker movement work in ares.
 
 No real-console test has been performed. Disc latency, BIOS/model differences and peripherals remain hardware checks.
+
+## Planning skill
+
+`megadev-planning` adds no target runtime code and does not need a new demonstration disc. Its standalone checker and worksheet complement Project Lab rather than replace its build/startup workflow.
+
+Nine additional host tests cover exact fits and one-byte overflow in all six physical pools, overlapping lifetimes, 2M ownership, independent 1M-bank limits, H32/H40 scanline limits, separate CPU budgets at 50/60 Hz, assumption-based preload timing, malformed declarations and CLI exit codes. Both installed skills are checked for resource fidelity; the installed planning checker runs without repository helpers.
+
+The existing native ARM64/AMD64 disc matrix remains enabled to catch accidental changes to the shared foundation. Planning calculations are host checks, not new hardware or emulator timing evidence. The example deliberately includes unmeasured values and warns about them.
+
+See [planning validation cases](planning-validation.md) for decision-oriented walkthroughs and the remaining limits.
