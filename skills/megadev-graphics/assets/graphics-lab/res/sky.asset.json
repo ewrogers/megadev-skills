@@ -1,0 +1,61 @@
+{
+  "version": 1,
+  "inputs": [
+    {
+      "path": "sky.png",
+      "sha256": "8b391b90a542c75d453b3ae94cbee11fdba7b52095bd1c70877cf8f93d032803"
+    },
+    {
+      "path": "sky.palette.json",
+      "sha256": "c03c46ebfb5fdfd22b9e021cc8cdac783b3d0b38f12699532518f06b2e5ae5cd"
+    }
+  ],
+  "outputs": [
+    {
+      "path": "sky.mda",
+      "sha256": "8d0ca90a928c10de8cf16e3200c5390e49fa715400bdfcb149a797c1843a63ee"
+    },
+    {
+      "path": "sky.used.png",
+      "sha256": "8b391b90a542c75d453b3ae94cbee11fdba7b52095bd1c70877cf8f93d032803"
+    }
+  ],
+  "source_size": [
+    512,
+    192
+  ],
+  "frame": null,
+  "frame_columns": null,
+  "snap_enabled": false,
+  "index_zero_mode": "scene_backdrop",
+  "snapped_source_colors": 0,
+  "opaque_cram_colors": 11,
+  "asset": {
+    "kind": 0,
+    "width_tiles": 64,
+    "height_tiles": 24,
+    "tiles": 469,
+    "entries": 1536,
+    "tile_bytes": 15008,
+    "total_bytes": 18144,
+    "crc32": 3544214443,
+    "palette": [
+      "0200",
+      "0420",
+      "0422",
+      "0622",
+      "0644",
+      "0844",
+      "0866",
+      "0A88",
+      "0CAA",
+      "0AAC",
+      "0ACE",
+      "08AE",
+      "068C",
+      "046A",
+      "0446",
+      "0424"
+    ]
+  }
+}

@@ -1,0 +1,35 @@
+{
+  "service": "PixelLab MCP",
+  "charged_generations": 30,
+  "assets": [
+    {
+      "key": "sky",
+      "job_id": "0525cef9-b6cb-4026-8def-e25037ad36da",
+      "width": 256,
+      "height": 192,
+      "charged_generations": 10
+    },
+    {
+      "key": "quay",
+      "job_id": "55563c35-1177-42f7-b30f-890bc194c7ae",
+      "width": 256,
+      "height": 192,
+      "charged_generations": 10
+    },
+    {
+      "key": "ship",
+      "job_id": "630ac6ff-d4e0-4b1b-9698-2fcbbed3b176",
+      "width": 32,
+      "height": 24,
+      "charged_generations": 5
+    },
+    {
+      "key": "ship2",
+      "job_id": "1114fa45-7966-40af-8c1d-f7fca518b45a",
+      "width": 32,
+      "height": 24,
+      "charged_generations": 5
+    }
+  ],
+  "processing": "Native pixels preserved. Backgrounds extended by mirroring, ship cels composed into a sheet. No resizing or visible recoloring."
+}

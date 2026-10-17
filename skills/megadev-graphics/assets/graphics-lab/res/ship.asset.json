@@ -1,0 +1,64 @@
+{
+  "version": 1,
+  "inputs": [
+    {
+      "path": "ship.png",
+      "sha256": "a39dcb1820e3efa42447e5d20b3dc6059d64947e8a57bd20806c6286f2c5aa68"
+    },
+    {
+      "path": "ship.palette.json",
+      "sha256": "087c98bc4c59e9af9b59b147a0db0c10b2970bd763b208f96a11a76f7d509a03"
+    }
+  ],
+  "outputs": [
+    {
+      "path": "ship.mda",
+      "sha256": "e24a43fa787c954512cdb70247e701527195a1c6bb4189f4f2be820f70b1a225"
+    },
+    {
+      "path": "ship.used.png",
+      "sha256": "9fdc65e22e96c1d3d6827765649d976349a006623af9020a543327d8f8f84878"
+    }
+  ],
+  "source_size": [
+    64,
+    24
+  ],
+  "frame": [
+    32,
+    24
+  ],
+  "frame_columns": 2,
+  "snap_enabled": false,
+  "index_zero_mode": "transparent",
+  "snapped_source_colors": 0,
+  "opaque_cram_colors": 11,
+  "asset": {
+    "kind": 1,
+    "width_tiles": 4,
+    "height_tiles": 3,
+    "tiles": 24,
+    "entries": 2,
+    "tile_bytes": 768,
+    "total_bytes": 832,
+    "crc32": 3785268033,
+    "palette": [
+      "0000",
+      "0220",
+      "0420",
+      "0442",
+      "0662",
+      "0684",
+      "08A6",
+      "0AC8",
+      "0ACC",
+      "08CE",
+      "06AE",
+      "048C",
+      "0468",
+      "0446",
+      "0424",
+      "0422"
+    ]
+  }
+}

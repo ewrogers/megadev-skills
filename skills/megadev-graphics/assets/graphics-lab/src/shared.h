@@ -1,0 +1,11 @@
+#ifndef PROJECT_SHARED_H
+#define PROJECT_SHARED_H
+#define CMD_LOAD_FILE 1
+#define CMD_PING 2
+#define FILE_IPX_MMD 0
+#define FILE_ROOM_MMD 1
+#define FILE_SKY 2
+#define FILE_QUAY 3
+#define LAB_MAIN_STACK_TOP 0xFFE000
+#define LAB_SUB_STACK_TOP 0x20000
+#endif

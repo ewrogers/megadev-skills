@@ -1,0 +1,61 @@
+{
+  "version": 1,
+  "inputs": [
+    {
+      "path": "quay.png",
+      "sha256": "21c8c76db7d5d17c40186e76f9192f162d27ab4dd45a2954e2f29979bef3455a"
+    },
+    {
+      "path": "quay.palette.json",
+      "sha256": "087c98bc4c59e9af9b59b147a0db0c10b2970bd763b208f96a11a76f7d509a03"
+    }
+  ],
+  "outputs": [
+    {
+      "path": "quay.mda",
+      "sha256": "ec4ad9e0685bb2371ddbec3077838caa6ef8f54362236eb0ff58c1f21f12363b"
+    },
+    {
+      "path": "quay.used.png",
+      "sha256": "a362b1027112db1deae2c9e3d7de008c21270033a1821ed692d8b8d44699cf04"
+    }
+  ],
+  "source_size": [
+    512,
+    192
+  ],
+  "frame": null,
+  "frame_columns": null,
+  "snap_enabled": false,
+  "index_zero_mode": "transparent",
+  "snapped_source_colors": 0,
+  "opaque_cram_colors": 9,
+  "asset": {
+    "kind": 0,
+    "width_tiles": 64,
+    "height_tiles": 24,
+    "tiles": 273,
+    "entries": 1536,
+    "tile_bytes": 8736,
+    "total_bytes": 11872,
+    "crc32": 2600705979,
+    "palette": [
+      "0000",
+      "0220",
+      "0420",
+      "0442",
+      "0662",
+      "0684",
+      "08A6",
+      "0AC8",
+      "0ACC",
+      "08CE",
+      "06AE",
+      "048C",
+      "0468",
+      "0446",
+      "0424",
+      "0422"
+    ]
+  }
+}
