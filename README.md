@@ -19,6 +19,7 @@ The skill includes a standalone starter and instructions for building a disc wit
 | Group | Skill | What it covers |
 | --- | --- | --- |
 | Foundations | [megadev-project](skills/megadev-project/SKILL.md) | Toolchain setup, Main/Sub startup, memory layouts, module loading and a bootable disc. |
+| Foundations | [megadev-planning](skills/megadev-planning/SKILL.md) | CPU responsibilities, memory lifetimes, Word RAM ownership and loading plans, with an editable budget checker. |
 
 More skills will follow in foundations, systems, advanced techniques, debugging/testing and release. See the [adaptation roadmap](docs/skill-adaptation-roadmap.md).
 For cartridge games using SGDK, see [SGDK Skills](https://github.com/ewrogers/sgdk-skills).
