@@ -9,9 +9,9 @@ def compare(paths):
     if len(reports)!=2 or {r.get('platform') for r in reports}!={'linux/arm64','linux/amd64'}:
         raise ValueError('Need one ARM64 and one AMD64 report')
     kinds={r.get('skill','megadev-project') for r in reports}
-    if len(kinds)!=1 or not kinds <= {'megadev-project','megadev-hardware'}:
+    if len(kinds)!=1 or not kinds <= {'megadev-project','megadev-hardware','megadev-assets'}:
         raise ValueError('Need matching supported skill reports')
-    expected=CASES | ({'us-tour'} if 'megadev-hardware' in kinds else set())
+    expected=CASES | ({'us-tour'} if kinds & {'megadev-hardware','megadev-assets'} else set())
     for r in reports:
         if r.get('passed') is not True or set(r.get('cases',{}))!=expected:
             raise ValueError('Failed or incomplete matrix')
@@ -20,6 +20,10 @@ def compare(paths):
                 raise ValueError('Missing startup/callback checks')
             if 'megadev-hardware' in kinds and any(case['startup'][kind].get('probe_execution') is not True for kind in ('main','sub')):
                 raise ValueError('Missing executed hardware probes')
+            if 'megadev-assets' in kinds and case['startup']['main'].get('probe_execution') is not True:
+                raise ValueError('Missing executed asset decoder checks')
+            if 'megadev-assets' in kinds and not {'GARDEN.MDA','CAVERN.MDA'} <= case.get('disc',{}).get('files',{}).keys():
+                raise ValueError('Missing disc art')
             if not case.get('boot_payloads') or not case.get('disc',{}).get('files'):
                 raise ValueError('Missing target payload hashes')
     if reports[0]['cases']!=reports[1]['cases']:

@@ -22,6 +22,7 @@ jobs:
       - uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97
         with:
           python-version: '3.12'
+      - run: python -m pip install -r tests/requirements.txt
       - run: python -m unittest discover -s tests -v
   distribution:
     runs-on: ubuntu-24.04
@@ -33,6 +34,7 @@ jobs:
       - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1
         with:
           node-version: '24'
+      - run: python -m pip install -r tests/requirements.txt
       - run: python tests/distribution.py
   target:
     strategy:
@@ -51,6 +53,12 @@ jobs:
           - arch: amd64
             runner: ubuntu-24.04
             skill: megadev-hardware
+          - arch: arm64
+            runner: ubuntu-24.04-arm
+            skill: megadev-assets
+          - arch: amd64
+            runner: ubuntu-24.04
+            skill: megadev-assets
     runs-on: ${{ matrix.runner }}
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
@@ -82,3 +90,4 @@ jobs:
           path: build/reports
       - run: python tests/compare_reports.py build/reports/target-megadev-project-arm64/report.json build/reports/target-megadev-project-amd64/report.json
       - run: python tests/compare_reports.py build/reports/target-megadev-hardware-arm64/report.json build/reports/target-megadev-hardware-amd64/report.json
+      - run: python tests/compare_reports.py build/reports/target-megadev-assets-arm64/report.json build/reports/target-megadev-assets-amd64/report.json

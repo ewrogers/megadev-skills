@@ -16,7 +16,7 @@ from disc import digest
 
 def main():
     parser=argparse.ArgumentParser(description=__doc__)
-    parser.add_argument('--skill',default='megadev-project',choices=['megadev-project','megadev-hardware'])
+    parser.add_argument('--skill',default='megadev-project',choices=['megadev-project','megadev-hardware','megadev-assets'])
     parser.add_argument('--image',default='ewrogers/megadev:latest')
     parser.add_argument('--platform',required=True,choices=['linux/arm64','linux/amd64'])
     parser.add_argument('--output',type=Path,required=True);args=parser.parse_args()
@@ -34,18 +34,36 @@ def main():
         return text
     doctor=run('doctor',['doctor']);assert '-fno-strict-aliasing' in doctor
     cases={}
+    def fixture_times(project):
+        # Docker Desktop's guest clock can lag the host. These are disposable
+        # fresh-build inputs; stable old mtimes avoid misleading make skew warnings.
+        for path in [*project.rglob('*'),project]:
+            os.utime(path,(946684800,946684800),follow_symlinks=False)
     matrix=[('us-release','US','NTSC',[]),('jp-release','JP','NTSC',[]),
                                   ('eu-release','EU','PAL',[]),('us-debug','US','NTSC',['OPT_FLAGS=-Og -g -fconserve-stack -fomit-frame-pointer','DEBUG=1'])]
-    if args.skill=='megadev-hardware':matrix.append(('us-tour','US','NTSC',['TOUR=1']))
+    if args.skill in ('megadev-hardware','megadev-assets'):matrix.append(('us-tour','US','NTSC',['TOUR=1']))
     for key,region,video,flags in matrix:
         project=creator(output/(key+' game'),project_id='project_lab')
-        relative=str(project.relative_to(output));run(key,['build','-C',relative,'REGION='+region,'VIDEO='+video,*flags])
+        relative=str(project.relative_to(output))
+        if args.skill=='megadev-assets' and key=='us-release':
+            sys.path.insert(0,str(ROOT/'skills/megadev-assets/scripts'))
+            from prepare_image import prepare
+            for name in ['garden','cavern','actor','panel']:
+                source=project/'res'
+                prepared=project/'reprepared'/(name+'.mda')
+                art=prepare(source/(name+'.png'),source/(name+'.palette.json'),prepared,(16,24) if name=='actor' else None,backdrop=name in ('garden','cavern'))
+                assert prepared.read_bytes()==(source/(name+'.mda')).read_bytes(),'prepared bytes differ'
+                assert not art['snapped_source_colors'],'unexpected color changes'
+        fixture_times(project)
+        run(key,['build','-C',relative,'REGION='+region,'VIDEO='+video,*flags])
         # The upstream boot linker uses RWX LOAD segments on bare-metal RAM.
         log=(output/(key+'.log')).read_text()
         unexpected=[line for line in log.splitlines() if 'warning:' in line and 'has a LOAD segment with RWX permissions' not in line]
         assert not unexpected,unexpected
         image=project/'project_lab.iso'
-        got=inspect(image,region,['IPX.MMD','SPX.SMD','ROOM.MMD'])
+        expected_files=['IPX.MMD','SPX.SMD','ROOM.MMD']
+        if args.skill=='megadev-assets':expected_files+=['GARDEN.MDA','CAVERN.MDA']
+        got=inspect(image,region,expected_files)
         for wrong_region, expected in [('JP' if region!='JP' else 'US', []), (region, ['MISSING.MMD'])]:
             try:inspect(image,wrong_region,expected)
             except ValueError:pass
@@ -61,6 +79,9 @@ def main():
             if args.skill=='megadev-hardware' and kind in ('main','sub'):
                 from hardware_cpu import check_probe
                 extra=lambda u,sym:check_probe(u,sym,kind)
+            if args.skill=='megadev-assets' and kind=='main':
+                from assets_cpu import check_assets
+                extra=lambda u,sym:check_assets(u,sym,project/'res')
             startup[kind]=check((project/'disc'/file).read_bytes(),table,kind,extra)
         sp=symbols((project/'build/sp.bin.elf.sym').read_text())
         assert check_sub_callback((project/'build/sp.bin').read_bytes(),sp)
@@ -72,6 +93,7 @@ def main():
         print('Passed '+key,flush=True)
     bad=creator(output/'oversized allocation',project_id='project_lab')
     layout=bad/'src/ipx_layout.s';layout.write_text(layout.read_text().replace('MODULE_RAM_LENGTH 0x800','MODULE_RAM_LENGTH 0x4'))
+    fixture_times(bad)
     log=run('reject-overlap',['build','-C',str(bad.relative_to(output))],success=False)
     assert 'will not fit' in log or 'overflowed' in log,'expected linker capacity rejection'
     report={'passed':True,'skill':args.skill,'platform':args.platform,'doctor':doctor,'cases':cases,

@@ -1,0 +1,15 @@
+{
+  "source": "PixelLab MCP",
+  "generations_used": 30,
+  "jobs": {
+    "actor": "0f17642b-ffcd-44b4-991c-22a49b509f02",
+    "actor-2": "78e6eefe-fcfd-4f63-91dd-6022e79b2fe1",
+    "garden": "31a92387-79e0-44f5-9127-7fc6485adc9b",
+    "cavern": "fe838eb9-43a2-4b73-8b9a-f4c6940fc69f"
+  },
+  "changes": [
+    "Two native sprite cels placed side by side on a 32x24 sheet; no scaling.",
+    "No palette remapping, resizing, cropping, alpha thresholding or color snapping.",
+    "The solid 8x8 UI panel is exact procedural data, not AI-generated."
+  ]
+}

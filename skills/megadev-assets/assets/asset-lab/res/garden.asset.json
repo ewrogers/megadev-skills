@@ -1,0 +1,61 @@
+{
+  "version": 1,
+  "inputs": [
+    {
+      "path": "garden.png",
+      "sha256": "ee6e78ea2c28e68fa7c6bb08099d1ffed256f6c220c4f95e85a6c0c405fbf6af"
+    },
+    {
+      "path": "garden.palette.json",
+      "sha256": "ac03fe1f400a3d39c701f88c603a47cf27936b70acc6ae1a78474c1702b64255"
+    }
+  ],
+  "outputs": [
+    {
+      "path": "garden.mda",
+      "sha256": "cd9ef21aafa20fcf4743013e8492c89f832b69007cff1bfd3f3205dbb2a740ff"
+    },
+    {
+      "path": "garden.used.png",
+      "sha256": "cbbf12ebd74faf34172d864dd4065b7c81480167ea56e5f0ee6b0b1f1cb53dac"
+    }
+  ],
+  "source_size": [
+    320,
+    160
+  ],
+  "frame": null,
+  "frame_columns": null,
+  "snap_enabled": false,
+  "index_zero_mode": "scene_backdrop",
+  "snapped_source_colors": 0,
+  "opaque_cram_colors": 13,
+  "asset": {
+    "kind": 0,
+    "width_tiles": 40,
+    "height_tiles": 20,
+    "tiles": 438,
+    "entries": 800,
+    "tile_bytes": 14016,
+    "total_bytes": 15680,
+    "crc32": 1228868563,
+    "palette": [
+      "0ACC",
+      "0CEE",
+      "0ACA",
+      "0686",
+      "0464",
+      "0442",
+      "0468",
+      "068A",
+      "08AC",
+      "08CE",
+      "0446",
+      "0444",
+      "0AA8",
+      "0884",
+      "0662",
+      "0EEE"
+    ]
+  }
+}
