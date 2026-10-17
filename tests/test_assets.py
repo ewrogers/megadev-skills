@@ -130,9 +130,10 @@ class AssetTests(unittest.TestCase):
                 r=prepare(image,palette,out,frame,backdrop=name in ['garden','cavern'])
                 self.assertEqual(out.read_bytes(),(d/'res'/(name+'.mda')).read_bytes())
                 self.assertEqual(r['snapped_source_colors'],0)
-                self.assertEqual(r['source_size'],list(Image.open(image).size))
                 visible=lambda im:[p if p[3] else (0,0,0,0) for p in im.convert('RGBA').get_flattened_data()]
-                self.assertEqual(visible(Image.open(out.with_suffix('.used.png'))),visible(Image.open(image)))
+                with Image.open(image) as source, Image.open(out.with_suffix('.used.png')) as used:
+                    self.assertEqual(r['source_size'],list(source.size))
+                    self.assertEqual(visible(used),visible(source))
             self.assertTrue(verify(d,list((d/'regenerated').glob('*.asset.json'))))
 
     def test_c_decoder_with_valid_and_corrupt_files_at_both_optimization_levels(self):

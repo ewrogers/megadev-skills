@@ -59,7 +59,7 @@ The probes cover only reserved 256-byte local arrays and a 1024-byte Word RAM bu
 
 ## Asset Lab
 
-`megadev-assets` adds strict native-resolution PNG preparation and an optional MDA1 teaching format. The checked-in PixelLab sources use exact requested palettes and dimensions: two 320×160 backgrounds and two 16×24 sprite cels. Thirty generations were used; CI never calls the generation service. Prompts, originals and provenance ship with the Lab. Preparation preserves all visible pixels; transparent hidden RGB is normalized.
+`megadev-assets` adds strict native-resolution PNG preparation and an optional MDA1 teaching format. The checked-in PixelLab sources use exact requested palettes and dimensions: two 320×160 backgrounds and two 16×24 sprite cels. Palette JSON files keep LF endings across checkouts because reports hash their exact source bytes. Thirty generations were used; CI never calls the generation service. Prompts, originals and provenance ship with the Lab. Preparation preserves all visible pixels; transparent hidden RGB is normalized.
 
 Nine asset host tests cover CRAM encoding, opt-in channel snapping, pattern nibble order, flip deduplication, sprite frame order, pixel round trips, malformed headers/maps/CRC, partial alpha, input preservation, stale files and path escapes. A host C fixture exercises the decoder at O0/O3 and with undefined-behavior checking where available. Distribution installs the fourth skill, generates its standalone Lab and runs the installed image converter and verifier.
 

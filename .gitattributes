@@ -1,0 +1,4 @@
+# Palette source bytes are recorded in prepared-asset reports.
+*.palette.json text eol=lf
+*.png binary
+*.mda binary

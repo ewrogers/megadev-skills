@@ -1,3 +1,7 @@
+#ifdef _WIN32
+/* This host fixture uses portable C file I/O, not Microsoft-only fopen_s. */
+#define _CRT_SECURE_NO_WARNINGS
+#endif
 #include "asset.h"
 #include <assert.h>
 #include <stdio.h>
