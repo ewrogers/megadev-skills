@@ -46,3 +46,13 @@ Nine additional host tests cover exact fits and one-byte overflow in all six phy
 The existing native ARM64/AMD64 disc matrix remains enabled to catch accidental changes to the shared foundation. Planning calculations are host checks, not new hardware or emulator timing evidence. The example deliberately includes unmeasured values and warns about them.
 
 See [planning validation cases](planning-validation.md) for decision-oriented walkthroughs and the remaining limits.
+
+## Hardware Lab
+
+`megadev-hardware` includes its own installed diagnostic disc rather than depending on files from another skill. Run the same integration helper with `--skill megadev-hardware` and new output directories for each architecture, then compare their reports. CI builds both Project Lab and Hardware Lab on native ARM64/AMD64.
+
+Hardware Lab adds US release, JP release, EU release, US debug and US automatic-tour cases. Actual compiled probe routines execute on the original M68000 model on both Main and Sub, checking known endian patterns, corruption detection, zero-length refusal and guard bytes. Host tests run the primitives at O0/O3 with undefined-behavior checking where supported. Comparison rejects missing tours, missing target probe execution or mismatched skill reports.
+
+In ares v148 with the user's configured US BIOS, the automatic tour completed three scratch/2M round-trip checks, a verified ping and two disc-module reloads, displaying all four buffer PASS results and AUTO TOUR PASS. This is emulator runtime evidence, not controller-input or physical-console qualification. Synthetic A-button events did not reliably reach the manual build even with background input allowed; the tour uses a deterministic input source to test operations independently.
+
+The probes cover only reserved 256-byte local arrays and a 1024-byte Word RAM buffer. No 1M-mode, ASIC, audio, save-media or real-drive qualification is claimed. See the installed skill's verification reference for the remaining hardware checks.
