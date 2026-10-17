@@ -16,7 +16,7 @@ from disc import digest
 
 def main():
     parser=argparse.ArgumentParser(description=__doc__)
-    parser.add_argument('--skill',default='megadev-project',choices=['megadev-project','megadev-hardware','megadev-assets','megadev-graphics','megadev-input'])
+    parser.add_argument('--skill',default='megadev-project',choices=['megadev-project','megadev-hardware','megadev-assets','megadev-graphics','megadev-input','megadev-system'])
     parser.add_argument('--image',default='ewrogers/megadev:latest')
     parser.add_argument('--platform',required=True,choices=['linux/arm64','linux/amd64'])
     parser.add_argument('--output',type=Path,required=True);args=parser.parse_args()
@@ -41,7 +41,7 @@ def main():
             os.utime(path,(946684800,946684800),follow_symlinks=False)
     matrix=[('us-release','US','NTSC',[]),('jp-release','JP','NTSC',[]),
                                   ('eu-release','EU','PAL',[]),('us-debug','US','NTSC',['OPT_FLAGS=-Og -g -fconserve-stack -fomit-frame-pointer','DEBUG=1'])]
-    if args.skill in ('megadev-hardware','megadev-assets','megadev-graphics','megadev-input'):matrix.append(('us-tour','US','NTSC',['TOUR=1']))
+    if args.skill in ('megadev-hardware','megadev-assets','megadev-graphics','megadev-input','megadev-system'):matrix.append(('us-tour','US','NTSC',['TOUR=1']))
     if args.skill=='megadev-input':matrix.append(('us-ea','US','NTSC',['EA_MODE=1']))
     for key,region,video,flags in matrix:
         project=creator(output/(key+' game'),project_id='project_lab')
@@ -91,6 +91,11 @@ def main():
                 from input_cpu import check_input
                 extra=lambda u,sym:check_input(u,sym,key=='us-ea')
             startup[kind]=check((project/'disc'/file).read_bytes(),table,kind,extra)
+        if args.skill=='megadev-system':
+            from system_cpu import check_system
+            assert check_system(project,50 if video=='PAL' else 60)
+            startup['main']['probe_execution']=True
+            startup['sub']['probe_execution']=True
         sp=symbols((project/'build/sp.bin.elf.sym').read_text())
         assert check_sub_callback((project/'build/sp.bin').read_bytes(),sp)
         cases[key]={'disc':got,'startup':startup,'sub_callback':True,

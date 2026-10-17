@@ -9,9 +9,9 @@ def compare(paths):
     if len(reports)!=2 or {r.get('platform') for r in reports}!={'linux/arm64','linux/amd64'}:
         raise ValueError('Need one ARM64 and one AMD64 report')
     kinds={r.get('skill','megadev-project') for r in reports}
-    if len(kinds)!=1 or not kinds <= {'megadev-project','megadev-hardware','megadev-assets','megadev-graphics','megadev-input'}:
+    if len(kinds)!=1 or not kinds <= {'megadev-project','megadev-hardware','megadev-assets','megadev-graphics','megadev-input','megadev-system'}:
         raise ValueError('Need matching supported skill reports')
-    expected=CASES | ({'us-tour'} if kinds & {'megadev-hardware','megadev-assets','megadev-graphics','megadev-input'} else set())
+    expected=CASES | ({'us-tour'} if kinds & {'megadev-hardware','megadev-assets','megadev-graphics','megadev-input','megadev-system'} else set())
     if 'megadev-input' in kinds:expected|={'us-ea'}
     for r in reports:
         if r.get('passed') is not True or set(r.get('cases',{}))!=expected:
@@ -29,6 +29,8 @@ def compare(paths):
                 raise ValueError('Missing executed graphics checks or disc layers')
             if 'megadev-input' in kinds and case['startup']['main'].get('probe_execution') is not True:
                 raise ValueError('Missing executed input protocol/IRQ checks')
+            if 'megadev-system' in kinds and any(case['startup'][kind].get('probe_execution') is not True for kind in ('main','sub')):
+                raise ValueError('Missing paired executed system checks')
             if not case.get('boot_payloads') or not case.get('disc',{}).get('files'):
                 raise ValueError('Missing target payload hashes')
     if reports[0]['cases']!=reports[1]['cases']:
