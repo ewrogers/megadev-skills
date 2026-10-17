@@ -1,0 +1,61 @@
+{
+  "version": 1,
+  "inputs": [
+    {
+      "path": "panel.png",
+      "sha256": "6c2918d0a0178232eb73957f5fa479be03dc46e81e710dee68d2668269a31d10"
+    },
+    {
+      "path": "panel.palette.json",
+      "sha256": "48045ab7c5c0ac8041aaae8f6929a9b26386242c3baab294856b8ac929f7085e"
+    }
+  ],
+  "outputs": [
+    {
+      "path": "panel.mda",
+      "sha256": "4480f397fa02bf7ee9d2b62711cd8e0d0b3274c19f13c12a1e195117a7d78e81"
+    },
+    {
+      "path": "panel.used.png",
+      "sha256": "1ad072ada987f3d062a0b95135ad39774375f2d7dbf35f48e79f7618a61a7603"
+    }
+  ],
+  "source_size": [
+    8,
+    8
+  ],
+  "frame": null,
+  "frame_columns": null,
+  "snap_enabled": false,
+  "index_zero_mode": "transparent",
+  "snapped_source_colors": 0,
+  "opaque_cram_colors": 1,
+  "asset": {
+    "kind": 0,
+    "width_tiles": 1,
+    "height_tiles": 1,
+    "tiles": 1,
+    "entries": 1,
+    "tile_bytes": 32,
+    "total_bytes": 98,
+    "crc32": 2165122358,
+    "palette": [
+      "0000",
+      "0220",
+      "0442",
+      "0664",
+      "0AA6",
+      "0CCA",
+      "044A",
+      "046C",
+      "048E",
+      "06AE",
+      "08CE",
+      "0468",
+      "0446",
+      "0224",
+      "0CEE",
+      "0EEE"
+    ]
+  }
+}

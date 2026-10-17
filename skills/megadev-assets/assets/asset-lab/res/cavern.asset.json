@@ -1,0 +1,61 @@
+{
+  "version": 1,
+  "inputs": [
+    {
+      "path": "cavern.png",
+      "sha256": "9929ffbd0dfc001fc86b584468bdb48e8df01091f2b9f448406f10bceef74c73"
+    },
+    {
+      "path": "cavern.palette.json",
+      "sha256": "43bf0c2094123e9a6195ef6bb86f2f847c1a3ef580efcf324a085b639f92f475"
+    }
+  ],
+  "outputs": [
+    {
+      "path": "cavern.mda",
+      "sha256": "8f2dbf3aeb9abf1b61c06daecdaf1012e6c0635321b71be22a2c28b795ee9e82"
+    },
+    {
+      "path": "cavern.used.png",
+      "sha256": "1c457b4ab52c6eb98a7f35d8f91b40ab038555ed5b86005ca89a46679152c611"
+    }
+  ],
+  "source_size": [
+    320,
+    160
+  ],
+  "frame": null,
+  "frame_columns": null,
+  "snap_enabled": false,
+  "index_zero_mode": "scene_backdrop",
+  "snapped_source_colors": 0,
+  "opaque_cram_colors": 11,
+  "asset": {
+    "kind": 0,
+    "width_tiles": 40,
+    "height_tiles": 20,
+    "tiles": 611,
+    "entries": 800,
+    "tile_bytes": 19552,
+    "total_bytes": 21216,
+    "crc32": 675986800,
+    "palette": [
+      "0420",
+      "0422",
+      "0642",
+      "0644",
+      "0864",
+      "0886",
+      "0662",
+      "0882",
+      "0AA4",
+      "0CC8",
+      "0EEC",
+      "0646",
+      "0668",
+      "06AC",
+      "08CE",
+      "0220"
+    ]
+  }
+}

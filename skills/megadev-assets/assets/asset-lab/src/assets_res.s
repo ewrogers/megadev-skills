@@ -1,0 +1,9 @@
+.section .rodata
+#include <macros.s>
+.align 2
+GLABEL res_actor
+.incbin "../res/actor.mda"
+.align 2
+GLABEL res_panel
+.incbin "../res/panel.mda"
+.align 2

@@ -41,3 +41,20 @@ class ReportTests(unittest.TestCase):
                            lambda q:q.update(skill='megadev-project')]:
                 bad=copy.deepcopy(b);mutate(bad)
                 with self.assertRaises(ValueError):run(bad)
+
+    def test_asset_reports_require_disc_art_and_executed_decoder(self):
+        case={'disc':{'files':{'IPX.MMD':'hash','GARDEN.MDA':'garden','CAVERN.MDA':'cavern'}},
+              'boot_payloads':{'sp.bin':'hash'},'startup':{'main':{'probe_execution':True},'sub':{},'room':{}},'sub_callback':True}
+        a={'passed':True,'skill':'megadev-assets','platform':'linux/arm64','cases':{k:copy.deepcopy(case) for k in CASES|{'us-tour'}}}
+        b=copy.deepcopy(a);b['platform']='linux/amd64'
+        with tempfile.TemporaryDirectory() as folder:
+            paths=[Path(folder)/'a.json',Path(folder)/'b.json']
+            def run(right):
+                for p,r in zip(paths,[a,right]):p.write_text(json.dumps(r))
+                return compare(paths)
+            self.assertTrue(run(b))
+            for mutate in [lambda q:q['cases'].pop('us-tour'),
+                           lambda q:q['cases']['us-debug']['startup']['main'].pop('probe_execution'),
+                           lambda q:q['cases']['us-release']['disc']['files'].pop('CAVERN.MDA')]:
+                bad=copy.deepcopy(b);mutate(bad)
+                with self.assertRaises(ValueError):run(bad)
