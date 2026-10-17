@@ -1,0 +1,123 @@
+[
+  {
+    "key": "sky",
+    "tool": "mcp__pixellab__create_image_pro",
+    "args": {
+      "width": 256,
+      "height": 192,
+      "no_background": false,
+      "max_colors": 16,
+      "palette": [
+        "#000024",
+        "#002449",
+        "#242449",
+        "#24246d",
+        "#49496d",
+        "#494992",
+        "#6d6d92",
+        "#9292b6",
+        "#b6b6db",
+        "#dbb6b6",
+        "#ffdbb6",
+        "#ffb692",
+        "#db926d",
+        "#b66d49",
+        "#6d4949",
+        "#492449"
+      ],
+      "seed": 41017,
+      "description": "Native 256x192 pixel art background for a Mega Drive side scrolling game. Dusk over a quiet floating Mediterranean observatory port: huge soft peach clouds, pale warm crescent moon at upper right, far blue violet mountain silhouettes, tiny distant floating islands and elegant lighthouse domes along the lower horizon, dark violet sea in the bottom 32 pixels. Straight side view, distant layer ONLY: no foreground, no characters, no UI, no lettering. Seamlessly repeating horizontally; left and right edge sky/sea tones and horizon height must match. Strong readable pixel clusters at the actual 256x192 resolution, single pixel details only where intentional. Atmospheric contrast with peach light and violet blue shadows; not washed out or muddy. Use ONLY the exact provided colors. Restrained ordered 2x2 dithering only within broad sky/cloud transition bands if useful, clean silhouette edges without noisy texture. Composition leaves open sky in central play area."
+    }
+  },
+  {
+    "key": "quay",
+    "tool": "mcp__pixellab__create_image_pro",
+    "args": {
+      "width": 256,
+      "height": 192,
+      "no_background": true,
+      "max_colors": 15,
+      "palette": [
+        "#002424",
+        "#002449",
+        "#244949",
+        "#246d6d",
+        "#49926d",
+        "#6db692",
+        "#92dbb6",
+        "#dbdbb6",
+        "#ffdb92",
+        "#ffb66d",
+        "#db9249",
+        "#926d49",
+        "#6d4949",
+        "#492449",
+        "#242449"
+      ],
+      "seed": 41018,
+      "description": "Native 256x192 pixel art TRANSPARENT foreground layer for a Mega Drive side scrolling parallax scene, side view. A copper and dark teal harbor quay across the BOTTOM 56 pixels only: stone seawall, warm lantern posts, mooring bollards, small tufts of reeds, brass pipes and a short wrought iron railing. At far left a narrow tall teal observatory pillar rises to y=60, at far right a shorter weathered lantern post, keep the center and upper 130 pixels EMPTY TRANSPARENT so a distant sunset background shows through. Bottom edge should be solid dark teal foundation. Horizontal repeat: both left/right edges meet at same bottom seawall height. Do not draw sky, sea, mountains, backdrop rectangle, text or characters. Sharp deliberate pixel clusters, crisp blackened teal outlines, warm copper highlights, cohesive 16bit game art. Use ONLY provided 15 colors for opaque pixels and transparent background. No antialiasing, no blur, no scattered dots. Decorative foreground should partially occlude a passing small airship near the bottom."
+    }
+  },
+  {
+    "key": "ship",
+    "tool": "mcp__pixellab__create_image_pro_flash",
+    "args": {
+      "width": 32,
+      "height": 24,
+      "no_background": true,
+      "max_colors": 15,
+      "palette": [
+        "#002424",
+        "#002449",
+        "#244949",
+        "#246d6d",
+        "#49926d",
+        "#6db692",
+        "#92dbb6",
+        "#dbdbb6",
+        "#ffdb92",
+        "#ffb66d",
+        "#db9249",
+        "#926d49",
+        "#6d4949",
+        "#492449",
+        "#242449"
+      ],
+      "seed": 41019,
+      "description": "A tiny charming copper and teal one-person propeller airship, facing RIGHT in pure SIDE VIEW. Native 32x24 pixel sprite for a Mega Drive game. Small ivory fabric balloon with copper ribs over a dark teal wooden gondola, little glowing golden stern propeller, single dark porthole. Compact readable silhouette, crisp one pixel dark teal outline, strong cream highlights, purposeful pixel clusters, no blur or antialiasing. Transparent background. Entire ship fits within x=1..30 y=1..22, one pixel transparent margin. Exactly supplied palette, no text or ground. This is frame 1 of a subtle propeller animation; balloon and hull are stable."
+    }
+  },
+  {
+    "key": "ship2",
+    "tool": "mcp__pixellab__create_image_pro_flash",
+    "args": {
+      "width": 32,
+      "height": 24,
+      "no_background": true,
+      "max_colors": 15,
+      "palette": [
+        "#002424",
+        "#002449",
+        "#244949",
+        "#246d6d",
+        "#49926d",
+        "#6db692",
+        "#92dbb6",
+        "#dbdbb6",
+        "#ffdb92",
+        "#ffb66d",
+        "#db9249",
+        "#926d49",
+        "#6d4949",
+        "#492449",
+        "#242449"
+      ],
+      "seed": 41020,
+      "style_image": {
+        "source_image_id": "7d30bf32-d311-5bc1-970d-8f0e075be24c",
+        "usage_description": "Use this exact airship, same size, same position and silhouette. Second propeller animation cel; only rotate tiny glowing stern propeller and move glint by one pixel. No hull or balloon redesign."
+      },
+      "description": "Second animation frame of the referenced tiny copper and teal airship. Pure side view facing right, exact native 32x24 canvas with one pixel transparent margin. Keep balloon, hull, gondola and porthole at the exact same positions. Change ONLY the stern propeller from horizontal to a diagonal cross, subtle one pixel warm highlight glint. Sharp pixel art, transparent background, exact supplied palette, no text or background."
+    }
+  }
+]

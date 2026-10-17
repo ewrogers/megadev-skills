@@ -16,7 +16,7 @@ from disc import digest
 
 def main():
     parser=argparse.ArgumentParser(description=__doc__)
-    parser.add_argument('--skill',default='megadev-project',choices=['megadev-project','megadev-hardware','megadev-assets'])
+    parser.add_argument('--skill',default='megadev-project',choices=['megadev-project','megadev-hardware','megadev-assets','megadev-graphics'])
     parser.add_argument('--image',default='ewrogers/megadev:latest')
     parser.add_argument('--platform',required=True,choices=['linux/arm64','linux/amd64'])
     parser.add_argument('--output',type=Path,required=True);args=parser.parse_args()
@@ -41,7 +41,7 @@ def main():
             os.utime(path,(946684800,946684800),follow_symlinks=False)
     matrix=[('us-release','US','NTSC',[]),('jp-release','JP','NTSC',[]),
                                   ('eu-release','EU','PAL',[]),('us-debug','US','NTSC',['OPT_FLAGS=-Og -g -fconserve-stack -fomit-frame-pointer','DEBUG=1'])]
-    if args.skill in ('megadev-hardware','megadev-assets'):matrix.append(('us-tour','US','NTSC',['TOUR=1']))
+    if args.skill in ('megadev-hardware','megadev-assets','megadev-graphics'):matrix.append(('us-tour','US','NTSC',['TOUR=1']))
     for key,region,video,flags in matrix:
         project=creator(output/(key+' game'),project_id='project_lab')
         relative=str(project.relative_to(output))
@@ -63,6 +63,7 @@ def main():
         image=project/'project_lab.iso'
         expected_files=['IPX.MMD','SPX.SMD','ROOM.MMD']
         if args.skill=='megadev-assets':expected_files+=['GARDEN.MDA','CAVERN.MDA']
+        if args.skill=='megadev-graphics':expected_files+=['SKY.MDA','QUAY.MDA']
         got=inspect(image,region,expected_files)
         for wrong_region, expected in [('JP' if region!='JP' else 'US', []), (region, ['MISSING.MMD'])]:
             try:inspect(image,wrong_region,expected)
@@ -82,6 +83,9 @@ def main():
             if args.skill=='megadev-assets' and kind=='main':
                 from assets_cpu import check_assets
                 extra=lambda u,sym:check_assets(u,sym,project/'res')
+            if args.skill=='megadev-graphics' and kind=='main':
+                from graphics_cpu import check_graphics
+                extra=check_graphics
             startup[kind]=check((project/'disc'/file).read_bytes(),table,kind,extra)
         sp=symbols((project/'build/sp.bin.elf.sym').read_text())
         assert check_sub_callback((project/'build/sp.bin').read_bytes(),sp)
@@ -92,12 +96,13 @@ def main():
         # project_lab.iso within each original project folder.
         print('Passed '+key,flush=True)
     bad=creator(output/'oversized allocation',project_id='project_lab')
-    layout=bad/'src/ipx_layout.s';layout.write_text(layout.read_text().replace('MODULE_RAM_LENGTH 0x800','MODULE_RAM_LENGTH 0x4'))
+    import re
+    layout=bad/'src/ipx_layout.s';layout.write_text(re.sub(r'MODULE_RAM_LENGTH 0x[0-9A-Fa-f]+','MODULE_RAM_LENGTH 0x4',layout.read_text()))
     fixture_times(bad)
     log=run('reject-overlap',['build','-C',str(bad.relative_to(output))],success=False)
     assert 'will not fit' in log or 'overflowed' in log,'expected linker capacity rejection'
     report={'passed':True,'skill':args.skill,'platform':args.platform,'doctor':doctor,'cases':cases,
-            'limits':'M68000 startup/callback execution only; BIOS, full CD I/O, IRQ timing and peripherals need emulator/hardware checks'}
+            'limits':'Compiled M68000 startup and selected model/callback execution; MMIO capture is not a VDP. BIOS, full CD I/O, IRQ timing and peripherals need emulator/hardware checks'}
     (output/'report.json').write_text(json.dumps(report,indent=2)+'\n')
     print('Passed '+args.platform+'; report: '+str(output/'report.json'))
 if __name__=='__main__':main()

@@ -9,7 +9,8 @@
         "megadev-project",
         "megadev-planning",
         "megadev-hardware",
-        "megadev-assets"
+        "megadev-assets",
+        "megadev-graphics"
       ]
     }
   ]
