@@ -38,9 +38,10 @@ write CRAM during active display. HUD updates are limited to 24 changed cells.
 This is a measured Lab schedule, not a universal safe transfer budget.
 
 Warp waits for the displayed area palette to be black, installs the selected map while black, then fades
-in. Resident UI/actor colors are unaffected. Walking triggers a preload before
-the right edge; the edge waits if the next slot is still loading. This is a
-small **area preload**, not a seamless tile-column streamer or a general cache.
+in. Resident UI/actor colors are unaffected. The next-area preload starts during the entry fade; the right edge explicitly
+shows EXIT WAITING FOR NEXT AREA if content is still late. Cancelling consumes
+that entry trigger; walking back and approaching the exit, or requesting travel,
+can start a new load. This is a small **area preload**, not a seamless tile-column streamer or a general cache.
 
 A game may instead use larger chunks, eviction, multiple zones, portals or a
 camera streamer. Cache keys should include asset identity/generation; invalidate
@@ -53,3 +54,12 @@ and uploads serviced. Pending travel begins after resume. Decide this policy
 explicitly in your game rather than pausing the interrupt that drains a read.
 No audio service is included; CD-DA/data seek sharing and PCM/graphics contention
 remain an audio integration task, not an implied guarantee.
+
+The original demo triggered at x=176 with a boundary at x=294: only 59 movement
+ticks at two pixels per tick. Cavern validation needs 166 calls at 128 bytes,
+and its 19,552 pattern bytes need 77 calls at 256 bytes. A 59-tick lead cannot
+hide even those CPU/upload stages, before adding CD latency. Start earlier,
+measure the whole pipeline, and label a late boundary rather than presenting
+it as unexplained movement slowdown. Earlier preloading improves the opportunity
+to finish; it does not guarantee readiness on arrival, especially in slow-upload
+mode or on physical drives.

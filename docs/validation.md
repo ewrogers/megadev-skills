@@ -272,3 +272,12 @@ real reader/BIOS/VDP path but does not establish physical seek/retry deadlines,
 stack high-water, console/model compatibility or CD-DA/PCM/ASIC/DMA coexistence.
 No compressed decoding, general tile-column cache or seamless level streamer is
 claimed by this small area-preload example.
+
+The user confirmed the manual US build: controls, fades and recovery worked with
+no CRAM dots. They confirmed the slowdown occurred only at the far-right exit, not during
+ordinary movement. The original
+preload trigger allowed only 59 movement ticks before the boundary, versus at
+least 166 validation plus 77 upload ticks for the cavern. The Lab now starts
+preloading during entry and explicitly labels an exit that is still waiting.
+This removes the unexplained boundary behavior; it does not claim that real CD
+loads or the deliberately slower upload mode always finish before arrival.

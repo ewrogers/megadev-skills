@@ -94,6 +94,17 @@ def check_streaming(project,hz):
         finish();assert word(main,ms['stream_ready'])==1,(index,word(main,ms['stream_result']),word(main,ms['stream_errors']))
         assert b''.join(uploads)==files[index][64:64+word(main,ms['stream_cache_tiles'])*32]
         assert bytes(main.mem_read(ms['stream_cache_map'],1600))==files[index][-1600:]
+    # Entry prefetch runs before reaching the exit and is consumed exactly once.
+    put(main,ms['active'],0);put(main,ms['player_x'],40);put(main,ms['preload_on_entry'],1)
+    call('main','stream_preload_entry');assert word(main,ms['stream_phase'])==1
+    assert word(main,ms['stream_asset'])==1 and not word(main,ms['preload_on_entry'])
+    finish();call('main','stream_preload_entry');assert not word(main,ms['stream_phase'])
+    # An exit wait is explicit only at the boundary, unpaused, with a pending destination.
+    put(main,ms['want_warp'],1);assert not call('main','stream_exit_waiting')
+    put(main,ms['player_x'],294);assert call('main','stream_exit_waiting')==1
+    put(main,ms['paused'],1);assert not call('main','stream_exit_waiting')
+    put(main,ms['paused'],0);put(main,ms['cached']+2,1);assert not call('main','stream_exit_waiting')
+    put(main,ms['cached']+2,0);put(main,ms['want_warp'],0)
     # Cancellation while the drive writes: no second request and no partial publication.
     drive_delay=20;assert call('main','stream_start',(1,))==1
     for i in range(12):frame()

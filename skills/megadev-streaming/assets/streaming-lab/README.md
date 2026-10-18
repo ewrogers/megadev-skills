@@ -27,8 +27,8 @@ Open the CUE in ares as **Mega CD**, using your own configured BIOS. On macOS:
 open -a ares --args --system 'Mega CD' "$PWD/stream_lab.cue"
 ```
 
-- D-pad: move the resident actor. Moving right starts the next-area preload.
-  The right edge travels when the next area is ready.
+- D-pad: move the resident actor. The next area starts preloading during entry.
+  The right edge travels when it is ready, or shows an explicit waiting message.
 - A: travel to the other area; starts a load if its cache is empty.
 - B: switch pattern uploads between 256 and 64 bytes per frame.
 - C: discard the pending/next area. A live CD read drains before its result is

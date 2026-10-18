@@ -26,7 +26,7 @@ typedef struct {u16 hud[HUD_WORDS],palette[64],sat[8],data[UP_WORDS],address,wor
 static Frame frames[2];
 static u16 displayed[HUD_WORDS],displayed_palette[64];
 static u16 maps[2][STREAM_MAP],palettes[64],cached[2],stage,active=2,target,loaded_slot;
-static u16 player_x=48,player_y=120,hz,paused,transition,map_row,fade=8,want_warp,slow,flip,actor_tick,preload_suppressed;
+static u16 player_x=48,player_y=120,hz,paused,transition,map_row,fade=8,want_warp,slow,flip,actor_tick,preload_suppressed,preload_on_entry;
 static u16 errors,previous_pass;
 #ifdef STREAM_AUTOTEST
 static u16 tour_step,tour_ok;
@@ -86,11 +86,18 @@ static void number(Frame *f,u16 x,u16 y,u16 v){char s[5];for(u16 i=0;i<4;i++)s[i
 /* Explicit 16x16 product: Megadev links modules without implicit libgcc. */
 static u16 mul16(u16 a,u16 b){u32 r=a;__asm__("mulu.w %1,%0":"+d"(r):"d"(b):"cc");return (u16)r;}
 static u16 shade(u16 c,u16 amount){u16 result=0;for(u16 s=0;s<12;s+=4){u16 n=(c>>s)&14u;result|=(u16)(((mul16(n,amount))>>3)&14u)<<s;}return result;}
+int stream_exit_waiting(void) {
+    return !paused && active<2 && player_x>=294 && want_warp && !cached[active^1u];
+}
 void stream_prepare(void) {
     Frame *f=&frames[stage];f->words=0;f->row=0;
     for(u16 i=0;i<HUD_WORDS;i++)f->hud[i]=0x8020;
     text(f,1,0,"STREAMING LAB");text(f,24,0,active==0?"GARDEN":active==1?"CAVERN":"LOADING");
     text(f,1,1,"D-PAD WALK");text(f,16,1,paused?"START RESUME":"START PAUSE");
+    if(stream_exit_waiting()) {
+        for(u16 i=40;i<80;i++)f->hud[i]=0x8020;
+        text(f,1,1,"EXIT WAITING FOR NEXT AREA");
+    }
     text(f,1,2,"A WARP   B UPLOAD");text(f,19,2,slow?"064B":"256B");text(f,26,2,"C DROP NEXT");
     static char const * const names[]={"IDLE","WAIT GRANT","CD READING","RETIRING","CHECKING","VRAM UPLOAD","DRAINING","RESET DISC"};
     if(!stream_phase && stream_result>=SR_CANCEL) {
@@ -121,7 +128,7 @@ void stream_prepare(void) {
             u16 cell=maps[target][map_row*40u+i];
             f->data[i]=(u16)((cell&0x1800u)|((cell&0x7FFu)+tile_base(target))|((target+2u)<<13));
         }
-        map_row+=4;if(map_row==20){active=target;transition=3;reg(7,(u16)((active+2u)*16u));}
+        map_row+=4;if(map_row==20){active=target;transition=3;preload_on_entry=1;reg(7,(u16)((active+2u)*16u));}
     } else if(stream_phase==ST_UPLOAD) {
         if((*ga_reg_memmode&7u)!=1u){errors++;stream_cancel();}
         else {
@@ -136,6 +143,12 @@ void stream_prepare(void) {
 }
 static int request(u16 which) {
     if(stream_start(which)){loaded_slot=which;if(which<2)cached[which]=0;return 1;}return 0;
+}
+void stream_preload_entry(void) {
+    if(preload_on_entry && active<2 && !stream_phase) {
+        preload_on_entry=0;
+        if(!preload_suppressed && !cached[active^1u])request(active^1u);
+    }
 }
 static void initialize(void) {
     lab_display_off();lab_clear();
@@ -188,6 +201,11 @@ void main(void) {
             else if(tour_step==4 && stream_result==SR_MISSING){tour_ok=stream_pass>=2 && !stream_errors && !errors && !video_fault;}
         }
         player_x=(u16)(40+(main_ticks&127u));
+#endif
+        /* Begin the next-area preload during entry fade, rather than near the exit.
+           Consume the one-shot trigger so cancel/missing-file results stay observable. */
+#ifndef STREAM_AUTOTEST
+        stream_preload_entry();
 #endif
         if(hit&PAD_START)paused^=1;
         if(hit&PAD_B)slow^=1;
