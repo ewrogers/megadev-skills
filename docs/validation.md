@@ -320,3 +320,45 @@ behavior and PAL listening remain separate checks. Physical consoles,
 BIOS/model variations, FM/Z80 drivers, PCM streaming and ASIC coexistence remain
 unqualified. The Lab intentionally stops CD music for data reads and restarts it
 afterward; resident PCM can continue during the handoff.
+
+## Transition Lab
+
+`megadev-scenes` composes the existing reader, audio owner and VBlank publisher.
+It adds resident game-flow states rather than treating every scene as a module.
+Its title, options, credits, two areas, pause and results are illustrative. Shared
+art/audio and two bounded area slots stay resident; local collected-lantern state
+is cleared only after a successful scene commit. Retained cache bytes are not
+misreported as freed scene memory.
+
+Portable C fixtures execute at O0/O3 with undefined-behavior checking where
+supported. They cover black-display acknowledgment, leases, stalled retirement,
+missing-target rollback preserving progress, latest queued requests, stale
+generations, generation exhaustion and equal-time PAL/NTSC fades. The complete
+host suite has 56 tests. All eleven skills install with telemetry disabled, and
+the standalone Transition Lab generator/art tools run without repository helpers.
+
+Compiled original-68000 checks execute both the portable scene policy and the
+actual Main coordinator around an outstanding reader, held generation, unretired
+mailbox and acknowledged map replacement. Existing audio and paired-reader tests
+also execute against the Lab. Completion signals are modeled, not an arbitrary
+instruction-interleaving or full drive/VDP timing simulation.
+
+Local native ARM64 and emulated AMD64 pass US/JP/EU release, US debug and US tour;
+their payloads, startup facts and external CD-track hashes match. Native CI repeats
+the matrices. The selected latest image reports GCC 16.2.0 and Megadev revision
+`7a7246c14b845ad2f1bd3c7d73afb04cf67d83ef`. Build/test containers use two CPUs.
+The first build exposed implicit 32-bit division helpers in the fade clock;
+Megadev's direct module link does not automatically add libgcc. A loop bounded
+to eight useful fade steps avoids that dependency without changing fade timing.
+
+In ares v148 with the configured US BIOS, the tour reached
+`AUTO PASS - CLEANUP AND RECOVERY`: nine scene changes, cancelled-preload drain,
+re-entry and missing-area rollback completed. The normal US disc is open for
+manual movement, pause, UI and listening checks. Physical seeks/retries, other
+BIOS/models, stack maxima, PAL presentation and audio quality remain separate
+checks. Dynamic module unloading, 1M streaming and ASIC coexistence are not
+demonstrated.
+
+The first manual pass found that the beacon used an undefined opaque HUD glyph.
+It now uses a dedicated transparent 16x16 white/gold marker, with native pattern
+and compiled sprite-chain regression checks.

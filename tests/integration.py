@@ -16,7 +16,7 @@ from disc import digest
 
 def main():
     parser=argparse.ArgumentParser(description=__doc__)
-    parser.add_argument('--skill',default='megadev-project',choices=['megadev-project','megadev-hardware','megadev-assets','megadev-graphics','megadev-input','megadev-system','megadev-memory','megadev-streaming','megadev-audio'])
+    parser.add_argument('--skill',default='megadev-project',choices=['megadev-project','megadev-hardware','megadev-assets','megadev-graphics','megadev-input','megadev-system','megadev-memory','megadev-streaming','megadev-audio','megadev-scenes'])
     parser.add_argument('--image',default='ewrogers/megadev:latest')
     parser.add_argument('--platform',required=True,choices=['linux/arm64','linux/amd64'])
     parser.add_argument('--output',type=Path,required=True);args=parser.parse_args()
@@ -41,7 +41,7 @@ def main():
             os.utime(path,(946684800,946684800),follow_symlinks=False)
     matrix=[('us-release','US','NTSC',[]),('jp-release','JP','NTSC',[]),
                                   ('eu-release','EU','PAL',[]),('us-debug','US','NTSC',['OPT_FLAGS=-Og -g -fconserve-stack -fomit-frame-pointer','DEBUG=1'])]
-    if args.skill in ('megadev-hardware','megadev-assets','megadev-graphics','megadev-input','megadev-system','megadev-memory','megadev-streaming','megadev-audio'):matrix.append(('us-tour','US','NTSC',['TOUR=1']))
+    if args.skill in ('megadev-hardware','megadev-assets','megadev-graphics','megadev-input','megadev-system','megadev-memory','megadev-streaming','megadev-audio','megadev-scenes'):matrix.append(('us-tour','US','NTSC',['TOUR=1']))
     if args.skill=='megadev-input':matrix.append(('us-ea','US','NTSC',['EA_MODE=1']))
     for key,region,video,flags in matrix:
         project=creator(output/(key+' game'),project_id='project_lab')
@@ -63,7 +63,7 @@ def main():
         assert not unexpected,unexpected
         image=project/'project_lab.iso'
         expected_files=['IPX.MMD','SPX.SMD','ROOM.MMD']
-        if args.skill in ('megadev-assets','megadev-streaming','megadev-audio'):expected_files+=['GARDEN.MDA','CAVERN.MDA']
+        if args.skill in ('megadev-assets','megadev-streaming','megadev-audio','megadev-scenes'):expected_files+=['GARDEN.MDA','CAVERN.MDA']
         if args.skill=='megadev-graphics':expected_files+=['SKY.MDA','QUAY.MDA']
         got=inspect(image,region,expected_files)
         for wrong_region, expected in [('JP' if region!='JP' else 'US', []), (region, ['MISSING.MMD'])]:
@@ -73,7 +73,7 @@ def main():
         payloads={file.name.upper():digest(file.read_bytes()) for file in (project/'disc').iterdir() if file.is_file()}
         assert got['files']==payloads,'disc contents differ from compiled modules'
         tracks={}
-        if args.skill=='megadev-audio':
+        if args.skill in ('megadev-audio','megadev-scenes'):
             cue_tool=load(project/'tools/make_cue.py','audio_cue')
             cue_tool.write_cue(image)
             for track in (2,3):
@@ -118,11 +118,15 @@ def main():
             assert check_streaming(project,50 if video=='PAL' else 60)
             startup['main']['probe_execution']=True
             startup['sub']['probe_execution']=True
-        if args.skill=='megadev-audio':
+        if args.skill in ('megadev-audio','megadev-scenes'):
             from audio_cpu import check_audio
             from streaming_cpu import check_streaming
             assert check_audio(project,50 if video=='PAL' else 60)
             assert check_streaming(project,50 if video=='PAL' else 60,entry_controls=False)
+            if args.skill=='megadev-scenes':
+                from scenes_cpu import check_scenes
+                assert check_scenes(project,50 if video=='PAL' else 60)
+                startup['main']['scene_execution']=True
             startup['main']['probe_execution']=True
             startup['sub']['probe_execution']=True
         sp=symbols((project/'build/sp.bin.elf.sym').read_text())

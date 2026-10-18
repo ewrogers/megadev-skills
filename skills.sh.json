@@ -21,7 +21,8 @@
         "megadev-system",
         "megadev-memory",
         "megadev-streaming",
-        "megadev-audio"
+        "megadev-audio",
+        "megadev-scenes"
       ]
     }
   ]
