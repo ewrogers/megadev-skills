@@ -489,3 +489,7 @@ separate from that deterministic regression.
 Real ASIC/bus timing, VDP/FIFO deadlines, stack high-water, other BIOS/model
 variants, physical PAL/NTSC behavior and combined CD/audio/PCM/DMA workloads
 remain separate qualification tasks. No BIOS or emulator source is distributed.
+
+The user confirmed on 2026-10-18 that the corrected manual build's three views
+and controls work and ERRORS stays 0000. This confirms the interactive emulator
+check; it does not replace the physical-hardware qualification above.
