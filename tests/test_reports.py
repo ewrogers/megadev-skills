@@ -188,3 +188,22 @@ class ReportTests(unittest.TestCase):
                            lambda q:q['cases']['us-release']['startup']['sub'].pop('probe_execution')]:
                 bad=copy.deepcopy(b);mutate(bad)
                 with self.assertRaises(ValueError):run(bad)
+
+    def test_save_reports_require_both_executed_adapters_and_readonly_tour(self):
+        case={'disc':{'files':{'IPX.MMD':'ipx'}},'boot_payloads':{'sp.bin':'sp'},
+              'startup':{'main':{'probe_execution':True,'cart_execution':True},'sub':{'probe_execution':True},'room':{}},'sub_callback':True}
+        a={'passed':True,'skill':'megadev-save','platform':'linux/arm64',
+           'cases':{k:copy.deepcopy(case) for k in CASES|{'us-tour'}}}
+        b=copy.deepcopy(a);b['platform']='linux/amd64'
+        with tempfile.TemporaryDirectory() as folder:
+            paths=[Path(folder)/'a.json',Path(folder)/'b.json']
+            def run(right):
+                for p,r in zip(paths,[a,right]):p.write_text(json.dumps(r))
+                return compare(paths)
+            self.assertTrue(run(b))
+            for mutate in [lambda q:q['cases'].pop('us-tour'),
+                           lambda q:q['cases']['us-release']['startup']['main'].pop('cart_execution'),
+                           lambda q:q['cases']['us-debug']['startup']['main'].pop('probe_execution'),
+                           lambda q:q['cases']['eu-release']['startup']['sub'].pop('probe_execution')]:
+                bad=copy.deepcopy(b);mutate(bad)
+                with self.assertRaises(ValueError):run(bad)

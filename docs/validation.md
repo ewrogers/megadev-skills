@@ -365,3 +365,66 @@ and compiled sprite-chain regression checks.
 The user confirmed the corrected beacon is visible and reaching it then pressing
 A continues normally in ares on 2026-10-18. The full manual pause/preload/audio
 matrix remains separate from that confirmed visual/input check.
+
+## Save Lab
+
+`megadev-save` adds actual internal `_BURAM` BIOS files, explicit versioned
+records and alternate-record recovery. It keeps its Sub workspace resident and
+uses a single Main/Sub request slot. Normal save/load/recovery only touches its
+private filenames and never formats. A separate confirmed Format Device action
+erases all saves on the selected device through BIOS command 6. A separate Main-side `BRAM_CART` backend uses the same checked records and an
+explicit device selector. Capacity, archive/copy workflow and IO boundaries are
+documented from the official manual and primary sources. Copying between devices
+and custom Work RAM handlers are not implemented.
+
+The 59-test host suite includes O0/O3 C fixtures and undefined-behavior checks
+where supported. Save cases cover a known CRC vector, every single-bit record
+error, guards/output preservation, v1 migration, future-version refusal, sequence
+exhaustion/conflicts, failed/partial writes, readback mismatch and older-record
+recovery. Twelve skills install with telemetry disabled and generate independently.
+
+Original-68000 execution checks the actual Main/Sub service and assembly BIOS
+ABI: resident BRMINIT buffers, carry handling, A0 reset after search, exact private
+names, one normal 64-byte block and BRMWRITE's D1.l zero. Oversized/protected
+files stop before a BIOS read. Unformatted/unavailable media stops at init for ordinary requests.
+The BIOS model rejects deletion and any format outside the explicit test flow. Request snapshots, retirement,
+50/60 Hz timeout quarantine and the actual recovery-menu dispatcher execute.
+These model BIOS outcomes; they do not establish physical battery/write timing.
+
+US/JP/EU release, US debug and a read-only US tour pass locally on native ARM64
+and emulated AMD64. Native CI repeats both matrices and compares target bytes
+and execution facts. The latest container reports GCC 16.2.0 and Megadev revision
+`7a7246c14b845ad2f1bd3c7d73afb04cf67d83ef`; containers use a two-CPU quota.
+The automatic tour only probes media and deliberately never creates or corrupts
+emulator save files.
+
+In ares v148 with the configured US BIOS, the user confirmed save/load and steady
+text. A normal emulator quit/reopen retained sequence 0006 and the new BIOS probe
+validated it. The original B+A recovery gesture was awkward because B could
+enqueue a load before A; Help now exposes a direct A recovery action, with B only
+returning to values. Compiled menu tests prevent that race from returning.
+The user confirmed that the revised action recovered the previous save's values.
+Physical consoles, depleted batteries,
+shared filesystem damage, full/fragmented media, other BIOS variants, PAL runtime
+presentation and simultaneous CD/audio/ASIC activity remain separate checks.
+
+The cartridge addition executes Main ABI shims with an independent named-file
+model, valid standard IDs, absent/custom IDs without handler dispatch, unformatted
+media and selection without internal fallback. An optional local fixture also
+executes the user-supplied US BIOS and compiled Main adapters on original-68000
+with fresh 16/128/512 KiB cart models: save, readback and corrupted-newest recovery
+pass. That fixture formats only its fresh Python bytearray, never emulator save
+files or hardware. No firmware/disassembly is committed. Its exact firmware hash
+and reproduction command are documented. Ares v148 lacks the CD RAM-cart mapping,
+so its manual evidence remains internal-only; actual cart hardware or a cart-capable
+emulator still needs interactive qualification.
+
+Explicit formatting now covers both internal RAM and standard backup carts.
+The confirmation names the selected device, warns that every game's saves there
+will be erased, and opens on Cancel every time. B/Start cancel, and navigation
+combined with A cannot also confirm. Compiled tests exercise both adapters,
+independent stores (including unrelated filenames), absent-media refusal,
+format failure, failed re-probe, zeroed sequence and subsequent save/load. The
+optional local BIOS fixture executes the compiled cart formatter rather than
+seeding its filesystem with a direct BIOS call. Formatting is tested on fresh
+in-memory storage; existing user emulator saves are left intact.
