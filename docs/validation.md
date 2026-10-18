@@ -165,6 +165,8 @@ access-loop continuation, and ordinary worker chunks run in Sub foreground.
 
 In ares v148 with the configured US BIOS, the corrected tour reached AUTO PASS
 with 2 accepted, 1 rejected, 2 discarded and 0 bad-data jobs; Main/Sub clocks and
-the control light continued. No physical-console timing or audio/drive
+the control light continued. The user also confirmed manual movement, job
+processing, delayed-job recovery, cancellation, rejected requests and steady text.
+No physical-console timing or audio/drive
 coexistence qualification is claimed. Bootstrap disc loading is synchronous;
 the runtime example transforms a 522-byte owned buffer, not asynchronous CD data.
