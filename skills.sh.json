@@ -19,7 +19,8 @@
       "description": "Coordinate CPU work and resource lifetimes in a running game.",
       "skills": [
         "megadev-system",
-        "megadev-memory"
+        "megadev-memory",
+        "megadev-streaming"
       ]
     }
   ]

@@ -83,6 +83,12 @@ jobs:
           - arch: amd64
             runner: ubuntu-24.04
             skill: megadev-memory
+          - arch: arm64
+            runner: ubuntu-24.04-arm
+            skill: megadev-streaming
+          - arch: amd64
+            runner: ubuntu-24.04
+            skill: megadev-streaming
     runs-on: ${{ matrix.runner }}
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
@@ -119,3 +125,4 @@ jobs:
       - run: python tests/compare_reports.py build/reports/target-megadev-input-arm64/report.json build/reports/target-megadev-input-amd64/report.json
       - run: python tests/compare_reports.py build/reports/target-megadev-system-arm64/report.json build/reports/target-megadev-system-amd64/report.json
       - run: python tests/compare_reports.py build/reports/target-megadev-memory-arm64/report.json build/reports/target-megadev-memory-amd64/report.json
+      - run: python tests/compare_reports.py build/reports/target-megadev-streaming-arm64/report.json build/reports/target-megadev-streaming-amd64/report.json
