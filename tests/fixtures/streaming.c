@@ -1,3 +1,7 @@
+/* This host fixture uses ISO C fopen in read-only mode, including on MSVC. */
+#ifdef _MSC_VER
+#define _CRT_SECURE_NO_WARNINGS
+#endif
 #include "stream.h"
 #include <assert.h>
 #include <stdio.h>
