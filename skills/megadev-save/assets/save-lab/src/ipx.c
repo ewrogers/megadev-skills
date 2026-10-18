@@ -64,25 +64,26 @@ static void hex(u16 x,u16 y,u16 color,u16 value) {
 static void draw(void) {
     static char const * const names[]={"READY","SAVED AND VERIFIED","LOADED","OLDER RECORD RECOVERED","NO SAVE YET","MEDIA NOT READY","BIOS IO FAILED / CHECK SPACE","NEWER FORMAT - LEFT UNCHANGED","INVALID DATA / NEED TWO SAVES","UNEXPECTED FILE SIZE OR MODE","READBACK VERIFICATION FAILED","SEQUENCE FULL - LEFT UNCHANGED","CONFLICTING RECORDS"};
     for(u16 i=0;i<CELLS;i++)desired[i]=0x8020;
-    text(1,0,0,"SAVE LAB");text(23,0,1,"INTERNAL BACKUP");
+    text(1,0,0,"SAVE LAB");text(23,0,1,save_device?"BACKUP CART":"INTERNAL BACKUP");
     for(u16 i=0;i<40;i++)text(i,1,0,"-");
     text(1,3,0,"YOUR JOURNEY");text(1,5,field==0?1:0,field==0?"> LEVEL":"  LEVEL");hex(17,5,1,game.level);
     text(1,7,field==1?1:0,field==1?"> COINS":"  COINS");hex(17,7,1,game.coins);
     text(1,9,field==2?1:0,field==2?"> FLAGS":"  FLAGS");hex(17,9,1,game.flags);
-    text(1,12,0,"STATUS");text(9,12,save_result==SV_RECOVERED?2:1,save_pending?save_fault?"WAITING - SLOT STAYS OWNED":"WORKING":names[save_result<=SV_CONFLICT?save_result:SV_IO]);
-    text(1,14,0,"MEDIA");text(9,14,2,save_media==3?"SEGA FORMATTED":save_media==1?"UNFORMATTED":save_media==2?"OTHER FORMAT":"NOT READY");
-    text(1,15,0,"SEQUENCE");hex(12,15,1,save_sequence);
+    text(1,11,field==3?1:0,field==3?"> DEVICE":"  DEVICE");text(17,11,1,save_device?"BACKUP CART":"INTERNAL");
+    text(1,13,0,"STATUS");text(9,13,save_result==SV_RECOVERED?2:1,save_pending?save_fault?"WAITING - SLOT STAYS OWNED":"WORKING":names[save_result<=SV_CONFLICT?save_result:SV_IO]);
+    text(1,15,0,"MEDIA");text(9,15,2,save_media==3?"SEGA FORMATTED":save_media==1?"UNFORMATTED":save_media==2?"OTHER FORMAT":save_media==4?"UNSUPPORTED CART":"NOT READY");
+    text(1,16,0,"SEQUENCE");hex(12,16,1,save_sequence);
     if(help) {
-        text(1,17,0,"SAVE TWO DIFFERENT VERSIONS FIRST");
-        text(1,18,0,"A DAMAGE NEWEST AND RECOVER OLDER");
-        text(1,19,0,"B BACK - ONLY LAB FILES ARE TOUCHED");
-        text(1,20,0,"LOAD FALLS BACK TO THE OLDER RECORD");
-        text(1,21,2,"UNFORMATTED? USE BIOS MEMORY MANAGER");
+        text(1,18,0,"SAVE TWO DIFFERENT VERSIONS FIRST");
+        text(1,19,0,"A DAMAGE NEWEST AND RECOVER OLDER");
+        text(1,20,0,"B BACK - ONLY LAB FILES ARE TOUCHED");
+        text(1,21,0,"LOAD FALLS BACK TO THE OLDER RECORD");
+        text(1,22,2,"UNFORMATTED? USE BIOS MEMORY MANAGER");
     } else {
-        text(1,17,0,"UP/DOWN FIELD   LEFT/RIGHT CHANGE");
-        text(1,18,0,"A SAVE   B LOAD   C RESET VALUES");
-        text(1,20,0,"START HELP / CORRUPTION DEMO");
-        text(1,21,2,"NO AUTOMATIC FORMAT OR DELETE");
+        text(1,18,0,"UP/DOWN FIELD   LEFT/RIGHT CHANGE");
+        text(1,19,0,"A SAVE   B LOAD   C RESET VALUES");
+        text(1,21,0,"START HELP / CORRUPTION DEMO");
+        text(1,22,2,"NO AUTOMATIC FORMAT OR DELETE");
     }
     text(1,24,0,"VALUES AND COUNTERS ARE HEXADECIMAL");
     text(1,26,0,"MAIN");hex(6,26,1,main_ticks);text(15,26,0,"SUB");hex(19,26,1,*ga_reg_comstat3);text(34,26,0,hz==50?"PAL":"NTSC");
@@ -112,14 +113,19 @@ static void initialize_video(void) {
         for(u16 x=0;x<40;x++){displayed[y*40+x]=0x8020;vdp_data_16=0x8020;}
     }
 }
+static void save_issue(u16 op) {
+    request_op=op;
+    if(save_request(op,&game) && save_device && (op==3 || op==4) && (save_result==SV_LOADED || save_result==SV_RECOVERED))game=save_reply;
+}
 void save_input(u16 hit) {
         if(hit&PAD_START)help^=1;
         if(!save_pending && help) {
             if(hit&PAD_B)help=0;
-            else if(hit&PAD_A){request_op=4;save_request(request_op,&game);}
+            else if(hit&PAD_A){save_issue(4);}
         } else if(!save_pending) {
-            if(hit&PAD_DOWN){field++;if(field==3)field=0;}
-            if(hit&PAD_UP)field=field?field-1:2;
+            if(hit&PAD_DOWN){field++;if(field==4)field=0;}
+            if(hit&PAD_UP)field=field?field-1:3;
+            if((hit&(PAD_LEFT|PAD_RIGHT)) && field==3){save_device^=1;save_issue(1);return;}
             if(hit&(PAD_LEFT|PAD_RIGHT)) {
                 u16 *v=field==0?&game.level:field==1?&game.coins:&game.flags;
                 u16 low=field==0?1:0,high=field==0?9:field==1?999:3;
@@ -129,7 +135,7 @@ void save_input(u16 hit) {
             request_op=0;
             if(hit&PAD_A)request_op=2;
             else if(hit&PAD_B)request_op=3;
-            if(request_op)save_request(request_op,&game);
+            if(request_op)save_issue(request_op);
         }
 }
 void main(void) {

@@ -9,7 +9,7 @@ def check_save(project,hz):
         table=symbols((project/'build'/(file+'.elf.sym')).read_text())
         def collect(u,sym,kind=kind):contexts[kind]=(u,sym);return True
         check((project/'disc'/file).read_bytes(),table,kind,collect)
-    mailbox=bytearray(0x30);files={};media=3;write_failure=False;read_failure=False;bad_verify=False;writes=0;reads=0
+    mailbox=bytearray(0x30);files={};cart_files={};media=3;write_failure=False;read_failure=False;bad_verify=False;writes=0;reads=0
     meta={};calls=[]
     names=[b'MDSAVELAB_A',b'MDSAVELAB_B']
     for kind,(u,sym) in contexts.items():
@@ -28,31 +28,35 @@ def check_save(project,hz):
     def put(u,p,x,n=2):u.mem_write(p,x.to_bytes(n,'big'))
     def bios(u,address,size,user):
         nonlocal writes,reads
+        table=ss if u is sub else ms;store=files if u is sub else cart_files
         op=u.reg_read(UC_M68K_REG_D0)&65535;a0=u.reg_read(UC_M68K_REG_A0);a1=u.reg_read(UC_M68K_REG_A1);carry=False
         calls.append(op);assert op in [0,2,3,4],'Unexpected BIOS call, including delete/format'
         if op==0:
-            assert ss['_BSS_ORIGIN']<=a0 and a0+0x640<=ss['_BSS_ORIGIN']+ss['_BSS_LENGTH'],'BRMINIT work buffer not resident'
-            assert ss['_BSS_ORIGIN']<=a1 and a1+12<=ss['_BSS_ORIGIN']+ss['_BSS_LENGTH']
+            assert table['_BSS_ORIGIN']<=a0 and a0+0x640<=table['_BSS_ORIGIN']+table['_BSS_LENGTH'],'BRMINIT work buffer not resident'
+            assert table['_BSS_ORIGIN']<=a1 and a1+12<=table['_BSS_ORIGIN']+table['_BSS_LENGTH']
             u.reg_write(UC_M68K_REG_D0,2);u.reg_write(UC_M68K_REG_D1,0 if media==3 else media);carry=media!=3
         else:
             name=bytes(u.mem_read(a0,11));assert name in names,'Touched unrelated save or failed to reset A0 after search'
             if op==2:
-                carry=name not in files
+                carry=name not in store
                 count,mode=meta.get(name,(1,0));u.reg_write(UC_M68K_REG_D0,count);u.reg_write(UC_M68K_REG_D1,mode)
                 u.reg_write(UC_M68K_REG_A0,0xFE0001)
             elif op==3:
-                reads+=1;carry=read_failure or name not in files
+                reads+=1;carry=read_failure or name not in store
                 if not carry:
-                    u.mem_write(a1,files[name]);u.reg_write(UC_M68K_REG_D0,1);u.reg_write(UC_M68K_REG_D1,0)
+                    u.mem_write(a1,store[name]);u.reg_write(UC_M68K_REG_D0,1);u.reg_write(UC_M68K_REG_D1,0)
             else:
                 assert word(u,a0+11,1)==0 and word(u,a0+12)==1,'Write metadata size/mode wrong'
                 assert u.reg_read(UC_M68K_REG_D1)==0,'BRMWRITE requires D1.l zero'
                 data=bytearray(u.mem_read(a1,64));writes+=1
                 if write_failure or bad_verify:data[60]^=1
-                files[name]=bytes(data);carry=write_failure
+                store[name]=bytes(data);carry=write_failure
         sr=u.reg_read(UC_M68K_REG_SR);u.reg_write(UC_M68K_REG_SR,(sr|1) if carry else sr&~1)
         stack=u.reg_read(UC_M68K_REG_A7);u.reg_write(UC_M68K_REG_PC,word(u,stack,4));u.reg_write(UC_M68K_REG_A7,stack+4)
     sub.hook_add(UC_HOOK_CODE,bios,begin=0x5F16,end=0x5F16)
+    main.mem_map(0x400000,0x1000)
+    main.mem_write(0xFFFDAE,bytes.fromhex('4ef9000088f0'))
+    main.hook_add(UC_HOOK_CODE,bios,begin=0xFFFDAE,end=0xFFFDAE)
     def call(kind,name,*args):
         u,sym=contexts[kind];stack=0xFFDF00 if kind=='main' else 0x1FF00;stop=0x300000
         u.reg_write(UC_M68K_REG_SR,0x2700);u.reg_write(UC_M68K_REG_A7,stack)
@@ -91,6 +95,35 @@ def check_save(project,hz):
         media=unavailable;before_calls=len(calls);assert send(2)==5 and writes==before
         assert calls[before_calls:]==[0],'Unavailable media reached file operations'
     media=3;set_game(1,0,0);assert not call('main','save_request',77,game)
+    # Standard-cart backend runs on Main, uses an independent file namespace
+    # and refuses absent/custom-handler IDs before dispatching any BIOS code.
+    put(main,ms['save_device'],1)
+    for ident in [0,7,0x80,0xff]:
+        main.mem_write(0x400001,bytes([ident]));before_calls=len(calls)
+        assert call('main','save_request',2,game)==1
+        assert word(main,ms['save_result'])==5 and len(calls)==before_calls
+    main.mem_write(0x400001,b'\4');main.mem_write(0xFFFDB0,(0x400020).to_bytes(4,'big'))
+    before_calls=len(calls);assert call('main','save_request',2,game)==1
+    assert word(main,ms['save_result'])==5 and len(calls)==before_calls,'Cartridge-provided handler was executed'
+    main.mem_write(0xFFFDB0,(0x88f0).to_bytes(4,'big'))
+    for ident in [1,4,6]:
+        main.mem_write(0x400001,bytes([ident]));set_game(7,77,2)
+        assert call('main','save_request',2,game)==1 and word(main,ms['save_result'])==1
+    set_game(1,0,0);assert call('main','save_request',3,game)==1
+    assert word(main,ms['save_result'])==2 and word(main,ms['save_reply'])==7
+    assert call('main','save_request',4,game)==1 and word(main,ms['save_result'])==3
+    before=writes;media=1
+    assert call('main','save_request',2,game)==1 and word(main,ms['save_result'])==5 and writes==before
+    media=3;put(main,ms['save_device'],0)
+    # Device switching is explicit and an absent cart never silently saves to
+    # internal BRAM. Returning to internal probes through the Sub service.
+    main.mem_write(0x400001,b'\0');put(main,ms['field'],3);put(main,ms['help'],0)
+    before=writes;call('main','save_input',1<<3)
+    assert word(main,ms['save_device'])==1 and word(main,ms['save_result'])==5 and writes==before
+    assert not int.from_bytes(mailbox[0x10:0x12],'big')
+    call('main','save_input',1<<3);assert word(main,ms['save_device'])==0
+    call('sub','save_sub_tick');call('main','save_main_tick',300//hz)
+    call('sub','save_sub_tick');call('main','save_main_tick',300//hz)
     # Actual menu dispatch: Help's B returns without accidentally starting a
     # load; Help's A explicitly requests recovery without a held-button race.
     put(main,ms['help'],1);call('main','save_input',1<<4)

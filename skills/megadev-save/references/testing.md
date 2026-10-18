@@ -41,10 +41,25 @@ size, byte order or layout. Qualify conversion separately and preserve originals
 
 ## Physical limits
 
+Main cartridge tests use a separate named-file store and the actual `BRAM_CART`
+adapters. They cover standard IDs, absent/custom IDs without BIOS dispatch,
+unformatted media, independent saves/readback/recovery and device selection
+without falling back to internal writes.
+
+`tests/cart_bios.py PROJECT --bios YOUR_BIOS --id 4` is an optional local check
+against the precisely audited user-provided firmware. IDs 1/4/6 were executed
+for 16/128/512 KiB. It runs the original 68000 BIOS and compiled Main adapters on
+a fresh in-memory bus model. Its format call seeds only that new Python bytearray;
+it never touches emulator save files or hardware. No BIOS is distributed or
+required by CI. This is stronger ABI evidence than a stub, but not a full console
+or electrical-timing simulation.
+
 The BIOS model does not prove battery health, power-loss behavior, physical write
 timing, filesystem repair or behavior across BIOS/model variants. Ares runtime
 checks do not establish those either. Qualify simultaneous CD/audio/ASIC work,
 full/fragmented media and cartridge insertion/size/write protection separately.
-Internal BIOS saving is implemented; direct external-cart saving is not.
+Internal and standard external-cart BIOS saving are implemented. Interactive cart
+validation needs a cart-capable emulator/hardware; ares v148 lacks that mapping.
+Copying between devices and custom Work RAM handlers remain unimplemented.
 
 [Ares v148 MIA Mega CD storage mapping](https://github.com/ares-emulator/ares/blob/v148/mia/system/mega-cd.cpp) verifies the package/file mapping; user paths and sharing policy still depend on the front-end configuration.

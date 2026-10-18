@@ -371,10 +371,10 @@ matrix remains separate from that confirmed visual/input check.
 `megadev-save` adds actual internal `_BURAM` BIOS files, explicit versioned
 records and alternate-record recovery. It keeps its Sub workspace resident and
 uses a single Main/Sub request slot. It never issues format/delete calls or
-touches unrelated filenames. External cartridge capacity, archive/copy workflow
-and Main-side boundaries are documented from the official consumer manual,
-Megadev definitions and first-hand hardware sources; direct cartridge saving
-and custom Work RAM cartridge handlers are not implemented or qualified.
+touches unrelated filenames. A separate Main-side `BRAM_CART` backend uses the same checked records and an
+explicit device selector. Capacity, archive/copy workflow and IO boundaries are
+documented from the official manual and primary sources. Copying between devices
+and custom Work RAM handlers are not implemented.
 
 The 59-test host suite includes O0/O3 C fixtures and undefined-behavior checks
 where supported. Save cases cover a known CRC vector, every single-bit record
@@ -406,3 +406,14 @@ The user confirmed that the revised action recovered the previous save's values.
 Physical consoles, depleted batteries,
 shared filesystem damage, full/fragmented media, other BIOS variants, PAL runtime
 presentation and simultaneous CD/audio/ASIC activity remain separate checks.
+
+The cartridge addition executes Main ABI shims with an independent named-file
+model, valid standard IDs, absent/custom IDs without handler dispatch, unformatted
+media and selection without internal fallback. An optional local fixture also
+executes the user-supplied US BIOS and compiled Main adapters on original-68000
+with fresh 16/128/512 KiB cart models: save, readback and corrupted-newest recovery
+pass. That fixture formats only its fresh Python bytearray, never emulator save
+files or hardware. No firmware/disassembly is committed. Its exact firmware hash
+and reproduction command are documented. Ares v148 lacks the CD RAM-cart mapping,
+so its manual evidence remains internal-only; actual cart hardware or a cart-capable
+emulator still needs interactive qualification.

@@ -62,7 +62,7 @@ Implemented: `megadev-system` for command lifetimes and bounded Main/Sub work,
 `megadev-streaming` for safe CD reads, preloads and bounded uploads,
 `megadev-audio` for CD music, PCM samples and drive handoffs, and
 `megadev-scenes` for game flow, transitions and safe resource cleanup, and
-`megadev-save` for internal BIOS files, versioning and corruption recovery.
+`megadev-save` for internal/cartridge BIOS files, versioning and corruption recovery.
 
 Next add gameplay, collision, animation,
 levels, UI/dialogue/localization and multiplayer patterns as needed.

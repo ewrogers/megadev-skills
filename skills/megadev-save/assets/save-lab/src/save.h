@@ -22,4 +22,6 @@ int save_request(Sv16 op,SaveGame const *game);
 void save_main_tick(Sv16 elapsed);
 extern Sv16 save_pending,save_result,save_media,save_sequence,save_fault;
 extern SaveGame save_reply;
+Sv16 cart_execute(Sv16 op,SaveGame const *game);
+extern Sv16 save_device,cart_id;
 #endif

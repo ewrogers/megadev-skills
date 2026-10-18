@@ -1,9 +1,9 @@
 # Save Lab
 
-A standalone Megadev disc for internal Sega CD backup RAM. It writes two private,
+A standalone Megadev disc for internal and standard-cartridge Sega CD backup RAM. It writes two private,
 versioned BIOS records, verifies readback and can demonstrate recovery from a
 damaged newest record. The fields and controls are illustrative. This is not a
-cartridge SRAM driver, a general filesystem or a required game-save format.
+raw SRAM driver, a general filesystem or a required game-save format.
 
 ## Build and open
 
@@ -32,7 +32,8 @@ the ISO/CUE name. Use a fresh review copy for `build REGION=EU VIDEO=PAL` or
 Typical ares bindings are arrows for the D-pad, J/K/L for A/B/C and Enter for
 Start. Use your configured Mega CD mappings.
 
-1. Up/Down selects Level, Coins or Flags; Left/Right changes the value.
+1. Up/Down selects Level, Coins, Flags or Device; Left/Right changes it.
+   Device explicitly chooses Internal or Backup Cart. There is no silent fallback.
 2. A saves and verifies it. Change values, then B loads the newest valid record.
 3. C resets only the working values, leaving saved files intact. B restores them.
 4. Quit/reopen ares normally and load again to check persistent storage rather
@@ -56,7 +57,7 @@ size/mode records are preserved instead of overwritten.
 
 ## Implementation
 
-- Sub owns `_BURAM` calls, a resident 0x640-byte BIOS workspace and 12-byte display
+- Sub owns internal `_BURAM` calls, a resident 0x640-byte BIOS workspace and 12-byte display
   buffer. Main owns input/UI and one pending request. Parameters precede the token;
   replies retire before reuse. A lost-reply timeout leaves the slot quarantined.
 - The BIOS service is synchronous on Sub; Main and Sub INT2 keep their existing
@@ -76,8 +77,15 @@ size/mode records are preserved instead of overwritten.
 
 `save_*` and the record format are project helpers, not Megadev SDK APIs. The
 skill references identify actual BIOS services and the optional cartridge path.
-The cartridge's archive/copy role is documented, but direct external-cart saving
-is not implemented by this internal-only Lab.
+The cartridge backend uses Main's `BRAM_CART` vector, its own resident workspace
+and the same records on that device. Standard IDs 1-6 require formatted BIOS
+media; custom Work RAM handlers are refused. Copying between devices is not
+implemented. Ares v148 lacks the cartridge mapping, so select Internal there;
+Backup Cart must report unavailable rather than pretend to save.
+
+Compiled Main adapters were also executed with the locally supplied BIOS against
+fresh 16/128/512 KiB virtual carts for save/readback/recovery. That checks the
+actual BIOS ABI, not physical timing or an interactive cart emulator.
 
 The automatic tour is deliberately read-only: it probes storage and leaves
 existing records untouched. Host tests and compiled original-68000 BIOS-model

@@ -46,7 +46,7 @@ Do not implement a failed update as delete-old-then-create-new.
 
 ## Service lifetime and UI
 
-One Sub foreground service owns the BIOS workspace and performs save operations.
+One Sub foreground service owns the internal workspace and performs internal saves.
 Main writes parameters first and the request token last. Sub publishes values and
 status before the matching acknowledgment. Main consumes that snapshot, clears
 its command and waits for reply retirement before reusing the slot. A 30-second
@@ -57,6 +57,12 @@ Show success only after readback. Report unavailable media, failed writes/check
 space, incompatible records and recovery in language the player can act on.
 Do not equate an emulator state snapshot with an on-media save. Do not freeze
 gameplay's entire service layer merely because a save UI is open.
+
+The cartridge backend uses Main foreground and a separate resident workspace.
+Its BIOS calls are synchronous; it does not fake a Sub acknowledgment. The UI
+waits for the internal request to retire before changing devices. Each device
+holds its own A/B files and sequence; selection never silently writes elsewhere.
+Reuse the record codec and policy while keeping physical IO owners distinct.
 
 The recovery demonstration requires two valid Lab records and an explicit
 Help-page A command. It corrupts only the newest Lab record's CRC and then

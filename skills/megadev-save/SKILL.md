@@ -1,6 +1,6 @@
 ---
 name: megadev-save
-description: Implement and diagnose Megadev Sega CD internal backup-RAM saves with BIOS file access, explicit versioned records, validation, migration, corruption recovery and non-destructive failure handling; distinguish optional backup cartridges from internal storage.
+description: Implement and diagnose Megadev Sega CD internal and cartridge backup-RAM saves with BIOS file access, explicit versioned records, validation, migration, corruption recovery and non-destructive failure handling; distinguish optional backup cartridges from internal storage.
 ---
 
 # Megadev saves
@@ -29,11 +29,11 @@ Essential contracts:
   read back before accepting success. A write failure must remain visible.
 - Keep BIOS work buffers and requests alive until completion. A lost reply does
   not authorize another write or reuse of its request slot.
-- Optional cartridge saves use a distinct Main-side path. A presence/size ID or
-  a raw SRAM window is not a verified file-management implementation.
+- Cartridge saves use the distinct Main-side `BRAM_CART` path. Require a supported
+  standard ID and successful BIOS initialization; refuse custom Work RAM handlers.
 
 Use `ewrogers/megadev:latest` and inspect its selected source before teaching an
-API. The [standalone Save Lab](assets/save-lab/README.md) exercises actual internal
+API. The [standalone Save Lab](assets/save-lab/README.md) exercises internal and cartridge
 BIOS files, versioned records and an explicitly selected recovery demonstration.
 Its `save_*` helpers and record format are project code, not Megadev APIs.
 Build/test containers use at most two CPUs.

@@ -43,7 +43,7 @@ def compare(paths):
                     raise ValueError('Missing executed audio adapters, CD tracks or disc areas')
             if 'megadev-scenes' in kinds and case['startup']['main'].get('scene_execution') is not True:
                 raise ValueError('Missing executed scene policy/coordinator checks')
-            if 'megadev-save' in kinds and any(case['startup'][kind].get('probe_execution') is not True for kind in ('main','sub')):
+            if 'megadev-save' in kinds and (any(case['startup'][kind].get('probe_execution') is not True for kind in ('main','sub')) or case['startup']['main'].get('cart_execution') is not True):
                 raise ValueError('Missing executed save service and BRAM ABI checks')
             if not case.get('boot_payloads') or not case.get('disc',{}).get('files'):
                 raise ValueError('Missing target payload hashes')

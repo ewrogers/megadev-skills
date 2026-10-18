@@ -191,7 +191,7 @@ class ReportTests(unittest.TestCase):
 
     def test_save_reports_require_both_executed_adapters_and_readonly_tour(self):
         case={'disc':{'files':{'IPX.MMD':'ipx'}},'boot_payloads':{'sp.bin':'sp'},
-              'startup':{'main':{'probe_execution':True},'sub':{'probe_execution':True},'room':{}},'sub_callback':True}
+              'startup':{'main':{'probe_execution':True,'cart_execution':True},'sub':{'probe_execution':True},'room':{}},'sub_callback':True}
         a={'passed':True,'skill':'megadev-save','platform':'linux/arm64',
            'cases':{k:copy.deepcopy(case) for k in CASES|{'us-tour'}}}
         b=copy.deepcopy(a);b['platform']='linux/amd64'
@@ -202,6 +202,7 @@ class ReportTests(unittest.TestCase):
                 return compare(paths)
             self.assertTrue(run(b))
             for mutate in [lambda q:q['cases'].pop('us-tour'),
+                           lambda q:q['cases']['us-release']['startup']['main'].pop('cart_execution'),
                            lambda q:q['cases']['us-debug']['startup']['main'].pop('probe_execution'),
                            lambda q:q['cases']['eu-release']['startup']['sub'].pop('probe_execution')]:
                 bad=copy.deepcopy(b);mutate(bad)

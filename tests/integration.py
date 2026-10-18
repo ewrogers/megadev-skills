@@ -132,6 +132,7 @@ def main():
         if args.skill=='megadev-save':
             from save_cpu import check_save
             assert check_save(project,50 if video=='PAL' else 60)
+            startup['main']['cart_execution']=True
             startup['main']['probe_execution']=True
             startup['sub']['probe_execution']=True
         sp=symbols((project/'build/sp.bin.elf.sym').read_text())

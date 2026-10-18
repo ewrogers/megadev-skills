@@ -19,7 +19,7 @@ include $(MEGADEV_PATH)/megadev.make
 .DEFAULT_GOAL:=all
 .PHONY: all clean assets
 all: $(DISC_PATH)/ipx.mmd $(DISC_PATH)/spx.smd $(DISC_PATH)/room.mmd $(PROJECT_ID).iso
-$(DISC_PATH)/ipx.mmd: ipx_layout.s resident_init.s ipx.c save_main.c font.s bridge.s assets io.macros.s
+$(DISC_PATH)/ipx.mmd: ipx_layout.s resident_init.s ipx.c save.c save_main.c cart_main.c cart.s font.s bridge.s assets io.macros.s
 $(DISC_PATH)/room.mmd: room_layout.s std_init.s room.c $(DISC_PATH)/ipx.mmd
 $(DISC_PATH)/spx.smd: spx_layout.s sub_init.s spx.c save.c save_sub.c bram.s $(BUILD_PATH)/sp.bin
 clean:

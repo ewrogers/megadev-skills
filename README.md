@@ -26,7 +26,7 @@ The skill includes a standalone starter and instructions for building a disc wit
 | Foundations | [megadev-graphics](skills/megadev-graphics/SKILL.md) | Scrolling, parallax, sprites, animation frames and palette effects, with bounded frame submission. |
 | Systems | [megadev-audio](skills/megadev-audio/SKILL.md) | CD music, PCM samples, voice priorities and safe music/data loading handoffs. |
 | Systems | [megadev-memory](skills/megadev-memory/SKILL.md) | Linked RAM budgets, allocation lifetimes, buffer leases and safe 1M/2M Word RAM handling. |
-| Systems | [megadev-save](skills/megadev-save/SKILL.md) | Internal backup RAM, versioned records, verified writes and corruption recovery, with cartridge boundaries. |
+| Systems | [megadev-save](skills/megadev-save/SKILL.md) | Internal and cartridge backup RAM, versioned records, verified writes and corruption recovery. |
 | Systems | [megadev-scenes](skills/megadev-scenes/SKILL.md) | Game flow, fades, safe scene cleanup, preloads and failed-transition recovery. |
 | Systems | [megadev-streaming](skills/megadev-streaming/SKILL.md) | Safe CD loads, preloading, resident art and bounded uploads with Word RAM handoffs. |
 | Systems | [megadev-system](skills/megadev-system/SKILL.md) | Main/Sub command lifetimes, bounded work, safe Word RAM handoffs, cancellation and late-reply recovery. |

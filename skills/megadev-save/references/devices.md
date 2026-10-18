@@ -49,10 +49,30 @@ internal file space. Formatting destroys existing records and belongs to an
 explicit user-controlled workflow. This Lab never formats either device.
 
 The Main-side `BRAM_CART` entry definition is `0xFFFDAE`; the audited Megadev
-header supplies no complete typed operation wrappers. The internal Sub adapters
-must not be redirected to that address and assumed compatible. Direct cartridge
-support needs an audited Main BIOS ABI, detection, size/bounds and write-protect
-policy, plus tests against the actual device/emulator configuration.
+header supplies no complete typed operation wrappers. The Lab adds separate
+project-owned Main adapters for init/search/read/write after auditing the local
+US BIOS. They preserve the C ABI, carry, exact file metadata and D1.l=0.
+The runtime calls the boot-installed vector, never a guessed ROM offset.
+Main has its own resident 0x640-byte workspace and 12-byte display buffer;
+the internal Sub workspace stays separate. Do not put either in a scene arena.
+
+The device selector is explicit. Main checks the lower-byte ID at `0x400001`
+and accepts standard IDs 1–6 before BIOS initialization. Physical capacity is
+`0x2000 << id` bytes; ID 4 is 128 KiB. A valid ID alone is insufficient: the BIOS
+must report formatted media. Absent/invalid IDs, unformatted media and failures
+do not fall back to internal writes. High-bit/custom Work RAM handlers are refused
+before their code can execute.
+The adapter also requires an absolute-jump vector to an even BIOS-ROM address
+below 0x40000. A vector redirected into cartridge/RAM code is refused even if the
+current ID looks standard. A different legitimate vector shape needs a separate
+audit rather than weakening that check blindly.
+
+The audited Main BIOS uses codes 0/2/3/4 with named-file metadata and normal
+64-byte blocks. It manages the write-enable latch itself. This ABI was executed
+against the supplied firmware on fresh 16/128/512 KiB virtual carts, not inferred
+solely from the Sub API. BIOS variants and physical carts still need qualification.
+Model address decoding/mirroring from the selected hardware/emulator; a quoted
+SRAM window is not a reason to replace BIOS files with hardcoded raw offsets.
 
 Charles MacDonald's hardware teardown reports the official cart's ID at the
 400000 region, 128 KiB on the lower byte lane at 680000–6BFFFF, an unpopulated
@@ -62,9 +82,11 @@ hardware observations, not proof that arbitrary ID sizes or custom Work RAM
 cartridge drivers work on every BIOS. Do not execute cartridge-supplied handler
 code merely because a signature was detected.
 
-The Lab implements **internal files only**. Cartridge archive/copy behavior is
-documented; direct cart saving and custom Work RAM expansions are not claimed as
-implemented or qualified. Choose and test a backend explicitly before adding them.
+The Lab implements **internal and standard-cartridge files** with independent
+records. Copying between devices and custom Work RAM handlers are outside its
+scope. Ares v148's standard cartridge board does not implement the CD backup-cart
+ID/RAM/latch mapping. Use a cart-capable emulator or hardware for an interactive
+cart check; successful internal ares saves do not qualify the cart path.
 
 ## Sources
 
@@ -77,3 +99,10 @@ Audited SDK revision: `7a7246c14b845ad2f1bd3c7d73afb04cf67d83ef`.
 - [First-hand cartridge teardown/discussion](https://gendev.spritesmind.net/forum/viewtopic.php?t=826)
 - [WindDrake's cartridge hardware project](https://github.com/WindDrake/SegaCD_Ramcart), useful hardware/board context, not a Megadev software driver.
 - [Ares v148 Mega CD implementation](https://github.com/ares-emulator/ares/blob/v148/ares/md/mcd/mcd.cpp), 8 KiB allocation and `backup.ram` persistence.
+- [Ares v148 standard cartridge board](https://github.com/ares-emulator/ares/blob/v148/ares/md/cartridge/board/standard.cpp), external-cart capability boundary.
+- [Genesis Plus GX CD cartridge implementation](https://github.com/ekeeke/Genesis-Plus-GX/blob/master/core/cd_hw/cd_cart.c), reference for ID, byte lanes, mirroring and write-enable behavior. Its implementation is not copied into this MIT project.
+
+The optional local firmware fixture uses SHA-256
+`b1c2036b79467514eaaa69c76e5ba83801621e821059caa53cb921a0b21e3af4`.
+No BIOS bytes or disassembly are distributed. The fixture refuses unknown hashes;
+production adapters use the installed vector, not the fixture's ROM entry offset.
