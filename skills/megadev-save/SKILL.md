@@ -32,7 +32,9 @@ Essential contracts:
 - Keep BIOS work buffers and requests alive until completion. A lost reply does
   not authorize another write or reuse of its request slot.
 - Cartridge saves use the distinct Main-side `BRAM_CART` path. Require a supported
-  standard ID and successful BIOS initialization; refuse custom Work RAM handlers.
+  standard ID and a checked BIOS-ROM handler; refuse custom Work RAM handlers.
+  Ordinary file access requires formatted media; explicit formatting also accepts
+  present unformatted/other-format media after initialization.
 
 Use `ewrogers/megadev:latest` and inspect its selected source before teaching an
 API. The [standalone Save Lab](assets/save-lab/README.md) exercises internal and cartridge

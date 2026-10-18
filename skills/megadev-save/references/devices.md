@@ -60,8 +60,8 @@ the internal Sub workspace stays separate. Do not put either in a scene arena.
 The device selector is explicit. Main checks the lower-byte ID at `0x400001`
 and accepts standard IDs 1–6 before BIOS initialization. Physical capacity is
 `0x2000 << id` bytes; ID 4 is 128 KiB. A valid ID alone is insufficient: the BIOS
-must report formatted media. Absent/invalid IDs, unformatted media and failures
-do not fall back to internal writes. High-bit/custom Work RAM handlers are refused
+must report formatted media for ordinary file access. Absent/invalid IDs,
+unformatted media and failures do not fall back to internal writes. High-bit/custom Work RAM handlers are refused
 before their code can execute.
 The adapter also requires an absolute-jump vector to an even BIOS-ROM address
 below 0x40000. A vector redirected into cartridge/RAM code is refused even if the
