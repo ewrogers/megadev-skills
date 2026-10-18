@@ -1,0 +1,7 @@
+#include <macros.s>
+GLOBAL MMD_DEST 0
+GLOBAL MODULE_ROM_ORIGIN 0x200100
+GLOBAL MODULE_ROM_LENGTH 0x3FF00
+GLOBAL MODULE_RAM_ORIGIN 0xFFC400
+GLOBAL MODULE_RAM_LENGTH 0x400
+/* Module runs in Main-owned 2M Word RAM; return before any further load. */
