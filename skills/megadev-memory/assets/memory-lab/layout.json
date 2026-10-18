@@ -1,0 +1,97 @@
+{
+  "pools": [
+    {
+      "name": "Main Work RAM",
+      "start": "0xFF0000",
+      "bytes": 65536,
+      "regions": [
+        {
+          "name": "Main code and constants",
+          "start": "0xFF0000",
+          "bytes": "0xA000",
+          "module": "ipx.mmd",
+          "section": "rom"
+        },
+        {
+          "name": "Main module state",
+          "start": "0xFFA000",
+          "bytes": "0x3000",
+          "module": "ipx.mmd",
+          "section": "ram"
+        },
+        {
+          "name": "Main stack reservation",
+          "start": "0xFFD000",
+          "bytes": "0x1000"
+        },
+        {
+          "name": "Room fixture state",
+          "start": "0xFFE400",
+          "bytes": "0x800",
+          "module": "room.mmd",
+          "section": "ram"
+        },
+        {
+          "name": "Main BIOS workspace",
+          "start": "0xFFF700",
+          "bytes": "0x900"
+        }
+      ],
+      "kind": "main"
+    },
+    {
+      "name": "Sub Program RAM",
+      "start": 0,
+      "bytes": 524288,
+      "regions": [
+        {
+          "name": "Sub BIOS reservation",
+          "start": 0,
+          "bytes": "0x6000"
+        },
+        {
+          "name": "Sub bootstrap and access service",
+          "start": "0x6000",
+          "bytes": "0xA000",
+          "module": "sp.bin",
+          "section": "boot"
+        },
+        {
+          "name": "Sub module code",
+          "start": "0x10000",
+          "bytes": "0xC000",
+          "module": "spx.smd",
+          "section": "rom"
+        },
+        {
+          "name": "Sub module state",
+          "start": "0x1C000",
+          "bytes": "0x1000",
+          "module": "spx.smd",
+          "section": "ram"
+        },
+        {
+          "name": "Sub growth margin",
+          "start": "0x1D000",
+          "bytes": "0x1000"
+        },
+        {
+          "name": "Sub stack reservation",
+          "start": "0x1E000",
+          "bytes": "0x2000"
+        }
+      ],
+      "kind": "sub"
+    }
+  ],
+  "embedded": [
+    {
+      "name": "Scene arena backing",
+      "symbol": "scene_pool",
+      "bytes": 4096,
+      "module": "ipx.mmd",
+      "region": "Main module state"
+    }
+  ],
+  "word_bank_payload_bytes": 522
+}
