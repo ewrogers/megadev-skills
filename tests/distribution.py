@@ -12,8 +12,8 @@ def main():
     with tempfile.TemporaryDirectory(prefix='megadev skills install ') as folder:
         cwd=Path(folder);env={**os.environ,'DO_NOT_TRACK':'1','DISABLE_TELEMETRY':'1'}
         subprocess.run(['git','init','-q',str(cwd)],check=True)
-        subprocess.run(['npx','--yes','skills@1.7.2','add',str(ROOT),'--skill','megadev-project','megadev-planning','megadev-hardware','megadev-assets','megadev-graphics','megadev-input','--agent','codex','--yes','--copy'],cwd=cwd,env=env,check=True,stdout=subprocess.PIPE,stderr=subprocess.STDOUT,text=True,timeout=180)
-        for skill_name in ['megadev-project', 'megadev-planning', 'megadev-hardware', 'megadev-assets', 'megadev-graphics', 'megadev-input']:
+        subprocess.run(['npx','--yes','skills@1.7.2','add',str(ROOT),'--skill','megadev-project','megadev-planning','megadev-hardware','megadev-assets','megadev-graphics','megadev-input','megadev-system','--agent','codex','--yes','--copy'],cwd=cwd,env=env,check=True,stdout=subprocess.PIPE,stderr=subprocess.STDOUT,text=True,timeout=180)
+        for skill_name in ['megadev-project', 'megadev-planning', 'megadev-hardware', 'megadev-assets', 'megadev-graphics', 'megadev-input', 'megadev-system']:
             installed=cwd/'.agents/skills'/skill_name
             if not installed.exists():raise AssertionError('Installed skill missing: '+skill_name)
             source=ROOT/'skills'/skill_name
@@ -49,5 +49,12 @@ def main():
         subprocess.run([sys.executable,str(game/'tools/make_font.py')],check=True,cwd=game,stdout=subprocess.PIPE)
         assert (game/'res/font.bin').read_bytes()==before
         assert (game/'src/protocol.c').is_file()
-        print('Telemetry-disabled install: all six skills, standalone generators, planning checker and art tools passed')
+        systems=cwd/'.agents/skills/megadev-system'
+        game=cwd/'system game'
+        subprocess.run([sys.executable,str(systems/'scripts/create_project.py'),str(game)],check=True,cwd=cwd,stdout=subprocess.PIPE)
+        assert (game/'src/main_link.c').is_file() and (game/'src/sub_link.c').is_file()
+        before=(game/'res/font.bin').read_bytes()
+        subprocess.run([sys.executable,str(game/'tools/make_font.py')],check=True,cwd=game,stdout=subprocess.PIPE)
+        assert (game/'res/font.bin').read_bytes()==before
+        print('Telemetry-disabled install: all seven skills, standalone generators, planning checker and art tools passed')
 if __name__=='__main__':main()

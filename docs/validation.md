@@ -126,3 +126,47 @@ Its small IRQ-masked polling section preserves the previous SR and Z80 bus state
 it includes no audio driver. Real pads/mice/adapters, electrical timing, other BIOS
 models, PAL display operation and concurrent Z80 audio remain hardware/integration
 checks. The on-screen scripted mode is labeled and never presented as live input.
+
+
+## System Lab
+
+`megadev-system` owns command lifetimes and service coordination. It links to
+project startup, hardware facts, input and rendering guidance instead of defining
+another allocator, asset pipeline or device driver. Its standalone disc uses a
+single-slot project protocol; the `sy_*` helpers are not Megadev APIs.
+
+Run the integration helper with `--skill megadev-system`. Five cases cover
+US/JP/EU release, US debug and an automatic US tour. Native ARM64 and local
+emulated AMD64 execute both compiled original-68000 adapters against a shared
+mailbox/Word RAM model. They check publication order, writer direction, every
+owned buffer access, normal/rejected/cancelled/late results, varied observation
+order, skipped/repeated worker ticks, cancellation just after completion and
+refusal to reuse a buffer after a grant failure. CI runs both architectures
+natively and comparison requires executed checks on both CPUs.
+
+Host fixtures cover input/output/checksum guards, bounded chunks, invalid
+counts/opcodes/headers, corruption, owner refusal, cancellation at each chunk,
+stale replies, retirement and PAL/NTSC deadlines. A response first observed
+after a foreground stall expires is discarded. C runs at O0/O3 with undefined
+behavior checking where supported. Distribution verifies all seven installed
+skills and independent System Lab creation/font regeneration, with telemetry off.
+
+The paired CPU harness needed to retain each Unicorn Work RAM backing allocation
+with its CPU instance; previously single-CPU checks completed before that local
+allocation expired. The harness models ownership grants, not electrical timing.
+The IRQ register-save, clock and input-edge accumulation execute up to RTE, with
+BIOS calls stubbed. Full interrupt return remains an emulator/hardware check.
+
+The first ares tour exposed a clock error: UI callback counts advanced more
+slowly than physical VBlanks. The corrected standalone handler counts every
+VBlank and retains input edges between UI updates. Main deadlines use elapsed
+interrupt ticks, independent of redraw frequency. Sub INT2 still runs the CD
+access-loop continuation, and ordinary worker chunks run in Sub foreground.
+
+In ares v148 with the configured US BIOS, the corrected tour reached AUTO PASS
+with 2 accepted, 1 rejected, 2 discarded and 0 bad-data jobs; Main/Sub clocks and
+the control light continued. The user also confirmed manual movement, job
+processing, delayed-job recovery, cancellation, rejected requests and steady text.
+No physical-console timing or audio/drive
+coexistence qualification is claimed. Bootstrap disc loading is synchronous;
+the runtime example transforms a 522-byte owned buffer, not asynchronous CD data.

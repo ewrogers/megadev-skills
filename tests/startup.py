@@ -9,6 +9,9 @@ def check(data,sym,kind,extra_check=None):
     from unicorn.m68k_const import UC_CPU_M68K_M68000,UC_M68K_REG_SR,UC_M68K_REG_A7,UC_M68K_REG_PC
     u=Uc(UC_ARCH_M68K,UC_MODE_BIG_ENDIAN);u.ctl_set_cpu_model(UC_CPU_M68K_M68000)
     keep=ctypes.create_string_buffer(65536)
+    # Paired-CPU tests retain the Uc instance after this function returns.
+    # mem_map_ptr does not own its backing allocation; keep it alive with Uc.
+    u._work_ram_backing=keep
     # Original 68000 addresses are 24-bit. Absolute-short accesses sign-extend;
     # map the same backing RAM at both spellings, not two independent copies.
     for base in [0xFF0000,0xFFFF0000]:u.mem_map_ptr(base,65536,UC_PROT_ALL,ctypes.addressof(keep))

@@ -57,7 +57,9 @@ hardware/system skills. Prove a small original Lab, not a renamed SGDK scaffold.
 
 ### 2. Systems
 
-Build `megadev-system`, `megadev-memory`, `megadev-streaming`, `megadev-audio`,
+Implemented: `megadev-system` for command lifetimes and bounded Main/Sub work.
+
+Next build `megadev-memory`, `megadev-streaming`, `megadev-audio`,
 `megadev-scenes` and `megadev-save`. Then add gameplay, collision, animation,
 levels, UI/dialogue/localization and multiplayer patterns as needed.
 
