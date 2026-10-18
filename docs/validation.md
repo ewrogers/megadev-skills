@@ -428,3 +428,68 @@ format failure, failed re-probe, zeroed sequence and subsequent save/load. The
 optional local BIOS fixture executes the compiled cart formatter rather than
 seeding its filesystem with a direct BIOS call. Formatting is tested on fresh
 in-memory storage; existing user emulator saves are left intact.
+
+## Scaling Lab
+
+`megadev-scaling` adds an actual Sub graphics-ASIC path, not a software rasterizer
+presented as hardware acceleration. The original 256px observatory mosaic uses
+one palette line and native 16px stamps. Zoom, orbit and per-scanline perspective
+floor all render to a fixed 128×128 Word RAM image. The US release links 17,028 bytes of Main BSS and 1,064 bytes of Sub BSS,
+including the snapshot, HUD queue and trace scratch; these are linked example
+costs, not universal engine reservations. Main copies a completed
+snapshot and stages it into one of two hidden 8 KiB VRAM banks before committing
+the name table. A separate wisp remains independent of the transformed image.
+
+The host suite now has 63 tests. Scaling C fixtures cover 3 modes × 256 heading
+phases × 5 scale settings, fixed-point limits, identity/quarter turns, monotonic
+floor sampling, malformed requests and output guards, at O0/O3 with undefined-
+behavior checks where supported. Original native art/palette/stamp bytes rebuild
+exactly; the installed generator/art tools run without repository helpers and
+all thirteen skills install with telemetry disabled.
+
+Compiled original-68000 Main/Sub tests check trace agreement, register units and
+write-to-start order, masking only ASIC INT1, delayed completion, actual ownership
+before access, independent image snapshots, and timeout quarantine for both a
+stuck grant and stuck ASIC. Functional ASIC sampling is a model for the fixed
+profile, not a hardware timing simulator. The actual VBlank callback executes
+against captured port writes/a DMA stub: active/late blank deferral, resident
+source bounds, chunk contents and complete-image publication are checked. The
+next ASIC operation may overlap DMA, but cannot overwrite a leased Main snapshot.
+Changed-cell HUD tests cover coalescing, unchanged redraw and shorter labels.
+
+US/JP/EU release, US debug and the automatic tour are built separately on ARM64
+and AMD64. CI uses native runners; local AMD64 is Docker emulation. Containers
+have a two-CPU quota and reports retain actual compiler/SDK versions and hashes.
+The selected latest image uses GCC 16.2.0, original 68000, and Megadev revision
+`7a7246c14b845ad2f1bd3c7d73afb04cf67d83ef`.
+
+The first link exposed wide arithmetic helpers not supplied by the ordinary
+Megadev module link. The Lab uses a reciprocal table and a bounded signed
+16×16→32 `muls.w` primitive, checked through actual target execution. It does not
+assume later m68k instructions or teach that every C multiplication needs assembly.
+
+In ares v148 with the configured US BIOS, the initial automatic tour reached
+AUTO PASS after images from all three views with zero errors. The user questioned
+the image cadence; the new rate counter exposed approximately five images per
+second in the first serial/word-copy/full-HUD-scan version. A fixed 8 KiB MOVEM
+snapshot copy, overlapping render/upload, changed-cell HUD queue and prompt
+ownership/retirement rechecks removed the bottlenecks. The corrected manual
+build showed 30 new images per 60 serviced VBlanks, including the perspective
+floor, with zero errors. This reaches the example's two-upload NTSC ceiling;
+it is not the ASIC's universal limit, a game-loop FPS claim or physical hardware
+qualification. Temporary phase profiling was removed; IMAGE/S remains decimal
+and the cumulative IMAGES count remains hexadecimal.
+
+The faster schedule also exposed an ownership-snapshot race. Each CPU now reads
+ownership after observing the other CPU's committed token/reply, rather than
+rejecting a valid request using an earlier mode sample. Adversarial compiled
+tests deliver those events between the polling instructions. Ares evidence is
+separate from that deterministic regression.
+
+Real ASIC/bus timing, VDP/FIFO deadlines, stack high-water, other BIOS/model
+variants, physical PAL/NTSC behavior and combined CD/audio/PCM/DMA workloads
+remain separate qualification tasks. No BIOS or emulator source is distributed.
+
+The user confirmed on 2026-10-18 that the corrected manual build's three views
+and controls work and ERRORS stays 0000. This confirms the interactive emulator
+check; it does not replace the physical-hardware qualification above.

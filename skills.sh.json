@@ -25,6 +25,13 @@
         "megadev-scenes",
         "megadev-save"
       ]
+    },
+    {
+      "title": "Advanced",
+      "description": "Use Mega CD hardware features with explicit resource and timing budgets.",
+      "skills": [
+        "megadev-scaling"
+      ]
     }
   ]
 }
