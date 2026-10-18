@@ -310,7 +310,11 @@ unsafe reuse. Paired reader tests retain delayed/failed reads, Word RAM ownershi
 corruption checks and copied VBlank uploads. These models neither synthesize
 sound nor measure BIOS or physical-drive timing.
 
-The manual US disc is open in ares v148 for listening checks. Audible CD music,
+In ares v148 with the configured US BIOS, the automatic US tour reached
+`AUTO PASS - AUDIO CONTINUES` after its music/PCM requests and area handoff.
+The cavern rendered and the resident PCM bed remained marked active. This is
+runtime/command evidence, not an audible-quality result.
+The manual US disc is open for listening checks. Audible CD music,
 PCM pitch/mix, track repeat, real seek behavior and PAL playback remain separate
 from compilation and command-model evidence until confirmed. Physical consoles,
 BIOS/model variations, FM/Z80 drivers, PCM streaming and ASIC coexistence remain
