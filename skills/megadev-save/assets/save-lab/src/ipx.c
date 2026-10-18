@@ -17,7 +17,7 @@ extern u8 const res_font[];
 typedef struct {u16 offset,word;} Cell;
 typedef struct {Cell cells[DIRTY_CAP];u16 count;u16 sat[8][4],sprites;} Frame;
 _Static_assert(sizeof(Frame)==452,"Publisher fixture layout changed");
-static u16 desired[CELLS],displayed[CELLS],scan,stage,hz,field,help,request_op;
+static u16 desired[CELLS],displayed[CELLS],scan,stage,hz,field,help,request_op,format_dialog,format_yes,format_device;
 static SaveGame game={1,10,0};
 static Frame frames[2];
 static volatile u16 published,submitted,video_fault,input_hits;
@@ -62,7 +62,7 @@ static void hex(u16 x,u16 y,u16 color,u16 value) {
     s[4]=0;text(x,y,color,s);
 }
 static void draw(void) {
-    static char const * const names[]={"READY","SAVED AND VERIFIED","LOADED","OLDER RECORD RECOVERED","NO SAVE YET","MEDIA NOT READY","BIOS IO FAILED / CHECK SPACE","NEWER FORMAT - LEFT UNCHANGED","INVALID DATA / NEED TWO SAVES","UNEXPECTED FILE SIZE OR MODE","READBACK VERIFICATION FAILED","SEQUENCE FULL - LEFT UNCHANGED","CONFLICTING RECORDS"};
+    static char const * const names[]={"READY","SAVED AND VERIFIED","LOADED","OLDER RECORD RECOVERED","NO SAVE YET","MEDIA NOT READY","BIOS IO FAILED / CHECK SPACE","NEWER FORMAT - LEFT UNCHANGED","INVALID DATA / NEED TWO SAVES","UNEXPECTED FILE SIZE OR MODE","READBACK VERIFICATION FAILED","SEQUENCE FULL - LEFT UNCHANGED","CONFLICTING RECORDS","DEVICE FORMATTED"};
     for(u16 i=0;i<CELLS;i++)desired[i]=0x8020;
     text(1,0,0,"SAVE LAB");text(23,0,1,save_device?"BACKUP CART":"INTERNAL BACKUP");
     for(u16 i=0;i<40;i++)text(i,1,0,"-");
@@ -70,15 +70,21 @@ static void draw(void) {
     text(1,7,field==1?1:0,field==1?"> COINS":"  COINS");hex(17,7,1,game.coins);
     text(1,9,field==2?1:0,field==2?"> FLAGS":"  FLAGS");hex(17,9,1,game.flags);
     text(1,11,field==3?1:0,field==3?"> DEVICE":"  DEVICE");text(17,11,1,save_device?"BACKUP CART":"INTERNAL");
-    text(1,13,0,"STATUS");text(9,13,save_result==SV_RECOVERED?2:1,save_pending?save_fault?"WAITING - SLOT STAYS OWNED":"WORKING":names[save_result<=SV_CONFLICT?save_result:SV_IO]);
+    text(1,13,0,"STATUS");text(9,13,save_result==SV_RECOVERED?2:1,save_pending?save_fault?"WAITING - SLOT STAYS OWNED":"WORKING":names[save_result<=SV_FORMATTED?save_result:SV_IO]);
     text(1,15,0,"MEDIA");text(9,15,2,save_media==3?"SEGA FORMATTED":save_media==1?"UNFORMATTED":save_media==2?"OTHER FORMAT":save_media==4?"UNSUPPORTED CART":"NOT READY");
     text(1,16,0,"SEQUENCE");hex(12,16,1,save_sequence);
-    if(help) {
+    if(format_dialog) {
+        text(1,18,2,format_device?"FORMAT BACKUP CART?":"FORMAT INTERNAL RAM?");
+        text(1,19,0,"ERASES ALL GAMES' SAVES ON THIS DEVICE");
+        text(1,20,0,"THIS CANNOT BE UNDONE");
+        text(1,21,1,format_yes?"  CANCEL        > ERASE ALL":" > CANCEL         ERASE ALL");
+        text(1,22,0,"LEFT/RIGHT CHOOSE   A CONFIRM   B BACK");
+    } else if(help) {
         text(1,18,0,"SAVE TWO DIFFERENT VERSIONS FIRST");
         text(1,19,0,"A DAMAGE NEWEST AND RECOVER OLDER");
-        text(1,20,0,"B BACK - ONLY LAB FILES ARE TOUCHED");
+        text(1,20,0,"B BACK TO VALUES");
         text(1,21,0,"LOAD FALLS BACK TO THE OLDER RECORD");
-        text(1,22,2,"UNFORMATTED? USE BIOS MEMORY MANAGER");
+        text(1,22,2,"C FORMAT DEVICE - ERASES ALL SAVES");
     } else {
         text(1,18,0,"UP/DOWN FIELD   LEFT/RIGHT CHANGE");
         text(1,19,0,"A SAVE   B LOAD   C RESET VALUES");
@@ -118,9 +124,22 @@ static void save_issue(u16 op) {
     if(save_request(op,&game) && save_device && (op==3 || op==4) && (save_result==SV_LOADED || save_result==SV_RECOVERED))game=save_reply;
 }
 void save_input(u16 hit) {
-        if(hit&PAD_START)help^=1;
+        if(save_pending)return;
+        if(format_dialog) {
+            if(hit&(PAD_B|PAD_START)){format_dialog=0;format_yes=0;return;}
+            /* A navigation press cannot also accept the destructive choice. */
+            if(hit&(PAD_LEFT|PAD_RIGHT)){format_yes^=1;return;}
+            if(hit&PAD_A) {
+                u16 erase=format_yes && format_device==save_device;
+                format_dialog=0;format_yes=0;
+                if(erase)save_issue(5);
+            }
+            return;
+        }
+        if(hit&PAD_START){help^=1;return;}
         if(!save_pending && help) {
             if(hit&PAD_B)help=0;
+            else if(hit&PAD_C){format_dialog=1;format_yes=0;format_device=save_device;return;}
             else if(hit&PAD_A){save_issue(4);}
         } else if(!save_pending) {
             if(hit&PAD_DOWN){field++;if(field==4)field=0;}

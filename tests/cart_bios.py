@@ -49,18 +49,21 @@ def validate(project,bios_path,ident=4):
             assert u.reg_read(UC_M68K_REG_PC)==stop,'BIOS did not return'
             return u.reg_read(UC_M68K_REG_D0)
         assert call('cart_init')==1,'Fresh in-memory cart should be unformatted'
-        call(0xFFFDAE,d0=6) # Disposable model only; no emulator file or hardware attached.
-        assert call('cart_init')==3,'Actual BIOS failed to format its in-memory cart fixture'
         game=0xFFDC00
         def request(op,values):
             u.mem_write(game,b''.join(x.to_bytes(2,'big') for x in values))
             u.mem_write(s['save_device'],b'\0\1')
             assert call('save_request',op,game)==1
             return int.from_bytes(u.mem_read(s['save_result'],2),'big')
+        assert request(5,[1,0,0])==13,'Compiled format adapter failed on fresh cart'
+        assert call('cart_init')==3
         assert request(2,[2,17,1])==1
         assert request(2,[4,31,3])==1
         assert request(3,[1,0,0])==2 and int.from_bytes(u.mem_read(s['save_reply'],2),'big')==4
         assert request(4,[1,0,0])==3 and int.from_bytes(u.mem_read(s['save_reply'],2),'big')==2
+        assert request(5,[1,0,0])==13
+        assert request(3,[1,0,0])==4,'Format left old Lab records behind'
+        assert request(2,[3,18,2])==1 and request(3,[1,0,0])==2
         assert not enabled,'BIOS left cart writes enabled after returning'
         return True
     check((project/'disc/ipx.mmd').read_bytes(),sym,'main',run)

@@ -1,5 +1,6 @@
 #include "save.h"
 extern Sv16 cart_init(void);
+extern Sv16 cart_format(void);
 extern Sv16 cart_read(Sv16 slot,Sv8 *data);
 extern Sv16 cart_write(Sv16 slot,Sv8 const *data);
 Sv16 cart_id;
@@ -16,7 +17,12 @@ Sv16 cart_execute(Sv16 op,SaveGame const *game) {
     Sv16 opcode=*(volatile Sv16 *)0xFFFDAEu;
     Sv32 handler=*(volatile Sv32 *)0xFFFDB0u;
     if(opcode!=0x4EF9u || handler>=0x40000u || (handler&1u)){save_media=4;return SV_MEDIA;}
-    save_media=cart_init();if(save_media!=3)return SV_MEDIA;
+    save_media=cart_init();
+    if(op==5 && save_media>=1 && save_media<=3) {
+        Sv16 result=cart_format();save_media=cart_init();
+        return result==SV_OK?(save_media==3?SV_FORMATTED:SV_MEDIA):result;
+    }
+    if(save_media!=3)return SV_MEDIA;
     cart_ready=1;SaveSummary summary={0};SaveGame next=*game;Sv16 result=SV_INVALID;
     if(op==1 || op==3)result=save_load(&next,&summary);
     else if(op==2)result=save_write(game,&summary);

@@ -48,10 +48,16 @@ and load the older valid record. This refuses to run without two valid records.
 The expected status is OLDER RECORD RECOVERED and the earlier values return.
 A later normal save replaces the invalid alternate record.
 
-Only `MDSAVELAB_A` and `MDSAVELAB_B` are accessed. The Lab does not format or delete
-anything. If MEDIA is not SEGA FORMATTED, use your BIOS memory manager yourself;
-formatting existing storage destroys saves. No automatic repair or formatting is
-attempted. IO failure can mean insufficient space or another BIOS write/read
+Normal save/load/recovery accesses only `MDSAVELAB_A` and `MDSAVELAB_B`.
+Formatting is separate: select the Device, open Help with Start, then press C.
+The confirmation names Internal RAM or Backup Cart and warns that it erases
+**all games' saves** on that device, not just the Lab's records. Cancel is selected
+on every open. Left/Right selects ERASE ALL; a fresh A press confirms. B or Start
+cancels. Use a disposable emulator profile/device for this test. After success,
+MEDIA shows SEGA FORMATTED, the sequence is zero, and B reports NO SAVE YET.
+You can then save/load normally. Working values remain unchanged.
+
+There is no automatic repair, formatting or deletion. IO failure can mean insufficient space or another BIOS write/read
 problem; it is not silently treated as success. Newer-version and unexpected
 size/mode records are preserved instead of overwritten.
 
@@ -84,7 +90,7 @@ implemented. Ares v148 lacks the cartridge mapping, so select Internal there;
 Backup Cart must report unavailable rather than pretend to save.
 
 Compiled Main adapters were also executed with the locally supplied BIOS against
-fresh 16/128/512 KiB virtual carts for save/readback/recovery. That checks the
+fresh 16/128/512 KiB virtual carts for format/save/readback/recovery. That checks the
 actual BIOS ABI, not physical timing or an interactive cart emulator.
 
 The automatic tour is deliberately read-only: it probes storage and leaves

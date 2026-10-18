@@ -1,7 +1,7 @@
 #include <main/bramcart.def.h>
 /* ABI adapters around Megadev's documented Main BRAM_CART entry. */
 .section .text
-.global cart_init,cart_read,cart_write
+.global cart_init,cart_read,cart_write,cart_format
 cart_init:
     movem.l d2-d7/a2-a6,-(sp)
     lea cart_work,a0
@@ -66,6 +66,17 @@ cart_write:
     bra 3f
 2:  moveq #6,d0
 3:  movem.l (sp)+,d2-d7/a2-a6
+    rts
+/* Explicit destructive operation; caller must initialize and confirm first. */
+cart_format:
+    movem.l d2-d7/a2-a6,-(sp)
+    moveq #6,d0
+    jsr BRAM_CART
+    bcs 1f
+    moveq #0,d0
+    bra 2f
+1:  moveq #6,d0
+2:  movem.l (sp)+,d2-d7/a2-a6
     rts
 .section .rodata
 .balign 2

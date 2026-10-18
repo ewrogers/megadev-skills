@@ -10,7 +10,7 @@ def check_save(project,hz):
         def collect(u,sym,kind=kind):contexts[kind]=(u,sym);return True
         check((project/'disc'/file).read_bytes(),table,kind,collect)
     mailbox=bytearray(0x30);files={};cart_files={};media=3;write_failure=False;read_failure=False;bad_verify=False;writes=0;reads=0
-    meta={};calls=[]
+    meta={};calls=[];allow_format=False;format_failure=False;format_count=0;post_format_media=3
     names=[b'MDSAVELAB_A',b'MDSAVELAB_B']
     for kind,(u,sym) in contexts.items():
         u.mem_map(0x300000,0x1000)
@@ -27,14 +27,18 @@ def check_save(project,hz):
     def word(u,p,n=2):return int.from_bytes(u.mem_read(p,n),'big')
     def put(u,p,x,n=2):u.mem_write(p,x.to_bytes(n,'big'))
     def bios(u,address,size,user):
-        nonlocal writes,reads
+        nonlocal writes,reads,media,format_count
         table=ss if u is sub else ms;store=files if u is sub else cart_files
         op=u.reg_read(UC_M68K_REG_D0)&65535;a0=u.reg_read(UC_M68K_REG_A0);a1=u.reg_read(UC_M68K_REG_A1);carry=False
-        calls.append(op);assert op in [0,2,3,4],'Unexpected BIOS call, including delete/format'
+        calls.append(op);assert op in [0,2,3,4,6],'Unexpected BIOS call, including delete'
+        if op==6:assert allow_format,'Formatting outside explicit test confirmation'
         if op==0:
             assert table['_BSS_ORIGIN']<=a0 and a0+0x640<=table['_BSS_ORIGIN']+table['_BSS_LENGTH'],'BRMINIT work buffer not resident'
             assert table['_BSS_ORIGIN']<=a1 and a1+12<=table['_BSS_ORIGIN']+table['_BSS_LENGTH']
             u.reg_write(UC_M68K_REG_D0,2);u.reg_write(UC_M68K_REG_D1,0 if media==3 else media);carry=media!=3
+        elif op==6:
+            format_count+=1;carry=format_failure
+            if not carry:store.clear();media=post_format_media
         else:
             name=bytes(u.mem_read(a0,11));assert name in names,'Touched unrelated save or failed to reset A0 after search'
             if op==2:
@@ -134,6 +138,69 @@ def check_save(project,hz):
     call('sub','save_sub_tick');call('main','save_main_tick',300//hz)
     call('sub','save_sub_tick');call('main','save_main_tick',300//hz)
     assert not word(main,ms['save_pending'])
+    # Confirmation defaults to Cancel on every open; selecting a device or
+    # opening Help never formats. Back/Start and simultaneous navigation+A
+    # cannot bypass confirmation. While pending, controls cannot arm a format.
+    put(main,ms['help'],1)
+    before_calls=len(calls)
+    call('main','save_input',1<<5) # C opens format confirmation
+    assert word(main,ms['format_dialog'])==1 and not word(main,ms['format_yes'])
+    call('main','save_input',1<<6) # A accepts default Cancel
+    assert not word(main,ms['format_dialog']) and len(calls)==before_calls
+    for cancel in [1<<4,1<<7]:
+        call('main','save_input',1<<5);call('main','save_input',1<<3)
+        call('main','save_input',cancel)
+        assert not word(main,ms['format_dialog']) and len(calls)==before_calls
+    call('main','save_input',1<<5)
+    call('main','save_input',(1<<3)|(1<<6))
+    assert word(main,ms['format_dialog'])==1 and len(calls)==before_calls
+    call('main','save_input',1<<4)
+    # Confirmed internal format clears all files, not only Lab records, and
+    # re-probes. The cart's independently stored files remain unchanged.
+    unrelated=b'OTHERGAME_X';files[unrelated]=b'foreign';cart_before=dict(cart_files)
+    call('main','save_input',1<<5);call('main','save_input',1<<3)
+    put(main,ms['format_device'],1);call('main','save_input',1<<6)
+    assert not word(main,ms['save_pending']) and len(calls)==before_calls,'Device mismatch confirmed format'
+    allow_format=True;call('main','save_input',1<<5);call('main','save_input',1<<3)
+    call('main','save_input',1<<6)
+    assert word(main,ms['save_pending'])==1
+    before=bytes(mailbox);call('main','save_input',1<<5);assert bytes(mailbox)==before
+    call('sub','save_sub_tick');call('main','save_main_tick',300//hz)
+    call('sub','save_sub_tick');call('main','save_main_tick',300//hz)
+    assert word(main,ms['save_result'])==13 and not files and cart_files==cart_before
+    assert word(main,ms['save_sequence'])==0 and format_count==1
+    assert calls[-3:]==[0,6,0],'Format must initialize then re-probe'
+    assert send(2)==1 and send(3)==2,'Internal saves failed after format'
+    # Absent media refuses format; unformatted/foreign media require explicit
+    # op 5. BIOS failure and failed post-format probe never report success.
+    for status in [0,1,2]:
+        media=status;before_format=format_count
+        assert send(2)==5 and format_count==before_format
+        assert send(5)==(5 if status==0 else 13)
+        assert format_count==before_format+(status!=0)
+    media=3;format_failure=True;assert send(5)==6;format_failure=False
+    post_format_media=1;assert send(5)==5;post_format_media=3;media=3
+    # Same explicit flow on Main/cart, with independent store and no fallback.
+    put(main,ms['save_device'],1);main.mem_write(0x400001,b'\4')
+    cart_files[unrelated]=b'foreign';internal_before=dict(files)
+    call('main','save_input',1<<5);assert not word(main,ms['format_yes'])
+    call('main','save_input',1<<3);call('main','save_input',1<<6)
+    assert word(main,ms['save_result'])==13 and not cart_files and files==internal_before
+    assert word(main,ms['save_sequence'])==0 and calls[-3:]==[0,6,0]
+    assert call('main','save_request',2,game)==1 and word(main,ms['save_result'])==1
+    assert call('main','save_request',3,game)==1 and word(main,ms['save_result'])==2
+    for status in [1,2]:
+        media=status;assert call('main','save_request',5,game)==1
+        assert word(main,ms['save_result'])==13
+    format_failure=True;assert call('main','save_request',5,game)==1
+    assert word(main,ms['save_result'])==6;format_failure=False
+    post_format_media=1;assert call('main','save_request',5,game)==1
+    assert word(main,ms['save_result'])==5;post_format_media=3;media=3
+    for ident in [0,0x80]:
+        main.mem_write(0x400001,bytes([ident]));before_format=format_count
+        assert call('main','save_request',5,game)==1
+        assert word(main,ms['save_result'])==5 and format_count==before_format
+    allow_format=False;put(main,ms['save_device'],0)
     assert call('main','save_request',3,game)
     for _ in range(hz*30+1):call('main','save_main_tick',300//hz)
     assert word(main,ms['save_pending'])==3 and word(main,ms['save_fault'])==1

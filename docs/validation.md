@@ -370,8 +370,9 @@ matrix remains separate from that confirmed visual/input check.
 
 `megadev-save` adds actual internal `_BURAM` BIOS files, explicit versioned
 records and alternate-record recovery. It keeps its Sub workspace resident and
-uses a single Main/Sub request slot. It never issues format/delete calls or
-touches unrelated filenames. A separate Main-side `BRAM_CART` backend uses the same checked records and an
+uses a single Main/Sub request slot. Normal save/load/recovery only touches its
+private filenames and never formats. A separate confirmed Format Device action
+erases all saves on the selected device through BIOS command 6. A separate Main-side `BRAM_CART` backend uses the same checked records and an
 explicit device selector. Capacity, archive/copy workflow and IO boundaries are
 documented from the official manual and primary sources. Copying between devices
 and custom Work RAM handlers are not implemented.
@@ -385,8 +386,8 @@ recovery. Twelve skills install with telemetry disabled and generate independent
 Original-68000 execution checks the actual Main/Sub service and assembly BIOS
 ABI: resident BRMINIT buffers, carry handling, A0 reset after search, exact private
 names, one normal 64-byte block and BRMWRITE's D1.l zero. Oversized/protected
-files stop before a BIOS read. Unformatted/unavailable media stops at init.
-The BIOS model rejects delete/format calls. Request snapshots, retirement,
+files stop before a BIOS read. Unformatted/unavailable media stops at init for ordinary requests.
+The BIOS model rejects deletion and any format outside the explicit test flow. Request snapshots, retirement,
 50/60 Hz timeout quarantine and the actual recovery-menu dispatcher execute.
 These model BIOS outcomes; they do not establish physical battery/write timing.
 
@@ -417,3 +418,13 @@ files or hardware. No firmware/disassembly is committed. Its exact firmware hash
 and reproduction command are documented. Ares v148 lacks the CD RAM-cart mapping,
 so its manual evidence remains internal-only; actual cart hardware or a cart-capable
 emulator still needs interactive qualification.
+
+Explicit formatting now covers both internal RAM and standard backup carts.
+The confirmation names the selected device, warns that every game's saves there
+will be erased, and opens on Cancel every time. B/Start cancel, and navigation
+combined with A cannot also confirm. Compiled tests exercise both adapters,
+independent stores (including unrelated filenames), absent-media refusal,
+format failure, failed re-probe, zeroed sequence and subsequent save/load. The
+optional local BIOS fixture executes the compiled cart formatter rather than
+seeding its filesystem with a direct BIOS call. Formatting is tested on fresh
+in-memory storage; existing user emulator saves are left intact.

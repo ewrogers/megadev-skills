@@ -1,6 +1,6 @@
 /* ABI adapters around Megadev's documented Sub _BURAM entry. */
 .section .text
-.global bram_init,bram_read,bram_write
+.global bram_init,bram_read,bram_write,bram_format
 bram_init:
     movem.l d2-d7/a2-a6,-(sp)
     lea bram_work,a0
@@ -65,6 +65,17 @@ bram_write:
     bra 3f
 2:  moveq #6,d0
 3:  movem.l (sp)+,d2-d7/a2-a6
+    rts
+/* Explicit destructive operation; caller must initialize and confirm first. */
+bram_format:
+    movem.l d2-d7/a2-a6,-(sp)
+    moveq #6,d0
+    jsr 0x5F16
+    bcs 1f
+    moveq #0,d0
+    bra 2f
+1:  moveq #6,d0
+2:  movem.l (sp)+,d2-d7/a2-a6
     rts
 .section .rodata
 .balign 2

@@ -15,6 +15,7 @@ Megadev's audited Sub definitions provide `_BURAM` at `0x005F16`:
 | 2 | BRMSERCH | A0 points to name; carry reports presence; D0.w reports blocks and D1.b mode |
 | 3 | BRMREAD | A0 name, A1 destination; carry reports success; check size/mode again |
 | 4 | BRMWRITE | A0 14-byte file-info structure, A1 data, D1.l zero; carry reports success |
+| 6 | BRMFORMAT | After BRMINIT and explicit device confirmation only; carry clear means success |
 
 BRMINIT error D1 values distinguish no RAM (0), unformatted (1), other format (2).
 Its successful carry result is authoritative; the Lab converts it to status 3.
@@ -46,11 +47,11 @@ separate storage device. Games usually saved internally; the system menu can cop
 files between internal and cartridge RAM, and some games support direct cart saves.
 Do not promise that inserting a cartridge automatically expands every game's
 internal file space. Formatting destroys existing records and belongs to an
-explicit user-controlled workflow. This Lab never formats either device.
+explicit user-controlled workflow. The Lab provides one separately from saving.
 
 The Main-side `BRAM_CART` entry definition is `0xFFFDAE`; the audited Megadev
 header supplies no complete typed operation wrappers. The Lab adds separate
-project-owned Main adapters for init/search/read/write after auditing the local
+project-owned Main adapters for init/search/read/write/format after auditing the local
 US BIOS. They preserve the C ABI, carry, exact file metadata and D1.l=0.
 The runtime calls the boot-installed vector, never a guessed ROM offset.
 Main has its own resident 0x640-byte workspace and 12-byte display buffer;
@@ -67,7 +68,7 @@ below 0x40000. A vector redirected into cartridge/RAM code is refused even if th
 current ID looks standard. A different legitimate vector shape needs a separate
 audit rather than weakening that check blindly.
 
-The audited Main BIOS uses codes 0/2/3/4 with named-file metadata and normal
+The audited Main BIOS uses codes 0/2/3/4/6 with named-file metadata and normal
 64-byte blocks. It manages the write-enable latch itself. This ABI was executed
 against the supplied firmware on fresh 16/128/512 KiB virtual carts, not inferred
 solely from the Sub API. BIOS variants and physical carts still need qualification.
@@ -87,6 +88,27 @@ records. Copying between devices and custom Work RAM handlers are outside its
 scope. Ares v148's standard cartridge board does not implement the CD backup-cart
 ID/RAM/latch mapping. Use a cart-capable emulator or hardware for an interactive
 cart check; successful internal ares saves do not qualify the cart path.
+
+## Explicit formatting
+
+Use the BIOS formatter, not a hand-built filesystem layout. `BRMFORMAT` is code
+6 after `BRMINIT`, on Sub for internal RAM or Main's checked `BRAM_CART` vector
+for a standard cart. It erases the entire selected device, including other games'
+files. This is different from deleting the Lab's two records.
+
+Keep formatting out of startup, normal saves and recovery. Name the device and
+warn that all saves there will be erased; default to Cancel. The Lab uses Help's
+C to open confirmation, Left/Right to choose, then a separate A press to accept.
+B/Start cancel. Navigation combined with A never confirms in the same input.
+Device changes and other requests are blocked while a request is pending.
+
+The explicit format operation accepts present unformatted, other-format or
+already formatted media. Missing storage and unsupported/custom cart handlers
+are refused. Initialize immediately before formatting, capture BIOS carry, then
+initialize again to check the result. Report BIOS errors or a failed re-probe;
+never show success merely because the command returned. Clear cached record
+sequence after the operation and leave working game values unchanged. The
+project's request code 5 and `SV_FORMATTED` are helpers, not BIOS function codes.
 
 ## Sources
 

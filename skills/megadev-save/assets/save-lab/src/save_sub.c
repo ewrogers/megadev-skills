@@ -1,6 +1,7 @@
 #include "save.h"
 #include <sub/gate_arr.h>
 extern Sv16 bram_init(void);
+extern Sv16 bram_format(void);
 extern Sv16 bram_read(Sv16 slot,Sv8 *data);
 extern Sv16 bram_write(Sv16 slot,Sv8 const *data);
 Sv16 save_backend_read(Sv16 slot,Sv8 *out){return slot>1?SV_META:bram_read(slot,out);}
@@ -12,7 +13,12 @@ void save_sub_tick(void) {
     SaveGame game={*ga_reg_comcmd1,*ga_reg_comcmd2,*ga_reg_comcmd3};
     SaveSummary summary={0};Sv16 result=SV_INVALID,op=*ga_reg_comcmd4;
     Sv16 media=bram_init();
-    if(media!=3)result=SV_MEDIA;
+    if(op==5 && media>=1 && media<=3) {
+        result=bram_format();
+        media=bram_init();
+        if(result==SV_OK)result=media==3?SV_FORMATTED:SV_MEDIA;
+    }
+    else if(media!=3)result=SV_MEDIA;
     else if(op==1 || op==3)result=save_load(&game,&summary);
     else if(op==2)result=save_write(&game,&summary);
     else if(op==4){result=save_damage(&summary);if(result==SV_OK)result=save_load(&game,&summary);}

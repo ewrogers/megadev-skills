@@ -5,7 +5,7 @@ Sv16 save_device;
 SaveGame save_reply;
 static Sv16 serial=1,age;
 int save_request(Sv16 op,SaveGame const *game) {
-    if(save_pending || *ga_reg_comcmd0 || *ga_reg_comstat0 || op<1 || op>4)return 0;
+    if(save_pending || *ga_reg_comcmd0 || *ga_reg_comstat0 || op<1 || op>5)return 0;
     if(save_device){save_result=cart_execute(op,game);return 1;}
     serial++;if(serial<2)serial=2;
     *ga_reg_comcmd1=game->level;*ga_reg_comcmd2=game->coins;*ga_reg_comcmd3=game->flags;*ga_reg_comcmd4=op;

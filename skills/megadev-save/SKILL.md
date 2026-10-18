@@ -21,6 +21,8 @@ Essential contracts:
   at SGDK offsets. Sub owns the `_BURAM` service; serialize its calls.
 - Initialize/probe first. Missing, unformatted or other-format media is a status
   to report, not permission to format. Do not erase unrelated files to make room.
+  Offer formatting only as a separate explicitly confirmed whole-device action,
+  naming the device and defaulting to Cancel; use BIOS BRMFORMAT and re-probe.
 - Use project-specific names and validate file size/mode before a BIOS read into
   a bounded buffer. Do not deserialize by casting raw bytes to a C struct.
 - Validate magic, version, payload length, checksum and semantic ranges before
@@ -34,7 +36,7 @@ Essential contracts:
 
 Use `ewrogers/megadev:latest` and inspect its selected source before teaching an
 API. The [standalone Save Lab](assets/save-lab/README.md) exercises internal and cartridge
-BIOS files, versioned records and an explicitly selected recovery demonstration.
+BIOS files, versioned records and explicitly selected recovery and whole-device formatting demonstrations.
 Its `save_*` helpers and record format are project code, not Megadev APIs.
 Build/test containers use at most two CPUs.
 
