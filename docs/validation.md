@@ -314,9 +314,9 @@ In ares v148 with the configured US BIOS, the automatic US tour reached
 `AUTO PASS - AUDIO CONTINUES` after its music/PCM requests and area handoff.
 The cavern rendered and the resident PCM bed remained marked active. This is
 runtime/command evidence, not an audible-quality result.
-The manual US disc is open for listening checks. Audible CD music,
-PCM pitch/mix, track repeat, real seek behavior and PAL playback remain separate
-from compilation and command-model evidence until confirmed. Physical consoles,
+The user confirmed that both CD music and PCM sounds work in the manual US
+build in ares on 2026-10-18. Detailed pitch/mix quality, track repeat, real seek
+behavior and PAL listening remain separate checks. Physical consoles,
 BIOS/model variations, FM/Z80 drivers, PCM streaming and ASIC coexistence remain
 unqualified. The Lab intentionally stops CD music for data reads and restarts it
 afterward; resident PCM can continue during the handoff.
