@@ -79,7 +79,7 @@ services and sound/disc responsibilities alongside any game computation.
 
 ### 3. Advanced
 
-Prioritize **`megadev-scaling`** as a dedicated hardware skill: ASIC stamps,
+**`megadev-scaling`** now provides the dedicated hardware skill: ASIC stamps,
 trace tables, rotation/scaling, supported layouts, operation completion, Word RAM
 ownership and the cost of getting the result to the VDP. It is not a sprite flag
 or an unlimited accelerator.
