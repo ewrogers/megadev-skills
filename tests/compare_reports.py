@@ -9,9 +9,9 @@ def compare(paths):
     if len(reports)!=2 or {r.get('platform') for r in reports}!={'linux/arm64','linux/amd64'}:
         raise ValueError('Need one ARM64 and one AMD64 report')
     kinds={r.get('skill','megadev-project') for r in reports}
-    if len(kinds)!=1 or not kinds <= {'megadev-project','megadev-hardware','megadev-assets','megadev-graphics','megadev-input','megadev-system','megadev-memory','megadev-streaming','megadev-audio','megadev-scenes','megadev-save','megadev-scaling'}:
+    if len(kinds)!=1 or not kinds <= {'megadev-project','megadev-hardware','megadev-assets','megadev-graphics','megadev-input','megadev-system','megadev-memory','megadev-streaming','megadev-audio','megadev-scenes','megadev-save','megadev-scaling','megadev-debug'}:
         raise ValueError('Need matching supported skill reports')
-    expected=CASES | ({'us-tour'} if kinds & {'megadev-hardware','megadev-assets','megadev-graphics','megadev-input','megadev-system','megadev-memory','megadev-streaming','megadev-audio','megadev-scenes','megadev-save','megadev-scaling'} else set())
+    expected=CASES | ({'us-tour'} if kinds & {'megadev-hardware','megadev-assets','megadev-graphics','megadev-input','megadev-system','megadev-memory','megadev-streaming','megadev-audio','megadev-scenes','megadev-save','megadev-scaling','megadev-debug'} else set())
     if 'megadev-input' in kinds:expected|={'us-ea'}
     for r in reports:
         if r.get('passed') is not True or set(r.get('cases',{}))!=expected:
@@ -47,6 +47,8 @@ def compare(paths):
                 raise ValueError('Missing executed save service and BRAM ABI checks')
             if 'megadev-scaling' in kinds and (any(case['startup'][kind].get('probe_execution') is not True for kind in ('main','sub')) or case['startup']['sub'].get('asic_execution') is not True):
                 raise ValueError('Missing executed ASIC adapters, completion and publication checks')
+            if 'megadev-debug' in kinds and (any(case['startup'][kind].get('probe_execution') is not True for kind in ('main','sub')) or case['startup']['main'].get('debug_execution') is not True):
+                raise ValueError('Missing executed diagnostic and paired coordination checks')
             if not case.get('boot_payloads') or not case.get('disc',{}).get('files'):
                 raise ValueError('Missing target payload hashes')
     if reports[0]['cases']!=reports[1]['cases']:

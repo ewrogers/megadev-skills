@@ -31,6 +31,7 @@ The skill includes a standalone starter and instructions for building a disc wit
 | Systems | [megadev-streaming](skills/megadev-streaming/SKILL.md) | Safe CD loads, preloading, resident art and bounded uploads with Word RAM handoffs. |
 | Systems | [megadev-system](skills/megadev-system/SKILL.md) | Main/Sub command lifetimes, bounded work, safe Word RAM handoffs, cancellation and late-reply recovery. |
 | Advanced | [megadev-scaling](skills/megadev-scaling/SKILL.md) | Graphics ASIC rotation, zoom and perspective floors, with checked Word RAM handoffs and staged VRAM publication. |
+| Debugging and Testing | [megadev-debug](skills/megadev-debug/SKILL.md) | CPU/module-aware symbols, bounded traces and first-fault evidence for crashes and stalled jobs. |
 
 More skills will follow in foundations, systems, advanced techniques, debugging/testing and release. See the [adaptation roadmap](docs/skill-adaptation-roadmap.md).
 For cartridge games using SGDK, see [SGDK Skills](https://github.com/ewrogers/sgdk-skills).
@@ -49,6 +50,8 @@ Megadev has its own APIs and build conventions; these skills do not require SGDK
 [Audio Lab](skills/megadev-audio/assets/audio-lab/README.md) auditions original CD tracks and PCM effects, with stereo panning and explicit music/data drive handoffs.
 [Transition Lab](skills/megadev-scenes/assets/transition-lab/README.md) brings title, options, two areas, pause, results and credits together with safe preload cancellation and recovery.
 [Scaling Lab](skills/megadev-scaling/assets/scaling-lab/README.md) rotates and scales a native mosaic and samples it as a perspective floor through the actual graphics ASIC.
+
+[Debug Lab](skills/megadev-debug/assets/debug-lab/README.md) freezes first-fault evidence while delayed work drains safely, with exact-build symbol lookup.
 
 [Save Lab](skills/megadev-save/assets/save-lab/README.md) saves versioned BIOS files, verifies readback and recovers an older record after an explicit corruption test.
 Labs demonstrate implementation techniques. Their appearance, controls and game design are examples, not requirements for your game.

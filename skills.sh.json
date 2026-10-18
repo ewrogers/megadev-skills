@@ -32,6 +32,13 @@
       "skills": [
         "megadev-scaling"
       ]
+    },
+    {
+      "title": "Debugging and Testing",
+      "description": "Diagnose failures with reproducible evidence and qualified checks.",
+      "skills": [
+        "megadev-debug"
+      ]
     }
   ]
 }

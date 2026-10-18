@@ -1,6 +1,6 @@
 """Execute both compiled CPUs; model only mailbox/2M ownership, not BIOS timing."""
 from startup import check,symbols
-def check_system(project,hz):
+def check_system(project,hz,diagnostics=False):
     from unicorn import UC_HOOK_MEM_READ,UC_HOOK_MEM_WRITE,UC_HOOK_CODE
     from unicorn.m68k_const import UC_M68K_REG_A7,UC_M68K_REG_PC,UC_M68K_REG_SR,UC_M68K_REG_D0
     contexts={}
@@ -99,6 +99,60 @@ def check_system(project,hz):
         if not word(main,ms['client']):break
     assert not word(main,ms['client'])
     assert word(main,ms['drained'])==3 and word(main,ms['passed'])==2
+    if diagnostics:
+        # Fault snapshots are private CPU state, not pointers exchanged through Word RAM.
+        for kind,table in [('main',ms),('sub',ss)]:
+            call(kind,'dbg_clear',(table[kind+'_trace'],))
+        assert call('main','sy_main_start',(3,0))==1
+        for count in range(80):
+            frame()
+            if not word(main,ms['client']):break
+        else:raise AssertionError('Guard-fault job did not retire')
+        assert word(main,ms['rejected'])==3 and not word(main,ms['verify_failed'])
+        snapshots={}
+        for kind,(u,table) in contexts.items():
+            address=table[kind+'_trace']
+            # 16 events x 12 bytes, first event x 12, then four words.
+            assert word(u,address+210)==1,kind+' fault snapshot not frozen'
+            assert word(u,address+194)==(6 if kind=='main' else 3)
+            snapshots[kind]=bytes(u.mem_read(address,212))
+        assert call('main','sy_main_start',(0,0))==1
+        for count in range(80):
+            frame()
+            if not word(main,ms['client']):break
+        assert word(main,ms['passed'])==3
+        for kind,(u,table) in contexts.items():
+            assert bytes(u.mem_read(table[kind+'_trace'],212))==snapshots[kind], 'Cleanup replaced first-fault evidence'
+            call(kind,'dbg_clear',(table[kind+'_trace'],))
+        # Freeze on timeout while the worker is still draining, not at a fabricated crash.
+        assert call('main','sy_main_start',(0,1))==1
+        for count in range(hz+4):frame()
+        assert word(main,ms['client'])==3
+        assert word(main,ms['main_trace']+194)==4
+        frozen=bytes(main.mem_read(ms['main_trace'],212))
+        for count in range(hz*2):
+            frame()
+            if not word(main,ms['client']):break
+        assert not word(main,ms['client']) and mode==1
+        assert bytes(main.mem_read(ms['main_trace'],212))==frozen
+    if diagnostics:
+        call('main','dbg_clear',(ms['main_trace'],))
+        assert call('main','sy_main_start',(0,0))==1
+        call('main','sy_main_tick',(0,))
+        for count in range(40):
+            now=(now+1)&65535;call('sub','sy_sub_tick',(now,hz))
+            if regword(0x20):break
+        assert mode==1 and regword(0x20)
+        # Corrupt only the modeled returned result, after safe ownership return.
+        mailbox[0x2a:0x2c]=(regword(0x2a)^1).to_bytes(2,'big')
+        frame()
+        assert word(main,ms['verify_failed'])==1
+        assert word(main,ms['main_trace']+194)==6
+        assert word(main,ms['main_trace']+210)==1
+        for count in range(10):
+            frame()
+            if not word(main,ms['client']):break
+        assert not word(main,ms['client'])
     # Word RAM grant failure cannot authorize buffer reuse or an unowned commit.
     grant_enabled=False
     assert call('main','sy_main_start',(0,0))==1

@@ -493,3 +493,20 @@ remain separate qualification tasks. No BIOS or emulator source is distributed.
 The user confirmed on 2026-10-18 that the corrected manual build's three views
 and controls work and ERRORS stays 0000. This confirms the interactive emulator
 check; it does not replace the physical-hardware qualification above.
+
+
+## Debugging milestone
+
+`megadev-debug` reuses the portable coordination model unchanged and instruments
+its Main/Sub adapters with private 212-byte rings. Host tests cover wrap/order,
+freeze/clear, overwrite saturation and invalid lookups. Paired original-68000
+execution adds guard corruption, stable first-fault snapshots across later jobs
+and timeout/drain evidence to the existing stale-reply, cancellation, ownership
+and callback checks. Real ELF lookups run inside the container for all three
+modules, including source attribution in the explicit `-g` build.
+
+The five-case US/JP NTSC, EU PAL, debug and tour matrices run on native ARM64 and
+AMD64 CI; payloads and executed markers must match. Distribution covers fourteen
+skills with telemetry disabled. This is controlled protocol/data fault injection,
+not verified fatal exception capture. ares checks readability and interactive
+recovery; physical-console timing, BIOS variants and fatal handlers remain unqualified.

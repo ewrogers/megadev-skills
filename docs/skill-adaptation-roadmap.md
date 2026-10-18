@@ -210,3 +210,12 @@ created. None means the existing SGDK code is a drop-in Megadev dependency.
 - [SGDK skill inventory](https://github.com/ewrogers/sgdk-skills/tree/main/skills)
   and [groups](https://github.com/ewrogers/sgdk-skills/blob/main/skills.sh.json)
   establish the 38 source skills. Proposed names/grouping/order are recommendations.
+
+## Debugging milestone
+
+`megadev-debug` now adds bounded per-CPU transition traces, first-fault snapshots,
+explicit build/CPU/module symbol lookup and controlled fault diagnosis. It reuses
+the system protocol rather than teaching another one. Automated gameplay replay,
+full fatal-vector handling and physical-console debugger qualification remain
+separate future work. Next candidates are `megadev-testing`, performance guidance
+and release/disc qualification; they should reuse these evidence conventions.
