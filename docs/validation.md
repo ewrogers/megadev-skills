@@ -362,3 +362,6 @@ demonstrated.
 The first manual pass found that the beacon used an undefined opaque HUD glyph.
 It now uses a dedicated transparent 16x16 white/gold marker, with native pattern
 and compiled sprite-chain regression checks.
+The user confirmed the corrected beacon is visible and reaching it then pressing
+A continues normally in ares on 2026-10-18. The full manual pause/preload/audio
+matrix remains separate from that confirmed visual/input check.
