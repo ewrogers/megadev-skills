@@ -510,3 +510,26 @@ AMD64 CI; payloads and executed markers must match. Distribution covers fourteen
 skills with telemetry disabled. This is controlled protocol/data fault injection,
 not verified fatal exception capture. ares checks readability and interactive
 recovery; physical-console timing, BIOS variants and fatal handlers remain unqualified.
+
+
+## Testing milestone
+
+`megadev-testing` adds a 5824-byte in-memory replay fixture and a standalone JSON
+verifier. Host O0/O3 checks cover reset, full/invalid tapes, input/event bounds,
+first divergence, state-field coverage and 240 NTSC versus 200 PAL VBlanks for the
+same four-second simulation. Compiled original-68000 checks execute the same
+logic and suite coordinator. Its service suite reuses the actual streaming/audio
+adapters; a combined execution model rejects music commands during a live reader
+and checks stop/read/resume, cancellation, bad content, missing files and recovery.
+
+A new race regression fails the old compiled streaming adapter: reading ownership
+before a newly committed reply can use stale mode and falsely fault. Streaming,
+audio, scenes and testing now read the reply before fresh ownership. Their existing
+execution matrices all run this regression; no wire protocol changed.
+
+The testing matrix covers US/JP NTSC, EU PAL, explicit debug and automatic-tour
+builds on native ARM64/AMD64 CI. Complete reports require replay and combined
+integration evidence, audio-track hashes and matching target payloads. Distribution
+checks include all fifteen skills with telemetry disabled. The course uses scripted
+service outcomes; real CD timing is tested separately, not claimed deterministic.
+Ares/physical-console evidence remains distinct from host and CPU models.

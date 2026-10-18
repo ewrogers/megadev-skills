@@ -9,9 +9,9 @@ def compare(paths):
     if len(reports)!=2 or {r.get('platform') for r in reports}!={'linux/arm64','linux/amd64'}:
         raise ValueError('Need one ARM64 and one AMD64 report')
     kinds={r.get('skill','megadev-project') for r in reports}
-    if len(kinds)!=1 or not kinds <= {'megadev-project','megadev-hardware','megadev-assets','megadev-graphics','megadev-input','megadev-system','megadev-memory','megadev-streaming','megadev-audio','megadev-scenes','megadev-save','megadev-scaling','megadev-debug'}:
+    if len(kinds)!=1 or not kinds <= {'megadev-project','megadev-hardware','megadev-assets','megadev-graphics','megadev-input','megadev-system','megadev-memory','megadev-streaming','megadev-audio','megadev-scenes','megadev-save','megadev-scaling','megadev-debug','megadev-testing'}:
         raise ValueError('Need matching supported skill reports')
-    expected=CASES | ({'us-tour'} if kinds & {'megadev-hardware','megadev-assets','megadev-graphics','megadev-input','megadev-system','megadev-memory','megadev-streaming','megadev-audio','megadev-scenes','megadev-save','megadev-scaling','megadev-debug'} else set())
+    expected=CASES | ({'us-tour'} if kinds & {'megadev-hardware','megadev-assets','megadev-graphics','megadev-input','megadev-system','megadev-memory','megadev-streaming','megadev-audio','megadev-scenes','megadev-save','megadev-scaling','megadev-debug','megadev-testing'} else set())
     if 'megadev-input' in kinds:expected|={'us-ea'}
     for r in reports:
         if r.get('passed') is not True or set(r.get('cases',{}))!=expected:
@@ -38,7 +38,7 @@ def compare(paths):
             if 'megadev-streaming' in kinds:
                 if any(case['startup'][kind].get('probe_execution') is not True for kind in ('main','sub')) or not {'GARDEN.MDA','CAVERN.MDA'} <= case.get('disc',{}).get('files',{}).keys():
                     raise ValueError('Missing executed streaming adapters or disc areas')
-            if kinds & {'megadev-audio','megadev-scenes'}:
+            if kinds & {'megadev-audio','megadev-scenes','megadev-testing'}:
                 if any(case['startup'][kind].get('probe_execution') is not True for kind in ('main','sub')) or set(case.get('audio_tracks',{}))!={'2','3'} or not {'GARDEN.MDA','CAVERN.MDA'} <= case.get('disc',{}).get('files',{}).keys():
                     raise ValueError('Missing executed audio adapters, CD tracks or disc areas')
             if 'megadev-scenes' in kinds and case['startup']['main'].get('scene_execution') is not True:
@@ -49,6 +49,8 @@ def compare(paths):
                 raise ValueError('Missing executed ASIC adapters, completion and publication checks')
             if 'megadev-debug' in kinds and (any(case['startup'][kind].get('probe_execution') is not True for kind in ('main','sub')) or case['startup']['main'].get('debug_execution') is not True):
                 raise ValueError('Missing executed diagnostic and paired coordination checks')
+            if 'megadev-testing' in kinds and any(case['startup']['main'].get(marker) is not True for marker in ('replay_execution','integration_execution')):
+                raise ValueError('Missing executed replay and combined integration regressions')
             if not case.get('boot_payloads') or not case.get('disc',{}).get('files'):
                 raise ValueError('Missing target payload hashes')
     if reports[0]['cases']!=reports[1]['cases']:
