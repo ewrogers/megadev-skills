@@ -24,6 +24,7 @@ The skill includes a standalone starter and instructions for building a disc wit
 | Foundations | [megadev-assets](skills/megadev-assets/SKILL.md) | Native PNG preparation, palettes, patterns and sprite sheets, with validated disc assets and Word RAM uploads. |
 | Foundations | [megadev-input](skills/megadev-input/SKILL.md) | Pad, mouse and multitap protocols, stable input snapshots and joining, with explicit device-validation limits. |
 | Foundations | [megadev-graphics](skills/megadev-graphics/SKILL.md) | Scrolling, parallax, sprites, animation frames and palette effects, with bounded frame submission. |
+| Systems | [megadev-audio](skills/megadev-audio/SKILL.md) | CD music, PCM samples, voice priorities and safe music/data loading handoffs. |
 | Systems | [megadev-memory](skills/megadev-memory/SKILL.md) | Linked RAM budgets, allocation lifetimes, buffer leases and safe 1M/2M Word RAM handling. |
 | Systems | [megadev-streaming](skills/megadev-streaming/SKILL.md) | Safe CD loads, preloading, resident art and bounded uploads with Word RAM handoffs. |
 | Systems | [megadev-system](skills/megadev-system/SKILL.md) | Main/Sub command lifetimes, bounded work, safe Word RAM handoffs, cancellation and late-reply recovery. |
@@ -42,6 +43,7 @@ Megadev has its own APIs and build conventions; these skills do not require SGDK
 [System Lab](skills/megadev-system/assets/system-lab/README.md) demonstrates bounded Sub work, rejected requests and safe cancellation/timeout recovery while Main keeps running.
 [Memory Lab](skills/megadev-memory/assets/memory-lab/README.md) visualizes RAM reservations, leased allocation lifetimes and verified 1M bank exchanges.
 [Streaming Lab](skills/megadev-streaming/assets/streaming-lab/README.md) preloads a second area while the current view stays resident, then travels through a fade with safe cancellation and missing-file recovery.
+[Audio Lab](skills/megadev-audio/assets/audio-lab/README.md) auditions original CD tracks and PCM effects, with stereo panning and explicit music/data drive handoffs.
 Labs demonstrate implementation techniques. Their appearance, controls and game design are examples, not requirements for your game.
 
 [Validation notes](docs/validation.md) explain the host tests, executed 68000 startup checks, architecture comparison and emulator checks. Emulator success does not replace real-console testing.

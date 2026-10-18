@@ -148,3 +148,23 @@ class ReportTests(unittest.TestCase):
                            lambda q:q['cases']['eu-release']['disc']['files'].pop('CAVERN.MDA')]:
                 bad=copy.deepcopy(b);mutate(bad)
                 with self.assertRaises(ValueError):run(bad)
+
+    def test_audio_reports_require_both_adapters_external_tracks_and_tour(self):
+        case={'disc':{'files':{'IPX.MMD':'hash','GARDEN.MDA':'garden','CAVERN.MDA':'cavern'}},
+              'audio_tracks':{'2':{'sha256':'two'},'3':{'sha256':'three'}},
+              'boot_payloads':{'sp.bin':'hash'},'startup':{'main':{'probe_execution':True},'sub':{'probe_execution':True},'room':{}},'sub_callback':True}
+        a={'passed':True,'skill':'megadev-audio','platform':'linux/arm64',
+           'cases':{k:copy.deepcopy(case) for k in CASES|{'us-tour'}}}
+        b=copy.deepcopy(a);b['platform']='linux/amd64'
+        with tempfile.TemporaryDirectory() as folder:
+            paths=[Path(folder)/'a.json',Path(folder)/'b.json']
+            def run(right):
+                for p,r in zip(paths,[a,right]):p.write_text(json.dumps(r))
+                return compare(paths)
+            self.assertTrue(run(b))
+            for mutate in [lambda q:q['cases'].pop('us-tour'),
+                           lambda q:q['cases']['us-debug']['startup']['sub'].pop('probe_execution'),
+                           lambda q:q['cases']['eu-release']['audio_tracks'].pop('3'),
+                           lambda q:q['cases']['us-release']['audio_tracks']['2'].update(sha256='changed')]:
+                bad=copy.deepcopy(b);mutate(bad)
+                with self.assertRaises(ValueError):run(bad)
