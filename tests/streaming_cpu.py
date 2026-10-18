@@ -1,9 +1,9 @@
 """Execute both compiled adapters; modeled drive writes are not BIOS/seek timing evidence."""
 from startup import check,symbols
 
-def check_streaming(project,hz,entry_controls=True):
-    from unicorn import UC_HOOK_MEM_READ,UC_HOOK_MEM_WRITE
-    from unicorn.m68k_const import UC_M68K_REG_A7,UC_M68K_REG_PC,UC_M68K_REG_SR,UC_M68K_REG_D0
+def check_streaming(project,hz,entry_controls=True,with_audio=False):
+    from unicorn import UC_HOOK_MEM_READ,UC_HOOK_MEM_WRITE,UC_HOOK_CODE
+    from unicorn.m68k_const import UC_M68K_REG_A7,UC_M68K_REG_PC,UC_M68K_REG_SR,UC_M68K_REG_D0,UC_M68K_REG_A0
     contexts={}
     for file,kind in [('ipx.mmd','main'),('spx.smd','sub')]:
         table=symbols((project/'build'/(file+'.elf.sym')).read_text())
@@ -23,12 +23,15 @@ def check_streaming(project,hz,entry_controls=True):
         for i,(name,data) in enumerate(zip([b'GARDEN.MDA;1',b'CAVERN.MDA;1'],files)))
     sub.mem_write(boot['dir_cache'],entries);put(sub,boot['dir_entry_count'],2)
     mailbox=bytearray(0x30);owner='main';grants=True;physical=bytearray(262144)
-    reads=0;writes=0
+    reads=0;writes=0;handoff_race=None
     def install(u,kind,base):
         def read(cpu,access,address,size,value,user):
-            nonlocal reads
+            nonlocal reads,owner,handoff_race
             if base<=address<base+0x30:
-                off=address-base;mailbox[2:4]=(1 if owner=='main' else 2).to_bytes(2,'big');u.mem_write(address,bytes(mailbox[off:off+size]))
+                off=address-base
+                if kind=='main' and off==0x20 and handoff_race is not None:
+                    owner='main';mailbox[0x20:0x22]=handoff_race.to_bytes(2,'big');handoff_race=None
+                mailbox[2:4]=(1 if owner=='main' else 2).to_bytes(2,'big');u.mem_write(address,bytes(mailbox[off:off+size]))
             if (kind=='main' and 0x200000<=address<0x240000) or (kind=='sub' and 0x80000<=address<0xC0000):
                 assert owner==kind,'Read from other CPU-owned Word RAM';offset=address-(0x200000 if kind=='main' else 0x80000)
                 u.mem_write(address,bytes(physical[offset:offset+size]));reads+=1
@@ -58,6 +61,19 @@ def check_streaming(project,hz,entry_controls=True):
         assert u.reg_read(UC_M68K_REG_PC)==stop,name+' did not return'
         assert u.reg_read(UC_M68K_REG_A7)==stack+4,name+' changed stack'
         return u.reg_read(UC_M68K_REG_D0)
+    bios_busy=0;cd_commands=[]
+    if with_audio:
+        def cd_bios(u,address,size,user):
+            nonlocal bios_busy
+            op=u.reg_read(UC_M68K_REG_D0)&65535;sr=u.reg_read(UC_M68K_REG_SR)
+            if op==0x80:u.reg_write(UC_M68K_REG_SR,(sr|1) if bios_busy else sr&~1)
+            else:
+                assert not bios_busy and not word(sub,ss['access_op']),'Music command collided with live data reader'
+                assert op in (2,3,4,0x13)
+                track=word(u,u.reg_read(UC_M68K_REG_A0));cd_commands.append((op,track));bios_busy=3
+            stack=u.reg_read(UC_M68K_REG_A7);u.reg_write(UC_M68K_REG_PC,word(u,stack,4));u.reg_write(UC_M68K_REG_A7,stack+4)
+        sub.hook_add(UC_HOOK_CODE,cd_bios,begin=0x5F22,end=0x5F22)
+        call('sub','audio_init')
     now=0;pending=None;drive_failure=False;drive_delay=5;corrupt=False;uploads=[]
     def drive():
         nonlocal pending,writes
@@ -74,8 +90,11 @@ def check_streaming(project,hz,entry_controls=True):
                 put(sub,ss['filesize'],len(files[word(sub,ss['asset'])]),4)
                 put(sub,ss['access_op_result'],0xff9c if drive_failure else 0x64);put(sub,ss['access_op'],0);pending=None
     def frame(upload=True):
-        nonlocal now
+        nonlocal now,bios_busy
         now=(now+1)&65535;drive()
+        if with_audio:
+            if bios_busy:bios_busy-=1
+            call('sub','audio_sub_tick',(now,hz));call('main','audio_main_tick',(300//hz,))
         if now%7:call('sub','stream_sub_tick',(now,hz))
         call('main','stream_main_tick',(300//hz,))
         if upload and word(main,ms['stream_phase'])==5:
@@ -88,12 +107,19 @@ def check_streaming(project,hz,entry_controls=True):
             frame()
             if not word(main,ms['stream_phase']):return
         raise AssertionError('Request did not retire')
+    if with_audio:
+        assert call('main','audio_request',(1,2))==1
+        for i in range(12):frame()
+        assert cd_commands[-1]==(0x13,2)
     for index in [0,1,0]:
         uploads.clear();assert call('main','stream_start',(index,))==1
         assert not call('main','stream_start',(index^1,)),'Overlapping request accepted'
         finish();assert word(main,ms['stream_ready'])==1,(index,word(main,ms['stream_result']),word(main,ms['stream_errors']))
         assert b''.join(uploads)==files[index][64:64+word(main,ms['stream_cache_tiles'])*32]
         assert bytes(main.mem_read(ms['stream_cache_map'],1600))==files[index][-1600:]
+        if with_audio:
+            for i in range(12):frame()
+            assert cd_commands[-1]==(0x13,2) and any(op==2 for op,track in cd_commands),'Music did not resume after data handoff'
     if entry_controls:
         # Entry prefetch runs before reaching the exit and is consumed exactly once.
         put(main,ms['active'],0);put(main,ms['player_x'],40);put(main,ms['preload_on_entry'],1)
@@ -106,6 +132,16 @@ def check_streaming(project,hz,entry_controls=True):
         put(main,ms['paused'],1);assert not call('main','stream_exit_waiting')
         put(main,ms['paused'],0);put(main,ms['cached']+2,1);assert not call('main','stream_exit_waiting')
         put(main,ms['cached']+2,0);put(main,ms['want_warp'],0)
+    # A reply may commit after an earlier ownership sample in the same poll.
+    assert call('main','stream_start',(0,))==1
+    call('main','stream_main_tick',(0,));assert word(main,ms['stream_phase'])==2
+    token=int.from_bytes(mailbox[0x10:0x12],'big')
+    mailbox[0x22:0x24]=(3).to_bytes(2,'big')
+    mailbox[0x24:0x26]=bytes(2);mailbox[0x2a:0x2c]=bytes(2);mailbox[0x2c:0x2e]=token.to_bytes(2,'big')
+    handoff_race=token;call('main','stream_main_tick',(0,))
+    assert word(main,ms['stream_phase'])==3,'Committed reply was checked against stale ownership'
+    mailbox[0x20:0x22]=bytes(2);call('main','stream_main_tick',(0,))
+    assert not word(main,ms['stream_phase']) and owner=='main'
     # Cancellation while the drive writes: no second request and no partial publication.
     drive_delay=20;assert call('main','stream_start',(1,))==1
     for i in range(12):frame()

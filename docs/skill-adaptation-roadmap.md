@@ -92,7 +92,7 @@ SGDK's TSK API is not assumed to exist.
 
 ### 4. Debugging and testing
 
-Expand dedicated `megadev-debug`, `megadev-testing` and `megadev-performance`.
+Implemented: `megadev-debug` and `megadev-testing`. Add `megadev-performance` next.
 Cover both CPU symbol/module views, command/ownership tracing, deterministic
 models/replay, failures and timeouts, PAL/NTSC, CD latency and audio contention.
 Publish a precise emulator-versus-console validation checklist. A base-68000
@@ -217,5 +217,13 @@ created. None means the existing SGDK code is a drop-in Megadev dependency.
 explicit build/CPU/module symbol lookup and controlled fault diagnosis. It reuses
 the system protocol rather than teaching another one. Automated gameplay replay,
 full fatal-vector handling and physical-console debugger qualification remain
-separate future work. Next candidates are `megadev-testing`, performance guidance
-and release/disc qualification; they should reuse these evidence conventions.
+separate future work. Testing now reuses these evidence conventions. Remaining candidates are
+performance guidance and release/disc qualification.
+
+## Testing milestone
+
+`megadev-testing` adds bounded input/event replay, equal-time PAL/NTSC checks,
+first-divergence reports and live CD/audio integration qualification. It reuses
+existing adapters and adds a reproduced committed-reply/ownership race regression
+across streaming/audio/scenes. Physical timing remains a separate acceptance step.
+Performance and release/disc qualification are the next major platform gaps.

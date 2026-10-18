@@ -20,7 +20,9 @@ void stream_cancel(void) {
 }
 void stream_main_tick(S16 elapsed) {
     if(stream_phase==ST_IDLE || stream_phase==ST_FAULT || stream_phase==ST_UPLOAD)return;
-    S16 mode=*ga_reg_memmode,reply=*ga_reg_comstat0;
+    /* Observe the committed reply before sampling its returned ownership. */
+    S16 reply=*ga_reg_comstat0;
+    S16 mode=*ga_reg_memmode;
     if(stream_phase==ST_GRANT || stream_phase==ST_READ || stream_phase==ST_RETIRE) {
         if(elapsed>=STREAM_TIMEOUT-elapsed_total)elapsed_total=STREAM_TIMEOUT;
         else elapsed_total=(S16)(elapsed_total+elapsed);
