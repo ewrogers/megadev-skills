@@ -1,0 +1,7 @@
+#ifndef SYSTEM_SHARED_H
+#define SYSTEM_SHARED_H
+#define CMD_LOAD_FILE 1
+#define FILE_IPX_MMD 0
+#define LAB_MAIN_STACK_TOP 0xFFE000
+#define LAB_SUB_STACK_TOP 0x20000
+#endif

@@ -170,3 +170,53 @@ processing, delayed-job recovery, cancellation, rejected requests and steady tex
 No physical-console timing or audio/drive
 coexistence qualification is claimed. Bootstrap disc loading is synchronous;
 the runtime example transforms a 522-byte owned buffer, not asynchronous CD data.
+
+
+## Memory Lab
+
+`megadev-memory` adds concrete linked RAM accounting, transient allocation
+lifetimes and 1M/2M Word RAM view validity. Planning still owns estimates;
+system owns request/acknowledgment contracts; graphics owns VDP transfer service.
+The arena, leases and memory commands are project examples, not Megadev APIs.
+
+The standalone layout reporter checks Main's 64 KiB and Sub's 512 KiB physical
+capacities, explicit reservations, actual module extents, overlaps and embedded
+pool bounds. The 4 KiB scene arena must exist in the linked state and is reported
+without adding it twice. A diagnostic-only write initially disappeared under
+optimization, so the Lab backing now uses observable volatile accesses; this
+does not prescribe volatile for general game assets. Reserved stacks/windows
+and measured runtime usage remain distinct.
+
+Host fixtures cover exact fits through 128 KiB, alignment, overflow/full refusal
+without mutation, pool/generation checks, leased unload refusal, stale handles,
+generation exhaustion, guarded chunk filling and corruption. Layout tests reject
+wrong capacities, overlap, one-byte overflow and a payload larger than a 1M bank.
+
+Run the integration helper with `--skill megadev-memory`. Five cases per
+architecture cover US/JP/EU release, US debug and US tour. Local native ARM64 and
+emulated AMD64 pass and produce matching payloads/layout reports. CI uses native
+runners for both. Compiled original-68000 adapters execute against one physical
+256 KiB model with interleaved 1M words and complementary CPU assignments.
+Every buffer access checks its view/ownership. The test rejects Main's 220000
+cell-mapped alias as an independent second bank and Sub's wrong-mode views.
+
+Paired tests exercise both RET directions, Main-front reads during Sub-back
+writes, different prior ownership on 1M exit, skipped/repeated ticks, pinned-reader
+swap refusal, early release, stale handles and a grant failure that cannot
+authorize reuse. The model covers register visibility, not electrical timing,
+arbitrary instruction interleavings or a full CDC/ASIC/BIOS machine.
+
+In ares v148 with the configured US BIOS, the automatic tour completed nine
+memory operations plus the lifetime check and reached AUTO PASS with zero
+errors. Both clocks and the diagnostic display continued. This includes 2M
+handoff, 1M entry, repeated swaps/fills and return to 2M with rebuilt contents.
+The user also completed the manual Budgets, Lifetimes and Word RAM checks on
+2026-10-17: allocation refusals, release/unload and the prepare/1M/swap/2M
+sequence worked, with Errors remaining `0000`.
+Physical mode/ownership timing, other BIOS/models, real stack maxima, PAL display
+operation and DMA/disc/audio/ASIC coexistence remain unqualified. No runtime
+disc streaming, direct Word RAM VDP DMA or ASIC work is demonstrated.
+
+All eight skills install with telemetry disabled in distribution checks.
+Memory Lab's independent generator, font regeneration and refusal to report an
+unbuilt layout are exercised. README, skill groups and roadmap include memory.
