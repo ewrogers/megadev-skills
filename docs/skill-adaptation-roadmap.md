@@ -59,10 +59,10 @@ hardware/system skills. Prove a small original Lab, not a renamed SGDK scaffold.
 
 Implemented: `megadev-system` for command lifetimes and bounded Main/Sub work,
 `megadev-memory` for linked budgets, lifetimes and safe 1M/2M views,
-and `megadev-streaming` for safe CD reads, preloads and bounded uploads.
+`megadev-streaming` for safe CD reads, preloads and bounded uploads,
+and `megadev-audio` for CD music, PCM samples and drive handoffs.
 
-Next build `megadev-audio`,
-`megadev-scenes` and `megadev-save`. Then add gameplay, collision, animation,
+Next build `megadev-scenes` and `megadev-save`. Then add gameplay, collision, animation,
 levels, UI/dialogue/localization and multiplayer patterns as needed.
 
 This group is specifically about Mega CD integration, not just adding CD reads:

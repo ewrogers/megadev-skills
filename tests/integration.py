@@ -16,7 +16,7 @@ from disc import digest
 
 def main():
     parser=argparse.ArgumentParser(description=__doc__)
-    parser.add_argument('--skill',default='megadev-project',choices=['megadev-project','megadev-hardware','megadev-assets','megadev-graphics','megadev-input','megadev-system','megadev-memory','megadev-streaming'])
+    parser.add_argument('--skill',default='megadev-project',choices=['megadev-project','megadev-hardware','megadev-assets','megadev-graphics','megadev-input','megadev-system','megadev-memory','megadev-streaming','megadev-audio'])
     parser.add_argument('--image',default='ewrogers/megadev:latest')
     parser.add_argument('--platform',required=True,choices=['linux/arm64','linux/amd64'])
     parser.add_argument('--output',type=Path,required=True);args=parser.parse_args()
@@ -41,7 +41,7 @@ def main():
             os.utime(path,(946684800,946684800),follow_symlinks=False)
     matrix=[('us-release','US','NTSC',[]),('jp-release','JP','NTSC',[]),
                                   ('eu-release','EU','PAL',[]),('us-debug','US','NTSC',['OPT_FLAGS=-Og -g -fconserve-stack -fomit-frame-pointer','DEBUG=1'])]
-    if args.skill in ('megadev-hardware','megadev-assets','megadev-graphics','megadev-input','megadev-system','megadev-memory','megadev-streaming'):matrix.append(('us-tour','US','NTSC',['TOUR=1']))
+    if args.skill in ('megadev-hardware','megadev-assets','megadev-graphics','megadev-input','megadev-system','megadev-memory','megadev-streaming','megadev-audio'):matrix.append(('us-tour','US','NTSC',['TOUR=1']))
     if args.skill=='megadev-input':matrix.append(('us-ea','US','NTSC',['EA_MODE=1']))
     for key,region,video,flags in matrix:
         project=creator(output/(key+' game'),project_id='project_lab')
@@ -63,7 +63,7 @@ def main():
         assert not unexpected,unexpected
         image=project/'project_lab.iso'
         expected_files=['IPX.MMD','SPX.SMD','ROOM.MMD']
-        if args.skill in ('megadev-assets','megadev-streaming'):expected_files+=['GARDEN.MDA','CAVERN.MDA']
+        if args.skill in ('megadev-assets','megadev-streaming','megadev-audio'):expected_files+=['GARDEN.MDA','CAVERN.MDA']
         if args.skill=='megadev-graphics':expected_files+=['SKY.MDA','QUAY.MDA']
         got=inspect(image,region,expected_files)
         for wrong_region, expected in [('JP' if region!='JP' else 'US', []), (region, ['MISSING.MMD'])]:
@@ -72,7 +72,17 @@ def main():
             else:raise AssertionError('Inspector accepted a wrong region or missing module')
         payloads={file.name.upper():digest(file.read_bytes()) for file in (project/'disc').iterdir() if file.is_file()}
         assert got['files']==payloads,'disc contents differ from compiled modules'
-        run(key+'-cue',['cue',relative+'/project_lab.iso'])
+        tracks={}
+        if args.skill=='megadev-audio':
+            cue_tool=load(project/'tools/make_cue.py','audio_cue')
+            cue_tool.write_cue(image)
+            for track in (2,3):
+                path=project/'res'/f'track{track:02}.wav'
+                tracks[str(track)]=digest(path.read_bytes())
+                destination=output/'res'/path.name;destination.parent.mkdir(exist_ok=True)
+                if destination.exists():assert destination.read_bytes()==path.read_bytes(),'Region changed audio payload'
+                else:shutil.copyfile(path,destination)
+        else:run(key+'-cue',['cue',relative+'/project_lab.iso'])
         assert 'MODE1/2048' in (project/'project_lab.cue').read_text()
         startup={}
         for file,kind in [('ipx.mmd','main'),('spx.smd','sub'),('room.mmd','room')]:
@@ -108,10 +118,18 @@ def main():
             assert check_streaming(project,50 if video=='PAL' else 60)
             startup['main']['probe_execution']=True
             startup['sub']['probe_execution']=True
+        if args.skill=='megadev-audio':
+            from audio_cpu import check_audio
+            from streaming_cpu import check_streaming
+            assert check_audio(project,50 if video=='PAL' else 60)
+            assert check_streaming(project,50 if video=='PAL' else 60,entry_controls=False)
+            startup['main']['probe_execution']=True
+            startup['sub']['probe_execution']=True
         sp=symbols((project/'build/sp.bin.elf.sym').read_text())
         assert check_sub_callback((project/'build/sp.bin').read_bytes(),sp)
         cases[key]={'disc':got,'startup':startup,'sub_callback':True,
                     'boot_payloads':{file.name:digest(file.read_bytes()) for file in (project/'build').glob('*.bin')}}
+        if tracks:cases[key]['audio_tracks']=tracks
         shutil.copyfile(image,output/(key+'.iso'));(output/(key+'.cue')).write_text((project/'project_lab.cue').read_text().replace('project_lab.iso',key+'.iso'))
         # Keep one self-contained review directory; copied CUE still refers to
         # project_lab.iso within each original project folder.

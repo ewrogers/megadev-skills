@@ -12,8 +12,8 @@ def main():
     with tempfile.TemporaryDirectory(prefix='megadev skills install ') as folder:
         cwd=Path(folder);env={**os.environ,'DO_NOT_TRACK':'1','DISABLE_TELEMETRY':'1'}
         subprocess.run(['git','init','-q',str(cwd)],check=True)
-        subprocess.run(['npx','--yes','skills@1.7.2','add',str(ROOT),'--skill','megadev-project','megadev-planning','megadev-hardware','megadev-assets','megadev-graphics','megadev-input','megadev-system','megadev-memory','megadev-streaming','--agent','codex','--yes','--copy'],cwd=cwd,env=env,check=True,stdout=subprocess.PIPE,stderr=subprocess.STDOUT,text=True,timeout=180)
-        for skill_name in ['megadev-project', 'megadev-planning', 'megadev-hardware', 'megadev-assets', 'megadev-graphics', 'megadev-input', 'megadev-system', 'megadev-memory', 'megadev-streaming']:
+        subprocess.run(['npx','--yes','skills@1.7.2','add',str(ROOT),'--skill','megadev-project','megadev-planning','megadev-hardware','megadev-assets','megadev-graphics','megadev-input','megadev-system','megadev-memory','megadev-streaming','megadev-audio','--agent','codex','--yes','--copy'],cwd=cwd,env=env,check=True,stdout=subprocess.PIPE,stderr=subprocess.STDOUT,text=True,timeout=180)
+        for skill_name in ['megadev-project', 'megadev-planning', 'megadev-hardware', 'megadev-assets', 'megadev-graphics', 'megadev-input', 'megadev-system', 'megadev-memory', 'megadev-streaming', 'megadev-audio']:
             installed=cwd/'.agents/skills'/skill_name
             if not installed.exists():raise AssertionError('Installed skill missing: '+skill_name)
             source=ROOT/'skills'/skill_name
@@ -72,5 +72,10 @@ def main():
         before=(game/'res/font.bin').read_bytes()
         subprocess.run([sys.executable,str(game/'tools/make_font.py')],check=True,cwd=game,stdout=subprocess.PIPE)
         assert (game/'res/font.bin').read_bytes()==before
-        print('Telemetry-disabled install: all nine skills, standalone generators, planning checker and art tools passed')
+        audio=cwd/'.agents/skills/megadev-audio'
+        game=cwd/'audio game'
+        subprocess.run([sys.executable,str(audio/'scripts/create_project.py'),str(game)],check=True,cwd=cwd,stdout=subprocess.PIPE)
+        subprocess.run([sys.executable,str(game/'tools/make_audio.py')],check=True,cwd=game,stdout=subprocess.PIPE)
+        assert (game/'res/track02.wav').is_file() and (game/'res/bell.pcm').is_file()
+        print('Telemetry-disabled install: all ten skills, standalone generators, planning checker and art/audio tools passed')
 if __name__=='__main__':main()

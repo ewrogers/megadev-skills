@@ -281,3 +281,42 @@ least 166 validation plus 77 upload ticks for the cavern. The Lab now starts
 preloading during entry and explicitly labels an exit that is still waiting.
 This removes the unexplained boundary behavior; it does not claim that real CD
 loads or the deliberately slower upload mode always finish before arrival.
+
+## Audio Lab
+
+`megadev-audio` covers CD-DA tracks, resident PCM effects and music/data-drive
+handoffs. The standalone Lab authors two original stereo CD tracks and three
+effects plus a looping bed. Its mixed-mode CUE includes real silent pregaps;
+opening only its ISO cannot test the music. No SGDK driver calls or unverified
+FM/PSG music driver are presented as Megadev APIs.
+
+Local native ARM64 and emulated AMD64 passed US/JP/EU release, US debug and US
+automatic-tour builds. All target payloads, bootstrap hashes and external audio
+track hashes match. The selected `ewrogers/megadev:latest` uses GCC 16.2.0 and
+Megadev revision `7a7246c14b845ad2f1bd3c7d73afb04cf67d83ef`. Native CI repeats
+both matrices. Containers remain limited to two CPUs.
+
+Portable C fixtures check voice priorities, bounded lifetimes, pause/resume,
+drive exclusion, latest music intent and faults at O0/O3, with undefined-behavior
+checking where supported. Authoring tests cover sign/magnitude samples, reserved
+loop markers, bank extents, release tails, pitch steps, WAV sectors, pregaps and
+CUE preservation. The complete host suite has 52 tests. Distribution checks
+install all ten skills with telemetry disabled and generate the audio independently.
+
+Compiled original-68000 adapters execute PCM bank/byte-lane uploads, channel
+enable masks, pitch/pan, mailbox retirement and a BIOS completion stub. Lost
+acknowledgments and stuck commands quarantine their slots rather than granting
+unsafe reuse. Paired reader tests retain delayed/failed reads, Word RAM ownership,
+corruption checks and copied VBlank uploads. These models neither synthesize
+sound nor measure BIOS or physical-drive timing.
+
+In ares v148 with the configured US BIOS, the automatic US tour reached
+`AUTO PASS - AUDIO CONTINUES` after its music/PCM requests and area handoff.
+The cavern rendered and the resident PCM bed remained marked active. This is
+runtime/command evidence, not an audible-quality result.
+The user confirmed that both CD music and PCM sounds work in the manual US
+build in ares on 2026-10-18. Detailed pitch/mix quality, track repeat, real seek
+behavior and PAL listening remain separate checks. Physical consoles,
+BIOS/model variations, FM/Z80 drivers, PCM streaming and ASIC coexistence remain
+unqualified. The Lab intentionally stops CD music for data reads and restarts it
+afterward; resident PCM can continue during the handoff.
