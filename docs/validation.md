@@ -210,6 +210,9 @@ In ares v148 with the configured US BIOS, the automatic tour completed nine
 memory operations plus the lifetime check and reached AUTO PASS with zero
 errors. Both clocks and the diagnostic display continued. This includes 2M
 handoff, 1M entry, repeated swaps/fills and return to 2M with rebuilt contents.
+The user also completed the manual Budgets, Lifetimes and Word RAM checks on
+2026-10-17: allocation refusals, release/unload and the prepare/1M/swap/2M
+sequence worked, with Errors remaining `0000`.
 Physical mode/ownership timing, other BIOS/models, real stack maxima, PAL display
 operation and DMA/disc/audio/ASIC coexistence remain unqualified. No runtime
 disc streaming, direct Word RAM VDP DMA or ASIC work is demonstrated.
