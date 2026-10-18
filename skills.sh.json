@@ -22,7 +22,8 @@
         "megadev-memory",
         "megadev-streaming",
         "megadev-audio",
-        "megadev-scenes"
+        "megadev-scenes",
+        "megadev-save"
       ]
     }
   ]

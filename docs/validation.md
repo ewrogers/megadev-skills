@@ -365,3 +365,44 @@ and compiled sprite-chain regression checks.
 The user confirmed the corrected beacon is visible and reaching it then pressing
 A continues normally in ares on 2026-10-18. The full manual pause/preload/audio
 matrix remains separate from that confirmed visual/input check.
+
+## Save Lab
+
+`megadev-save` adds actual internal `_BURAM` BIOS files, explicit versioned
+records and alternate-record recovery. It keeps its Sub workspace resident and
+uses a single Main/Sub request slot. It never issues format/delete calls or
+touches unrelated filenames. External cartridge capacity, archive/copy workflow
+and Main-side boundaries are documented from the official consumer manual,
+Megadev definitions and first-hand hardware sources; direct cartridge saving
+and custom Work RAM cartridge handlers are not implemented or qualified.
+
+The 59-test host suite includes O0/O3 C fixtures and undefined-behavior checks
+where supported. Save cases cover a known CRC vector, every single-bit record
+error, guards/output preservation, v1 migration, future-version refusal, sequence
+exhaustion/conflicts, failed/partial writes, readback mismatch and older-record
+recovery. Twelve skills install with telemetry disabled and generate independently.
+
+Original-68000 execution checks the actual Main/Sub service and assembly BIOS
+ABI: resident BRMINIT buffers, carry handling, A0 reset after search, exact private
+names, one normal 64-byte block and BRMWRITE's D1.l zero. Oversized/protected
+files stop before a BIOS read. Unformatted/unavailable media stops at init.
+The BIOS model rejects delete/format calls. Request snapshots, retirement,
+50/60 Hz timeout quarantine and the actual recovery-menu dispatcher execute.
+These model BIOS outcomes; they do not establish physical battery/write timing.
+
+US/JP/EU release, US debug and a read-only US tour pass locally on native ARM64
+and emulated AMD64. Native CI repeats both matrices and compares target bytes
+and execution facts. The latest container reports GCC 16.2.0 and Megadev revision
+`7a7246c14b845ad2f1bd3c7d73afb04cf67d83ef`; containers use a two-CPU quota.
+The automatic tour only probes media and deliberately never creates or corrupts
+emulator save files.
+
+In ares v148 with the configured US BIOS, the user confirmed save/load and steady
+text. A normal emulator quit/reopen retained sequence 0006 and the new BIOS probe
+validated it. The original B+A recovery gesture was awkward because B could
+enqueue a load before A; Help now exposes a direct A recovery action, with B only
+returning to values. Compiled menu tests prevent that race from returning.
+The user confirmed that the revised action recovered the previous save's values.
+Physical consoles, depleted batteries,
+shared filesystem damage, full/fragmented media, other BIOS variants, PAL runtime
+presentation and simultaneous CD/audio/ASIC activity remain separate checks.
