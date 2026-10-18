@@ -220,3 +220,55 @@ disc streaming, direct Word RAM VDP DMA or ASIC work is demonstrated.
 All eight skills install with telemetry disabled in distribution checks.
 Memory Lab's independent generator, font regeneration and refusal to report an
 unbuilt layout are exercised. README, skill groups and roadmap include memory.
+
+## Streaming Lab
+
+`megadev-streaming` adds a CD-native area preload example. It uses the pinned
+Megadev `filename`, `filebuff`, `access_op`, `access_op_result` and `filesize`
+contract, with request parameters committed before the operation. The resident
+Sub INT2 access service stays alive while Main renders resident art. A C ABI
+shim executes upstream `find_file` to validate directory size before starting a
+sector-rounded transfer. It does not use the pinned C inline wrapper's RTS path.
+
+Two original Asset Lab pictures remain unchanged, with a resident actor/font.
+Prepared files are checked before building; generated size constants must match
+the directory. A reserved 32 KiB portion of 2M Word RAM holds the padded read.
+The Lab explicitly does not qualify a 1M CDC/DMA pipeline. Main reads only after
+the matching result, confirmed ownership and mailbox retirement. CRC/map checks
+advance by at most 128 bytes per tick; pattern uploads are 64/256 bytes per frame.
+Two 640-tile slots end at B800 before the BIOS SAT. Main release code/data image
+is 11,936 bytes and linked state is 7,816 bytes in the audited build; reserved
+windows/stack capacity are distinct from those measured extents.
+
+Portable C tests exercise sector rounding, overflow, exact capacity, malformed
+headers/palettes/maps and corrupt checksums at O0/O3 with undefined-behavior
+checking where supported. The full host suite has 47 tests. Paired compiled
+original-68000 tests execute both adapters, real directory lookup and its ABI
+shim against a synthetic delayed sector producer. They cover overlapping
+requests, cancellation during read/validation/upload, missing/oversized files,
+read failures, corrupt data, timeout draining, unconfirmed grants and reuse only
+after retirement. Uploads remain unpublished until complete; VBlank consumes
+copied Main RAM bytes rather than retaining a Word RAM pointer.
+
+The publisher originally rewrote CRAM every frame after HUD writes. It now sends
+only changed palette lines, first, with an early-VBlank status/counter guard;
+late updates retry without changing the displayed palette snapshot. HUD work is
+limited to 24 changed cells. Tests verify no CRAM writes during active display
+or late blank, one early update and no repeat for unchanged colors. Map changes
+wait until the displayed area palette is black, rather than trusting a queued
+fade. In ares v148 with the configured US BIOS the revised tour reached AUTO
+PASS after preload, warp, cancelled read and missing-file recovery, with Errors
+0000 and foreground movement continuing. No CRAM dots were apparent in the
+revised capture; manual visual checks remain separate evidence.
+
+US/JP/EU release, US debug and US tour are built per architecture. CI uses native
+ARM64/AMD64 runners and compares target payloads; local AMD64 is emulated on the
+ARM64 host. Docker build/test containers use a two-CPU quota. Installed-resource
+checks include the independent generator, font and prepared-art tools with
+telemetry disabled. README, skill groups and roadmap include streaming.
+
+The synthetic producer is not a CDC/BIOS/drive timing model. Ares exercises the
+real reader/BIOS/VDP path but does not establish physical seek/retry deadlines,
+stack high-water, console/model compatibility or CD-DA/PCM/ASIC/DMA coexistence.
+No compressed decoding, general tile-column cache or seamless level streamer is
+claimed by this small area-preload example.

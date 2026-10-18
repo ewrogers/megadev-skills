@@ -12,8 +12,8 @@ def main():
     with tempfile.TemporaryDirectory(prefix='megadev skills install ') as folder:
         cwd=Path(folder);env={**os.environ,'DO_NOT_TRACK':'1','DISABLE_TELEMETRY':'1'}
         subprocess.run(['git','init','-q',str(cwd)],check=True)
-        subprocess.run(['npx','--yes','skills@1.7.2','add',str(ROOT),'--skill','megadev-project','megadev-planning','megadev-hardware','megadev-assets','megadev-graphics','megadev-input','megadev-system','megadev-memory','--agent','codex','--yes','--copy'],cwd=cwd,env=env,check=True,stdout=subprocess.PIPE,stderr=subprocess.STDOUT,text=True,timeout=180)
-        for skill_name in ['megadev-project', 'megadev-planning', 'megadev-hardware', 'megadev-assets', 'megadev-graphics', 'megadev-input', 'megadev-system', 'megadev-memory']:
+        subprocess.run(['npx','--yes','skills@1.7.2','add',str(ROOT),'--skill','megadev-project','megadev-planning','megadev-hardware','megadev-assets','megadev-graphics','megadev-input','megadev-system','megadev-memory','megadev-streaming','--agent','codex','--yes','--copy'],cwd=cwd,env=env,check=True,stdout=subprocess.PIPE,stderr=subprocess.STDOUT,text=True,timeout=180)
+        for skill_name in ['megadev-project', 'megadev-planning', 'megadev-hardware', 'megadev-assets', 'megadev-graphics', 'megadev-input', 'megadev-system', 'megadev-memory', 'megadev-streaming']:
             installed=cwd/'.agents/skills'/skill_name
             if not installed.exists():raise AssertionError('Installed skill missing: '+skill_name)
             source=ROOT/'skills'/skill_name
@@ -65,5 +65,12 @@ def main():
         assert (game/'res/font.bin').read_bytes()==before
         missing=subprocess.run([sys.executable,str(game/'tools/report_layout.py'),'--root',str(game)],cwd=cwd,capture_output=True)
         assert missing.returncode!=0, 'Unbuilt project unexpectedly passed linked layout validation'
-        print('Telemetry-disabled install: all eight skills, standalone generators, planning checker and art tools passed')
+        streaming=cwd/'.agents/skills/megadev-streaming'
+        game=cwd/'streaming game'
+        subprocess.run([sys.executable,str(streaming/'scripts/create_project.py'),str(game)],check=True,cwd=cwd,stdout=subprocess.PIPE)
+        assert (game/'src/stream_sub.c').is_file() and (game/'res/garden.mda').is_file()
+        before=(game/'res/font.bin').read_bytes()
+        subprocess.run([sys.executable,str(game/'tools/make_font.py')],check=True,cwd=game,stdout=subprocess.PIPE)
+        assert (game/'res/font.bin').read_bytes()==before
+        print('Telemetry-disabled install: all nine skills, standalone generators, planning checker and art tools passed')
 if __name__=='__main__':main()

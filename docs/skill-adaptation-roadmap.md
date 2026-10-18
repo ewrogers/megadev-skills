@@ -58,9 +58,10 @@ hardware/system skills. Prove a small original Lab, not a renamed SGDK scaffold.
 ### 2. Systems
 
 Implemented: `megadev-system` for command lifetimes and bounded Main/Sub work,
-and `megadev-memory` for linked budgets, lifetimes and safe 1M/2M views.
+`megadev-memory` for linked budgets, lifetimes and safe 1M/2M views,
+and `megadev-streaming` for safe CD reads, preloads and bounded uploads.
 
-Next build `megadev-streaming`, `megadev-audio`,
+Next build `megadev-audio`,
 `megadev-scenes` and `megadev-save`. Then add gameplay, collision, animation,
 levels, UI/dialogue/localization and multiplayer patterns as needed.
 
