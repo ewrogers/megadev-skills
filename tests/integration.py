@@ -22,7 +22,7 @@ def main():
     parser.add_argument('--output',type=Path,required=True);args=parser.parse_args()
     creator=load(ROOT/'skills'/args.skill/'scripts/create_project.py','selected_creator').create
     output=args.output.resolve();output.mkdir(parents=True,exist_ok=False)
-    base=['docker','run','--rm','--platform',args.platform]
+    base=['docker','run','--rm','--cpus=2','--platform',args.platform]
     if hasattr(os,'getuid'):base+=['--user',f'{os.getuid()}:{os.getgid()}']
     base+=['--mount',f'type=bind,source={output},target=/workspace',args.image]
     def run(name,command,success=True):

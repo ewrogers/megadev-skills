@@ -2,6 +2,8 @@
 
 - These skills target Megadev and Sega CD/Mega CD development. Do not copy SGDK
   APIs, resource formats, drivers or cartridge assumptions into Megadev guidance.
+- Limit Docker build/test containers to two CPUs (`docker run --cpus=2`).
+  Use at most two concurrent make jobs when rebuilding the toolchain.
 - Use `ewrogers/megadev:latest` in public commands and pull it before validation.
   Record actual compiler/SDK revisions in test reports; inspect the selected
   image's source before teaching an API or changing an assembly contract.
