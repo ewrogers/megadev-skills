@@ -13,7 +13,9 @@ flag, add palette lines or display the result by itself.
   trace lines or register values. Read the selected Megadev headers rather than
   inventing convenience APIs or importing SGDK types.
 - Read [Ownership and publication](references/pipeline.md) for Main/Sub leases,
-  completion, cached snapshots, hidden VRAM uploads and cost accounting.
+  completion, cached snapshots, hidden VRAM uploads and cost accounting. Its
+  performance section explains the measured 5→30 image/s improvements and how
+  to profile copying, HUD work and handoff delays without weakening correctness.
 - Read [Validation](references/testing.md) for math, compiled adapters, ares and
   checks that still need a physical console.
 

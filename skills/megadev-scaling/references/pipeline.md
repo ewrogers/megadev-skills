@@ -12,8 +12,8 @@
    configures the ASIC and writes trace base last.
 4. Sub polls completion. While busy it neither modifies inputs/output nor grants
    Word RAM away. It then grants Main ownership, waits for that state and replies.
-5. Main requires both the matching reply and a fresh ownership read after that reply before copying the
-   completed 8 KiB image into resident Main RAM. It then retires the mailbox.
+5. Main requires both the matching reply and a fresh ownership read after that reply before
+   copying the completed 8 KiB image into resident Main RAM. It then retires the mailbox.
 6. Main VBlank transfers the snapshot into hidden VRAM over two bounded uploads.
    It changes the preview's name table only after the final chunk is complete.
    The next ASIC job may overlap that upload. Its completed Word RAM output waits
@@ -33,8 +33,8 @@ handoff, bad reply or timeout quarantines the request; the current displayed
 image remains. There is no unsafe "cancel ASIC and immediately reuse RAM" path.
 In 2M mode the lease covers ownership of the whole Word RAM, even though this
 profile uses only part of its capacity. Main cannot access the unused remainder
-while Sub owns it. This example has no runtime CD reads after bootstrap. A real game must arbitrate
-Word RAM with its reader and other users rather than creating a second owner.
+while Sub owns it. This example has no runtime CD reads after bootstrap.
+A real game must arbitrate Word RAM with its reader and other users rather than creating a second owner.
 
 ## Separate costs
 
@@ -96,3 +96,58 @@ render/copy/handoff overhead. That ceiling belongs to this 8 KiB/two-upload
 configuration; it is not an ASIC-wide maximum. Use a smaller output, a measured
 larger upload budget or a different presentation strategy when a game needs a
 different cadence. Do not increase the budget blindly or display incomplete data.
+
+## Tuning scaling performance
+
+Measure the complete path before blaming the ASIC. Count newly committed images
+separately from serviced VBlanks and game updates. Keep temporary counters for
+grant wait, render/reply wait, retirement, pending upload and late-blank deferrals.
+Separate the first source-art initialization from steady state. Check that the
+profiler/HUD itself is not consuming the time being measured. VBlank counts do
+not substitute for an independent elapsed clock when checking missed interrupts.
+
+Start with a transfer ceiling. The Lab's 128×128×4bpp output is 8,192 bytes. With
+4,096 image bytes admitted per blank, each complete replacement needs at least
+two blanks: at most 30 new images per 60 Hz second or 25 per 50 Hz second, even
+if sampling were instantaneous. Also budget map commits, sprites, HUD and other
+DMA. For other profiles, calculate the actual padded output stride/extent rather
+than assuming width×height/2 always describes the allocated image.
+
+The useful optimizations from this Lab were:
+
+- **Keep static inputs resident.** Prepare stamp art/map once after acquiring the
+  runtime layout. Rebuild only trace lines that depend on the requested transform.
+  Use bounded fixed-point lookup/reciprocal math, with known signed ranges.
+- **Inspect generated copies and arithmetic.** The original word-copy loop used
+  expensive indexed address calculations for every word. A fixed-size original-
+  68000 MOVEM copy reduces that cost. Keep alignment, exact length, non-overlap,
+  C callee-saved registers and source ownership checked. Do not generalize this
+  8 KiB routine to arbitrary buffers or assume all C loops need assembly.
+- **Overlap independent stages.** Start the next ASIC job while the prior Main
+  snapshot uploads. Its finished Word RAM image waits until the old snapshot's
+  last DMA releases it. The optimization uses existing buffers; it does not let
+  two writers race or reveal a partly uploaded image.
+- **Avoid artificial frame waits.** Check a requested grant immediately and poll
+  retirement again after useful foreground work. Progress only when the actual
+  registers confirm it. A busy loop or a guessed delay is not a substitute for
+  ownership. Sample ownership after the committed token/reply: making the path
+  faster exposed a stale-snapshot race on both sides of the handoff.
+- **Charge UI work to the frame.** Repeatedly clearing/scanning all 1,120 HUD cells
+  dominated this small demo even when only a few digits changed. Queue changed
+  cells, coalesce repeated changes and cap the published packet. Pad shorter
+  labels so the optimization does not leave old glyphs on screen.
+
+Development checkpoints in ares were approximately 5 images/sec initially,
+7 after the first copy/overlap changes, 16 with changed-cell HUD work, and 30
+with prompt, race-correct handshakes. These are diagnostic observations during
+development, not isolated benchmarks assigning an exact gain to each change.
+The final decimal rate counts committed images per 60 serviced NTSC VBlanks;
+it is neither the ASIC's raw fill rate nor a physical-hardware guarantee.
+
+Recheck identity/rotation/floor pixels and all failure paths after optimizing.
+The Lab tests delayed completion, events arriving between ownership and marker
+reads, stalled ASIC/grants, protection of the uploading snapshot, exact upload
+contents and full-image commit. Confirm the result under the game's real CD,
+audio, sprite and DMA workload. If it still misses its target, reduce the output
+area/update frequency or choose a measured different upload/buffering policy;
+do not remove completion checks or raise the VBlank budget without evidence.
