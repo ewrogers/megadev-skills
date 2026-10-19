@@ -32,6 +32,7 @@ and build conventions; these skills do not require SGDK.
 | [megadev-assets](skills/megadev-assets/SKILL.md) | Prepare native art, palettes, patterns and sprite sheets with validated disc assets. |
 | [megadev-graphics](skills/megadev-graphics/SKILL.md) | Scroll backgrounds, add parallax, animate sprites and use palette effects. |
 | [megadev-ui](skills/megadev-ui/SKILL.md) | Build fonts, panels, menus and HUDs with bounded redraws. Includes Menu Lab. |
+| [megadev-localization](skills/megadev-localization/SKILL.md) | Compile translated text, budget accented fonts and check names, quantities and layouts. Includes Language Lab. |
 | [megadev-animation](skills/megadev-animation/SKILL.md) | Add named clips, frame holds, timed events and gameplay hitboxes. Includes Animation Lab. |
 | [megadev-effects](skills/megadev-effects/SKILL.md) | Add bounded particles, explosions, trails, weather and screen shake with effect priorities. Includes Effects Lab. |
 | [megadev-levels](skills/megadev-levels/SKILL.md) | Import Tiled maps, separate collision, scroll cameras and connect areas. Includes Level Lab. |
@@ -96,6 +97,7 @@ Ask for the task you want, and name a skill when you want to be explicit:
 
 - "Use megadev-project to create a bootable disc in a new folder."
 - "Use megadev-planning to budget an exploration game with voice and large backgrounds."
+- "Use megadev-localization to add accents and translated layouts with a checked font budget."
 - "Use megadev-ui to build a readable pause menu and inventory for my game's style."
 - "Use megadev-math to choose fixed-point formats and check overflow, trig and easing."
 - "Use megadev-animation to synchronize attack poses, events and hitboxes with my game clock."

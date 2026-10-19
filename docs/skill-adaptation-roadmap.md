@@ -333,3 +333,12 @@ existing VBlank, Main/Sub and audio services. It does not add a competing DMA
 queue, game clock, scene system or sprite engine. Separate water/split Labs
 exercise bounded DMA, immutable plans, pending/late interrupt recovery and
 regional timing. Physical CRAM/FIFO/bus qualification remains necessary.
+
+## Localization milestone
+
+`megadev-localization` owns UTF-8 authoring, checked private glyph encoding,
+translated layout bounds and font residency budgets. UI still owns panels and
+publication; dialogue owns reveal/choices; input owns device mapping; save owns
+versioned persistence. It does not replace those services or pass UTF-8 to BIOS
+printing. Language Lab's four Latin-script locales are examples, not a universal
+Unicode renderer or translation policy.

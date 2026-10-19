@@ -1,0 +1,222 @@
+{
+  "languages": [
+    "en",
+    "fr",
+    "de",
+    "es"
+  ],
+  "messages": {
+    "language": [
+      "English",
+      "Français",
+      "Deutsch",
+      "Español"
+    ],
+    "title": [
+      "The postcard desk",
+      "Le bureau des cartes",
+      "Die Postkartenstelle",
+      "El puesto de postales"
+    ],
+    "talk": [
+      "Conversation",
+      "Conversation",
+      "Gespräch",
+      "Conversación"
+    ],
+    "inventory": [
+      "Inventory",
+      "Inventaire",
+      "Inventar",
+      "Inventario"
+    ],
+    "name": [
+      "Your name",
+      "Votre nom",
+      "Dein Name",
+      "Tu nombre"
+    ],
+    "fonts": [
+      "Font budget",
+      "Budget des caractères",
+      "Zeichenvorrat",
+      "Presupuesto de glifos"
+    ],
+    "home_help": [
+      "A: open  C: language",
+      "A: ouvrir  C: langue",
+      "A: öffnen  C: Sprache",
+      "A: abrir  C: idioma"
+    ],
+    "back_help": [
+      "B: back  C: language",
+      "B: retour  C: langue",
+      "B: zurück  C: Sprache",
+      "B: volver  C: idioma"
+    ],
+    "talk_help": [
+      "A: next  B: back  C: language",
+      "A: suite  B: retour  C: langue",
+      "A: weiter  B: zurück  C: Sprache",
+      "A: seguir  B: volver  C: idioma"
+    ],
+    "name_help": [
+      "A: add  B: erase  C: language",
+      "A: ajout  B: effacer  C: langue",
+      "A: Wahl  B: löschen  C: Sprache",
+      "A: añadir  B: borrar  C: idioma"
+    ],
+    "count_help": [
+      "A: quantity  B: back  C: language",
+      "A: quantité B: retour C: langue",
+      "A: Menge  B: zurück  C: Sprache",
+      "A: cantidad B: volver C: idioma"
+    ],
+    "clerk": [
+      "The harbor clerk",
+      "La préposée du port",
+      "Die Hafenangestellte",
+      "La encargada del puerto"
+    ],
+    "story": [
+      "Welcome, {name}! Your postcard has arrived.\nThe captain will leave after the market closes. Ask for the blue envelope at the café, then meet us by the lighthouse. Keep your ticket safe; the next page has the final note.\nBon voyage!",
+      "Bienvenue, {name} ! Votre carte est arrivée.\nLe capitaine partira après la fermeture du marché. Demandez l'enveloppe bleue au café, puis retrouvez-nous près du phare. Gardez votre billet ; la page suivante contient la dernière note.\nBon voyage !",
+      "Willkommen, {name}! Deine Postkarte ist angekommen.\nDer Kapitän fährt nach Marktschluss ab. Frage im Café nach dem blauen Umschlag und triff uns danach am Leuchtturm. Bewahre deine Fahrkarte gut auf; die nächste Seite enthält den letzten Hinweis.\nGute Reise!",
+      "¡Bienvenido, {name}! Tu postal ha llegado.\nEl capitán saldrá al cerrar el mercado. Pide el sobre azul en el café y reúnete con nosotros junto al faro. Guarda tu billete; la página siguiente tiene la última nota.\n¡Buen viaje!"
+    ],
+    "welcome": [
+      "Traveler: {name}",
+      "Voyageur : {name}",
+      "Reisender: {name}",
+      "Viajero: {name}"
+    ],
+    "zero": [
+      "You have no apples.",
+      "Vous n'avez pas de pommes.",
+      "Du hast keine Äpfel.",
+      "No tienes manzanas."
+    ],
+    "one": [
+      "You have {count} apple.",
+      "Vous avez {count} pomme.",
+      "Du hast {count} Apfel.",
+      "Tienes {count} manzana."
+    ],
+    "many": [
+      "You have {count} apples.",
+      "Vous avez {count} pommes.",
+      "Du hast {count} Äpfel.",
+      "Tienes {count} manzanas."
+    ],
+    "apple": [
+      "Apples",
+      "Pommes",
+      "Äpfel",
+      "Manzanas"
+    ],
+    "key": [
+      "Brass keys",
+      "Clés en laiton",
+      "Messingschlüssel",
+      "Llaves de latón"
+    ],
+    "letter": [
+      "Letters",
+      "Lettres",
+      "Briefe",
+      "Cartas"
+    ],
+    "glyphs": [
+      "Used glyphs",
+      "Caractères utilisés",
+      "Genutzte Zeichen",
+      "Glifos usados"
+    ],
+    "bytes": [
+      "Pattern bytes",
+      "Octets des motifs",
+      "Musterdaten in Bytes",
+      "Bytes de patrones"
+    ],
+    "reserved": [
+      "Reserved tiles",
+      "Tuiles réservées",
+      "Reservierte Kacheln",
+      "Patrones reservados"
+    ],
+    "remaining": [
+      "Free glyph slots",
+      "Caractères disponibles",
+      "Freie Zeichenplätze",
+      "Glifos disponibles"
+    ],
+    "paused": [
+      "Paused",
+      "Pause",
+      "Pause",
+      "En pausa"
+    ],
+    "resume": [
+      "START: resume",
+      "START : reprendre",
+      "START: fortsetzen",
+      "START: continuar"
+    ],
+    "sample": [
+      "Café, façade, naïve, résumé",
+      "Café, façade, naïve, résumé",
+      "Grüße, Äpfel, Öl, süß",
+      "Niño, acción, pingüino, ¿sí?"
+    ],
+    "font_note": [
+      "One shared Latin atlas.",
+      "Un atlas latin partagé.",
+      "Ein gemeinsamer Latin-Font.",
+      "Un atlas latino compartido."
+    ],
+    "erase_key": [
+      "DEL",
+      "EFF",
+      "LÖS",
+      "BOR"
+    ],
+    "done_key": [
+      "OK",
+      "OK",
+      "OK",
+      "OK"
+    ]
+  },
+  "ids": [
+    "language",
+    "title",
+    "talk",
+    "inventory",
+    "name",
+    "fonts",
+    "home_help",
+    "back_help",
+    "talk_help",
+    "name_help",
+    "count_help",
+    "clerk",
+    "story",
+    "welcome",
+    "zero",
+    "one",
+    "many",
+    "apple",
+    "key",
+    "letter",
+    "glyphs",
+    "bytes",
+    "reserved",
+    "remaining",
+    "paused",
+    "resume",
+    "sample",
+    "font_note",
+    "erase_key",
+    "done_key"
+  ]
+}
