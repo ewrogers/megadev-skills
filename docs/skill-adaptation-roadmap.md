@@ -323,3 +323,13 @@ The importer can be extended deliberately when a project needs other Tiled
 orientations, additional layers, animated tiles or larger budgets.
 
 `megadev-math` owns numeric formats, range and rounding proofs. Gameplay owns clocks, collision owns contact policy, and scaling owns ASIC image transforms.
+
+
+## Raster milestone
+
+`megadev-raster` owns within-frame HBlank scheduling, reflected map transforms
+and split-view presentation. It builds on graphics/VDP ownership and keeps the
+existing VBlank, Main/Sub and audio services. It does not add a competing DMA
+queue, game clock, scene system or sprite engine. Separate water/split Labs
+exercise bounded DMA, immutable plans, pending/late interrupt recovery and
+regional timing. Physical CRAM/FIFO/bus qualification remains necessary.

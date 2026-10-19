@@ -12,8 +12,8 @@ def main():
     with tempfile.TemporaryDirectory(prefix='megadev skills install ') as folder:
         cwd=Path(folder);env={**os.environ,'DO_NOT_TRACK':'1','DISABLE_TELEMETRY':'1'}
         subprocess.run(['git','init','-q',str(cwd)],check=True)
-        subprocess.run(['npx','--yes','skills@1.7.2','add',str(ROOT),'--skill','megadev-project','megadev-planning','megadev-hardware','megadev-assets','megadev-graphics','megadev-input','megadev-system','megadev-memory','megadev-streaming','megadev-audio','megadev-scenes','megadev-save','megadev-scaling','megadev-debug','megadev-testing','megadev-performance','megadev-release','megadev-best-practices','megadev-ui','megadev-dialogue','megadev-gameplay','megadev-animation','megadev-collision','megadev-levels','megadev-math','megadev-compression','megadev-effects','--agent','codex','--yes','--copy'],cwd=cwd,env=env,check=True,stdout=subprocess.PIPE,stderr=subprocess.STDOUT,text=True,timeout=180)
-        for skill_name in ['megadev-project', 'megadev-planning', 'megadev-hardware', 'megadev-assets', 'megadev-graphics', 'megadev-input', 'megadev-system', 'megadev-memory', 'megadev-streaming', 'megadev-audio', 'megadev-scenes', 'megadev-save', 'megadev-scaling','megadev-debug','megadev-testing','megadev-performance','megadev-release','megadev-best-practices','megadev-ui','megadev-dialogue','megadev-gameplay','megadev-animation','megadev-collision','megadev-levels','megadev-math','megadev-compression','megadev-effects']:
+        subprocess.run(['npx','--yes','skills@1.7.2','add',str(ROOT),'--skill','megadev-project','megadev-planning','megadev-hardware','megadev-assets','megadev-graphics','megadev-input','megadev-system','megadev-memory','megadev-streaming','megadev-audio','megadev-scenes','megadev-save','megadev-scaling','megadev-debug','megadev-testing','megadev-performance','megadev-release','megadev-best-practices','megadev-ui','megadev-dialogue','megadev-gameplay','megadev-animation','megadev-collision','megadev-levels','megadev-math','megadev-compression','megadev-effects','megadev-raster','--agent','codex','--yes','--copy'],cwd=cwd,env=env,check=True,stdout=subprocess.PIPE,stderr=subprocess.STDOUT,text=True,timeout=180)
+        for skill_name in ['megadev-project', 'megadev-planning', 'megadev-hardware', 'megadev-assets', 'megadev-graphics', 'megadev-input', 'megadev-system', 'megadev-memory', 'megadev-streaming', 'megadev-audio', 'megadev-scenes', 'megadev-save', 'megadev-scaling','megadev-debug','megadev-testing','megadev-performance','megadev-release','megadev-best-practices','megadev-ui','megadev-dialogue','megadev-gameplay','megadev-animation','megadev-collision','megadev-levels','megadev-math','megadev-compression','megadev-effects','megadev-raster']:
             installed=cwd/'.agents/skills'/skill_name
             if not installed.exists():raise AssertionError('Installed skill missing: '+skill_name)
             source=ROOT/'skills'/skill_name
@@ -174,5 +174,12 @@ def main():
         subprocess.run([sys.executable,str(effects/'scripts/create_project.py'),str(game)],check=True,cwd=cwd,stdout=subprocess.PIPE)
         subprocess.run([sys.executable,str(game/'tools/make_art.py')],check=True,cwd=game,stdout=subprocess.PIPE)
         assert (game/'res/map.bin').is_file() and (game/'src/fx.c').is_file()
-        print('Telemetry-disabled install: all twenty-seven skills, standalone generators, planning checker and art/audio tools passed')
+        raster=cwd/'.agents/skills/megadev-raster'
+        for demo in ['water','split']:
+            game=cwd/('raster '+demo)
+            subprocess.run([sys.executable,str(raster/'scripts/create_project.py'),str(game),'--demo',demo],check=True,cwd=cwd,stdout=subprocess.PIPE)
+            subprocess.run([sys.executable,str(game/'tools/make_art.py')],check=True,cwd=game,stdout=subprocess.PIPE)
+            assert (game/'src/hint.s').is_file() and (game/'res/reflection_map.bin').is_file()
+            assert 'DEMO?='+demo.upper() in (game/'Makefile').read_text()
+        print('Telemetry-disabled install: all twenty-eight skills, standalone generators, planning checker and art/audio tools passed')
 if __name__=='__main__':main()

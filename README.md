@@ -54,6 +54,7 @@ and build conventions; these skills do not require SGDK.
 | [megadev-streaming](skills/megadev-streaming/SKILL.md) | Load and preload CD content with resident art and bounded uploads. |
 | [megadev-compression](skills/megadev-compression/SKILL.md) | Compare sector-rounded disc size, decode time and RAM; safely decode and preload compressed assets. Includes Compression Lab. |
 | [megadev-scaling](skills/megadev-scaling/SKILL.md) | Use the graphics ASIC for rotation, scaling and a perspective floor, with measured limits. |
+| [megadev-raster](skills/megadev-raster/SKILL.md) | Add bounded HBlank water/reflection and split-screen effects with interrupt and palette safety. Includes two Raster Labs. |
 
 ### Test, debug and optimize
 
@@ -105,6 +106,7 @@ Ask for the task you want, and name a skill when you want to be explicit:
 - "Check this Main/Sub handoff with megadev-system and megadev-best-practices."
 - "Use megadev-effects to add bounded feedback through my existing renderer, preserving my game’s art direction."
 - "Use megadev-compression to compare raw and packed assets, decode safely and budget loading RAM."
+- "Use megadev-raster to add a moving reflection or split view through my existing renderer."
 - "Use megadev-release to validate and package this mixed-mode disc."
 
 The guidance accounts for both CPUs, RAM ownership, interrupts, the shared VDP,
