@@ -1,1 +1,3 @@
 res/*.bin binary
+src/catalog.c text eol=lf
+src/catalog.h text eol=lf

@@ -41,13 +41,14 @@ The image inspected for this milestone uses Megadev
 `7a7246c14b845ad2f1bd3c7d73afb04cf67d83ef` and GCC 16.2.0. Reports record the
 actual image/tool revisions; public commands follow latest.
 
-NTSC user testing confirmed navigation, accents, paging and name entry. It also
-caught an unused second menu-label row being highlighted. Rendering now leaves
+NTSC and PAL user testing confirmed navigation, accents, paging, name entry
+and the corrected single selection highlight. The initial NTSC check caught
+extra highlights on the language label and unused second menu row. Rendering now leaves
 fully blank rows as panel background; tests check both the empty English row
 and the genuinely wrapped French label. Name-grid and budget labels are also
 checked against the panel's bottom border.
 
-PAL emulator acceptance and native CI status are recorded in the PR. Real
+Native CI status is recorded in the PR. Real
 hardware remains unqualified: check overscan, readability, VBlank/bus timing and
 combined CD/audio/ASIC activity. Sample translations need native-speaker review.
 The private glyph codec is not universal Unicode or a stable save-name format.
