@@ -10,11 +10,12 @@ polyphony and stealing rules belong to the game, not this example.
 Audio Lab reserves four 4 KiB banks (16 KiB total). It copies samples only at
 startup with all channels disabled, using the Sub-visible odd byte lane. Bed,
 bell, pluck and drum have separate addresses; a zero/marker tail at 3F00 is
-reserved for one-shot silence. The remainder of PCM RAM is unused, not
-implicitly available to another owner. No allocator or streamed PCM is supplied.
+reserved for one-shot silence. The optional [streaming path](streamed-pcm.md)
+reserves two additional 16 KiB halves; it never replaces these resident banks.
 
-Hardware channel 1 is the looping bed. Channels 2/3 serve effects; channels 4..8
-are unused. This is an illustrative split, not a three-channel hardware limit.
+Hardware channel 1 is the looping bed. Channels 2/3 serve effects; channel 4
+serves the optional long-sample streamer. Channels 5..8 remain unused. This is
+an illustrative split, not a four-channel hardware limit.
 The model selects a free effect slot, otherwise the lower-priority slot;
 a lower-priority request cannot steal it. Equal priorities may replace that
 slot. Effects have finite release times in a 300 Hz clock shared by PAL/NTSC.
@@ -24,10 +25,10 @@ enable bits, and pan uses independent left/right four-bit gains.
 
 The Sub foreground loop is the only PCM selector/register owner. It uses the
 same four-NOP settings settle interval illustrated in upstream `pcm.s`.
-No PCM RAM writes occur while voices play, and interrupt service does not
-change the selected PCM channel/wave bank. An asynchronous sample uploader
-would need its own range leases and idle-channel handoff; this Lab does not
-qualify overwriting a live sample bank.
+Resident PCM is never replaced during play. The streamer writes only an
+inactive reserved half; interrupt service does not change the selected PCM
+channel/wave bank. All users share the channel-enable shadow in `audio_sub.c`.
+This does not qualify arbitrary live-bank replacement.
 
 ## The optical drive
 
@@ -36,15 +37,17 @@ CD music and file reads share a pickup. The Lab's policy is:
 1. Keep the desired track/pause state as intent.
 2. Before a read, lock the drive for data. Finish any in-flight BIOS command,
    stop CD music, then wait for that command's completion.
-3. Let the existing reader fill its owned 2M Word RAM buffer. Main renders
-   resident art and can send PCM effects through a separate command channel.
+3. Let the existing scenery reader fill owned 2M Word RAM, or let the voice
+   reader fill its reserved Sub staging buffer. They are mutually exclusive
+   drive clients. Main renders resident art and can send PCM effects through
+   the existing command channel.
 4. When the reader is idle, release the drive. Restart the latest requested
    track from its beginning, or leave it stopped if the player requested Stop.
    Desired pause is applied after restart.
 
 This is a deliberate interruption/restart policy, not seamless CD-DA/data
 concurrency or resume-at-same-position. Preloading before CD music starts,
-using resident PCM during a seek, or a separately designed PCM streaming system
+using resident PCM during a seek, or the optional long-sample streamer
 may suit a game better. Do not issue another BIOS disc command during a live
 reader operation. The CD access pump remains serviced through every UI page,
 scene fade and gameplay pause.

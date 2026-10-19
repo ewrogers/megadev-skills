@@ -1,4 +1,5 @@
 #include "audio.h"
+#include "voice.h"
 #include "../build/audio_assets.h"
 #include <sub/bios.def.h>
 #include <sub/gate_arr.h>
@@ -8,6 +9,10 @@ AudioState audio_state;
 extern unsigned char const pcm_bed[],pcm_bell[],pcm_pluck[],pcm_drum[];
 static A16 last_tick,mail_stage,drive_elapsed,bed_applied;
 static unsigned char disabled=0xff;
+void audio_stream_enable(int enabled) {
+    if(enabled)disabled&=(unsigned char)~8u;else disabled|=8u;
+    *PCM_CDISABLE=disabled;
+}
 static void settle(void){__asm__ volatile("nop\nnop\nnop\nnop" ::: "memory");}
 static unsigned char pan_byte(A16 pan){return pan==0?0x0c:pan==2?0xc0:0x88;}
 static void channel(A16 index,A16 sample,A16 pan) {
@@ -51,7 +56,9 @@ void audio_sub_tick(A16 now,A16 hz) {
     if(!mail_stage && seq) {
         A16 op=*ga_reg_comcmd5,arg=*ga_reg_comcmd6;
         if(seq!=*ga_reg_comcmd4)return;
-        if(op==AU_EFFECT && arg<3) {
+        if(op==AU_STREAM && arg<4)voice_request(arg&1u,arg>>1);
+        else if(op==AU_STREAM_STOP)voice_stop();
+        else if(op==AU_EFFECT && arg<3) {
             A16 const ticks[]={AUDIO_BELL_TICKS,AUDIO_PLUCK_TICKS,AUDIO_DRUM_TICKS};
             int voice=audio_voice(&audio_state,arg,(A16)(arg+1),ticks[arg],audio_state.pan);
             if(voice>=0)channel((A16)(voice+1),(A16)(arg+1),audio_state.pan);
@@ -60,7 +67,7 @@ void audio_sub_tick(A16 now,A16 hz) {
             if(op==AU_PAN) {
                 for(A16 i=0;i<3;i++){*PCM_CTRL=(unsigned char)CHANNEL(i+1);settle();*PCM_PAN=pan_byte(audio_state.pan);settle();}
             }
-            if(op==AU_PANIC){disabled=0xff;bed_applied=0;*PCM_CDISABLE=disabled;}
+            if(op==AU_PANIC){voice_stop();disabled=0xff;bed_applied=0;*PCM_CDISABLE=disabled;}
         }
         __asm__ volatile("" ::: "memory");*ga_reg_comstat7=seq;mail_stage=1;
     }
@@ -81,5 +88,5 @@ void audio_sub_tick(A16 now,A16 hz) {
         audio_cd_command(command,audio_state.pending_track);drive_elapsed=0;
     }
     A16 state=audio_state.fault?5:audio_state.data_lock?3:audio_state.inflight?4:!audio_state.applied_track?0:audio_state.applied_pause?2:1;
-    *ga_reg_comstat4=(A16)((state<<8)|((unsigned char)~disabled&7u));
+    *ga_reg_comstat4=(A16)((state<<8)|voice_status()|((unsigned char)~disabled&15u));
 }

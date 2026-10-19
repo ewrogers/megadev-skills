@@ -854,3 +854,9 @@ UI/text and checkpoint owners in an original exploration game. The new CI profil
 checks both architectures and five build variants, shared audio/loading fault
 regressions, paired checkpoint/BIOS execution and an incremental generated-art/
 header rebuild. It is not a new skill and does not prescribe its design.
+
+## Streamed PCM expansion
+
+The Audio Lab now adds long voice/sample streaming to its existing single
+PCM/drive owner. See [streamed PCM validation](streamed-pcm-validation.md) for
+buffer budgets, failure tests, regional auditions and hardware limits.

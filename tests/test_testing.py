@@ -29,7 +29,10 @@ class TestingTests(unittest.TestCase):
         with tempfile.TemporaryDirectory() as folder:
             game=create(Path(folder)/'testing game')
             with self.assertRaises(ValueError):create(game)
+            # This replay fixture intentionally keeps the resident-audio path.
+            # Transition Lab uses that same owner; Audio Lab additionally opts
+            # into long-sample streaming and has extra arbitration hooks.
             for name in ['stream.c','stream_main.c','stream_sub.c','audio.c','audio_main.c','audio_sub.c']:
-                self.assertEqual((game/'src'/name).read_bytes(),(ROOT/'skills/megadev-audio/assets/audio-lab/src'/name).read_bytes())
+                self.assertEqual((game/'src'/name).read_bytes(),(ROOT/'skills/megadev-scenes/assets/transition-lab/src'/name).read_bytes())
             self.assertTrue((game/'tools/verify_replay.py').is_file())
             self.assertTrue((game/'tools/make_audio.py').is_file())

@@ -10,6 +10,42 @@ SKILL=ROOT/'skills/megadev-audio'
 LAB=SKILL/'assets/audio-lab'
 create=load(SKILL/'scripts/create_project.py','audio_creator').create
 class AudioTests(unittest.TestCase):
+    def test_stream_half_ownership_end_underrun_and_invalid_order(self):
+        cc=next((p for n in ['clang','cc','gcc'] if (p:=shutil.which(n))),None)
+        if not cc:
+            if os.environ.get('MEGADEV_REQUIRE_HOST_CC')=='1':self.fail('C compiler required')
+            self.skipTest('No host C compiler')
+        with tempfile.TemporaryDirectory() as folder:
+            for mode in ['-O0','-O3']:
+                binary=Path(folder)/('voice'+mode+('.exe' if os.name=='nt' else ''))
+                args=[cc,'-std=c17',mode,'-Wall','-Wextra','-Werror','-I',str(LAB/'src'),str(LAB/'src/voice.c'),str(ROOT/'tests/fixtures/voice.c'),'-o',str(binary)]
+                if os.name!='nt':args+=['-fsanitize=undefined','-fno-sanitize-recover=all']
+                subprocess.run(args,check=True,capture_output=True)
+                subprocess.run([str(binary)],check=True,capture_output=True)
+
+    def test_long_voice_and_sample_chunks_are_sector_safe_and_deterministic(self):
+        tool=load(LAB/'tools/make_voice.py','voice_gen')
+        with self.assertRaises(ValueError):tool.split(b'')
+        with self.assertRaises(ValueError):tool.split(b'\x80\xff')
+        with tempfile.TemporaryDirectory() as folder:
+            game=create(Path(folder)/'stream game');manifest=tool.generate(game)
+            self.assertEqual(manifest,tool.generate(game))
+            self.assertEqual(manifest['pcm_buffer_bytes'],32768)
+            self.assertEqual(manifest['sub_staging_bytes'],16384)
+            for name,clip in manifest['clips'].items():
+                self.assertGreater(clip['bytes'],65536)
+                for filename in clip['files']:
+                    data=(game/'disc'/filename).read_bytes()
+                    self.assertEqual(len(data),16384);self.assertEqual(len(data)%2048,0)
+                    self.assertEqual(data[-1],0xff);self.assertNotIn(0xff,data[:-1])
+            damaged=game/'disc/V000.pcm';damaged.write_bytes(b'broken')
+            tool.generate(game);self.assertEqual(len(damaged.read_bytes()),16384)
+            with wave.open(str(game/'res/stream_voice.wav'),'wb') as out:
+                out.setparams((2,2,8000,0,'NONE',''));out.writeframes(bytes(8000*4*10))
+            with self.assertRaises(ValueError):tool.generate(game)
+            with wave.open(str(game/'res/stream_voice.wav'),'wb') as out:
+                out.setparams((1,2,22050,0,'NONE',''));out.writeframes(bytes(22050*2*10))
+            with self.assertRaises(ValueError):tool.generate(game)
     def test_voice_priorities_lifetimes_and_drive_ownership_at_O0_O3(self):
         cc=next((p for n in ['clang','cc','gcc'] if (p:=shutil.which(n))),None)
         if not cc:

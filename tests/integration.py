@@ -183,6 +183,11 @@ def main():
             assert check_testing(project,50 if video=='PAL' else 60)
             startup['main']['replay_execution']=True
             startup['main']['integration_execution']=True
+        if args.skill=='megadev-audio':
+            from voice_cpu import check_voice
+            assert check_voice(project,50 if video=='PAL' else 60)
+            startup['main']['stream_voice_execution']=True
+            startup['sub']['stream_voice_execution']=True
         if args.skill=='megadev-save':
             from save_cpu import check_save
             assert check_save(project,50 if video=='PAL' else 60)

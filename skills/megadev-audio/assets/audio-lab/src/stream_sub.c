@@ -1,5 +1,6 @@
 #include "stream.h"
 #include "audio.h"
+#include "voice.h"
 #include "../build/stream_assets.h"
 #include <sub/cdrom.h>
 #include <sub/gate_arr.h>
@@ -14,6 +15,7 @@ void stream_sub_tick(S16 now,S16 hz) {
     if(now==last_tick)return;
     last_tick=now;
     if(!stage) {
+        if(voice_busy())return; /* One drive owner; voice keeps its reservation. */
         token=*ga_reg_comcmd0;if(!token)return;
         asset=*ga_reg_comcmd1;if(token!=*ga_reg_comcmd0)return;
         result=SR_OK;length=0;
