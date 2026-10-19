@@ -473,3 +473,23 @@ class ReportTests(unittest.TestCase):
                            lambda q:q['cases']['eu-release']['startup']['main'].pop('probe_execution')]:
                 bad=copy.deepcopy(b);mutate(bad)
                 with self.assertRaises(ValueError):run(bad)
+
+
+    def test_localization_requires_executed_catalog_and_publication(self):
+        case={'disc':{'files':{'IPX.MMD':'ipx'}},'boot_payloads':{'sp.bin':'sp'},'sub_callback':True,
+              'startup':{'main':{'localization_execution':True,'publication_execution':True,'probe_execution':True,'incremental_execution':True},'sub':{},'room':{}}}
+        a={'passed':True,'skill':'megadev-localization','platform':'linux/arm64','cases':{k:copy.deepcopy(case) for k in CASES|{'us-tour'}}}
+        b=copy.deepcopy(a);b['platform']='linux/amd64'
+        with tempfile.TemporaryDirectory() as folder:
+            paths=[Path(folder)/'a.json',Path(folder)/'b.json']
+            def run(right):
+                for p,r in zip(paths,[a,right]):p.write_text(json.dumps(r))
+                return compare(paths)
+            self.assertTrue(run(b))
+            for mutate in [lambda q:q['cases'].pop('us-tour'),
+                           lambda q:q['cases']['us-release']['startup']['main'].pop('incremental_execution'),
+                           lambda q:q['cases']['us-debug']['startup']['main'].pop('localization_execution'),
+                           lambda q:q['cases']['eu-release']['startup']['main'].pop('publication_execution'),
+                           lambda q:q['cases']['us-release']['startup']['main'].pop('probe_execution')]:
+                bad=copy.deepcopy(b);mutate(bad)
+                with self.assertRaises(ValueError):run(bad)

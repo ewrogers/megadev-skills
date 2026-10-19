@@ -16,7 +16,7 @@ from disc import digest
 
 def main():
     parser=argparse.ArgumentParser(description=__doc__)
-    parser.add_argument('--skill',default='megadev-project',choices=['megadev-project','megadev-hardware','megadev-assets','megadev-graphics','megadev-input','megadev-system','megadev-memory','megadev-streaming','megadev-audio','megadev-scenes','megadev-save','megadev-scaling','megadev-debug','megadev-testing','megadev-performance','megadev-best-practices','megadev-ui','megadev-dialogue','megadev-gameplay','megadev-animation','megadev-collision','megadev-levels','megadev-math','megadev-compression','megadev-effects','megadev-raster','cross-skill-validation'])
+    parser.add_argument('--skill',default='megadev-project',choices=['megadev-project','megadev-hardware','megadev-assets','megadev-graphics','megadev-input','megadev-system','megadev-memory','megadev-streaming','megadev-audio','megadev-scenes','megadev-save','megadev-scaling','megadev-debug','megadev-testing','megadev-performance','megadev-best-practices','megadev-ui','megadev-dialogue','megadev-gameplay','megadev-animation','megadev-collision','megadev-levels','megadev-math','megadev-compression','megadev-effects','megadev-raster','megadev-localization','cross-skill-validation'])
     parser.add_argument('--image',default='ewrogers/megadev:latest')
     parser.add_argument('--platform',required=True,choices=['linux/arm64','linux/amd64'])
     parser.add_argument('--output',type=Path,required=True);args=parser.parse_args()
@@ -42,7 +42,7 @@ def main():
             os.utime(path,(946684800,946684800),follow_symlinks=False)
     matrix=[('us-release','US','NTSC',[]),('jp-release','JP','NTSC',[]),
                                   ('eu-release','EU','PAL',[]),('us-debug','US','NTSC',['OPT_FLAGS=-Og -g -fconserve-stack -fomit-frame-pointer','DEBUG=1'])]
-    if args.skill in ('megadev-hardware','megadev-assets','megadev-graphics','megadev-input','megadev-system','megadev-memory','megadev-streaming','megadev-audio','megadev-scenes','megadev-save','megadev-scaling','megadev-debug','megadev-testing','megadev-performance','megadev-best-practices','megadev-ui','megadev-dialogue','megadev-gameplay','megadev-animation','megadev-collision','megadev-levels','megadev-math','megadev-compression','megadev-effects','megadev-raster','cross-skill-validation'):matrix.append(('us-tour','US','NTSC',['TOUR=1']))
+    if args.skill in ('megadev-hardware','megadev-assets','megadev-graphics','megadev-input','megadev-system','megadev-memory','megadev-streaming','megadev-audio','megadev-scenes','megadev-save','megadev-scaling','megadev-debug','megadev-testing','megadev-performance','megadev-best-practices','megadev-ui','megadev-dialogue','megadev-gameplay','megadev-animation','megadev-collision','megadev-levels','megadev-math','megadev-compression','megadev-effects','megadev-raster','megadev-localization','cross-skill-validation'):matrix.append(('us-tour','US','NTSC',['TOUR=1']))
     if args.skill=='megadev-raster':matrix += [
         ('us-split','US','NTSC',['DEMO=SPLIT']),('jp-split','JP','NTSC',['DEMO=SPLIT']),
         ('eu-split','EU','PAL',['DEMO=SPLIT']),
@@ -76,6 +76,9 @@ def main():
         assert not unexpected,unexpected
         if args.skill=='cross-skill-validation' and key=='us-release':
             from glass_cpu import check_rebuild
+            assert check_rebuild(project,run)
+        if args.skill=='megadev-localization' and key=='us-release':
+            from localization_cpu import check_rebuild
             assert check_rebuild(project,run)
         image=project/'project_lab.iso'
         expected_files=['IPX.MMD','SPX.SMD','ROOM.MMD']
@@ -117,6 +120,9 @@ def main():
             if args.skill=='megadev-input' and kind=='main':
                 from input_cpu import check_input
                 extra=lambda u,sym:check_input(u,sym,key=='us-ea')
+            if args.skill=='megadev-localization' and kind=='main':
+                from localization_cpu import check_localization
+                extra=check_localization
             if args.skill=='megadev-ui' and kind=='main':
                 from ui_cpu import check_ui
                 extra=check_ui
@@ -224,6 +230,10 @@ def main():
             assert check_practices(project,50 if video=='PAL' else 60)
             startup['main']['practice_execution']=True
             startup['sub']['checkpoint_execution']=True
+        if args.skill=='megadev-localization':
+            startup['main']['localization_execution']=True
+            if key=='us-release':startup['main']['incremental_execution']=True
+            startup['main']['publication_execution']=True
         if args.skill=='megadev-ui':
             startup['main']['ui_execution']=True
         if args.skill=='megadev-dialogue':

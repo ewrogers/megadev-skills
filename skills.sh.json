@@ -28,6 +28,7 @@
         "megadev-scenes",
         "megadev-save",
         "megadev-ui",
+        "megadev-localization",
         "megadev-dialogue",
         "megadev-gameplay",
         "megadev-animation",

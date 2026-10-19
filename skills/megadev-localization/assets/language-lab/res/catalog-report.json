@@ -1,0 +1,21 @@
+{
+  "languages": [
+    "en",
+    "fr",
+    "de",
+    "es"
+  ],
+  "messages": 30,
+  "glyphs": 117,
+  "pattern_bytes": 3744,
+  "reserved_tiles": 192,
+  "reserved_bytes": 6144,
+  "catalog_bytes": 3390,
+  "glyph_order": " !\"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz{|}~¡¿ÀÄÇÉÑÖÜßáäçèéíïñóöúü",
+  "language_keys": {
+    "0": "en",
+    "1": "fr",
+    "2": "de",
+    "3": "es"
+  }
+}

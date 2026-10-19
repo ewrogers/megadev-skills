@@ -881,3 +881,8 @@ immutable plans, bounded HBlank batches and Main Work RAM DMA publication.
 Both demos have US/JP/EU release, US debug and US tour cases per architecture.
 See [raster validation](raster-validation.md) for the moving-water regression,
 original-68000 interrupt tests, upload/RAM bounds and physical-hardware limits.
+
+## Localization milestone
+
+[Localization validation](localization-validation.md) records catalog/compiler
+failure tests, target CPU execution, regional builds and font/layout limits.
