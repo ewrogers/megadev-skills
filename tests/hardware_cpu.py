@@ -7,10 +7,10 @@ def check_probe(u, sym, kind):
     stack=0xFFDF00 if kind=='main' else 0x1FF00
     words=128
     u.mem_write(scratch-4,b'\xA5'*(words*2+8))
-    def call(symbol,args):
+    def call(symbol,args,instructions=100000):
         data=b''.join(int(value).to_bytes(4,'big') for value in [stop,*args])
         u.mem_write(stack,data);u.reg_write(UC_M68K_REG_A7,stack)
-        u.emu_start(sym[symbol],stop,count=100000)
+        u.emu_start(sym[symbol],stop,count=instructions)
         assert u.reg_read(UC_M68K_REG_PC)==stop, symbol+' did not return'
         assert u.reg_read(UC_M68K_REG_A7)==stack+4, 'C callee corrupted its stack'
         return u.reg_read(UC_M68K_REG_D0)&0xFFFF
@@ -28,6 +28,10 @@ def check_probe(u, sym, kind):
     assert bytes(u.mem_read(scratch+words*2,4))==b'\xA5'*4
     if kind=='main':
         check_usb(u,sym,call,scratch+512)
+        # The full multi-packet suite needs more instructions than a primitive,
+        # particularly in debug builds. This is a termination guard, not timing.
+        code=call('usb_input_contract_test',[],instructions=2000000)
+        assert code==0,'USB input target contract failed at line '+str(code)
     return True
 
 

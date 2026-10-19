@@ -47,6 +47,12 @@ def main():
     for key,region,video,flags in matrix:
         project=creator(output/(key+' game'),project_id='project_lab')
         relative=str(project.relative_to(output))
+        if args.skill=='megadev-hardware':
+            from test_usb_input import vectors
+            (project/'src/vectors.h').write_text('\n'.join('static const unsigned char '+name+'[]={'+','.join(str(b) for b in value)+'};' for name,value in vectors().items()))
+            fixture=(ROOT/'tests/fixtures/usb_input.c').read_text()
+            (project/'src/usb_input_probe.c').write_text('#define UI_TEST_ENTRY usb_input_contract_test\n#define USB_CHECK(value) do { if(!(value)) return __LINE__; } while(0)\n'+fixture)
+            make=project/'Makefile';make.write_text(make.read_text().replace('usb_input.c bridge.s','usb_input.c usb_input_probe.c bridge.s'))
         if args.skill=='megadev-assets' and key=='us-release':
             sys.path.insert(0,str(ROOT/'skills/megadev-assets/scripts'))
             from prepare_image import prepare

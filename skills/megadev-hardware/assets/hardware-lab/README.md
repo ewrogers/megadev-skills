@@ -77,3 +77,37 @@ Tiles occupy VRAM 0000..1E7F (244 tiles); plane A C000..CFFF, plane B E000..EFFF
 SAT F800..FA7F and hscroll FC00..FC03. Static redraw blanks the display; dynamic
 text writes at most 40 words after the existing BIOS VBlank wait, with interrupts
 briefly masked around VDP address/data writes. There is no new ISR or frame clock.
+
+## USB-controlled input test
+
+The readiness ROM includes a local copy of the testing skill's optional `UIV1`
+hook. A detected EverDrive interface enables it; without detection there is no
+FIFO access and input follows the existing physical sampler. The normal sampler
+still runs during overrides. Two logical slots independently accept a full pad
+or Mega Mouse (left/right/middle/Start, relative X/Y). Held overrides expire in
+at most 120 actual VInts; mouse deltas apply once. Explicit release or expiry
+returns to the current physical state. No saves or device configuration are
+changed by the hook itself; normal game actions still respond to mapped buttons.
+
+Install the testing skill's host pySerial requirements, then use its helper:
+
+```sh
+python /path/to/megadev-testing/scripts/usb_input.py --port ACTUAL_PORT --pad1 UP+B+X --pad2 DOWN+C+Z --seconds 5
+python /path/to/megadev-testing/scripts/usb_input.py --port ACTUAL_PORT --mouse1=20,8,left --mouse2=-16,-7,right --seconds 5
+python /path/to/megadev-testing/scripts/usb_input.py --port ACTUAL_PORT --release
+```
+
+The input helper and readiness verifier share one multiplexed FIFO owner. Do not
+run two serial processes concurrently. `HLV1` is the separate readiness check;
+`UIV1` controls logical input. Both use the existing frame counter. The source
+files copied into this Lab are tested against the testing skill's reusable
+snapshot, without requiring that skill at build/runtime.
+
+After the BIOS's physical Start prompt, Start on readiness opens Input Lab;
+Start returns. That view shows both slots' source, held/pressed/released masks,
+per-frame DX/DY, pointer XY and two independent tracks. The physical baseline is
+the BIOS's two three-button hold fields; this does not add native six-button or
+mouse support to the BIOS. Remote inputs are full logical states. Incoming USB
+is deferred during Main/Sub jobs, while lease expiry continues. USB_LAB=0 turns
+off both guest protocols and retains the physical sampler. The module and state
+remain resident while the Word RAM room runs. No second clock/ISR is installed.

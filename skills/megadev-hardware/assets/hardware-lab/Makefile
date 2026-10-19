@@ -29,7 +29,7 @@ $(DISC_PATH)/ipx.mmd: art
 $(BUILD_PATH)/lab_video.c.o: $(SRC_PATH)/lab_video.c $(BUILD_PATH)/art.h
 	$(CC) $(CC_FLAGS) $(INC) -c $(SRC_PATH)/lab_video.c -o $@
 all: $(DISC_PATH)/ipx.mmd $(DISC_PATH)/spx.smd $(DISC_PATH)/room.mmd $(PROJECT_ID).iso
-$(DISC_PATH)/ipx.mmd: ipx_layout.s resident_init.s ipx.c model.c probe.c lab_video.c everdrive_link.c bridge.s io.macros.s
+$(DISC_PATH)/ipx.mmd: ipx_layout.s resident_init.s ipx.c model.c probe.c lab_video.c everdrive_link.c usb_input.c bridge.s io.macros.s
 $(DISC_PATH)/room.mmd: room_layout.s std_init.s room.c $(DISC_PATH)/ipx.mmd
 $(DISC_PATH)/spx.smd: spx_layout.s sub_init.s spx.c probe.c $(BUILD_PATH)/sp.bin
 clean:

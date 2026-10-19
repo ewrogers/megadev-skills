@@ -32,3 +32,7 @@ Poll once per display frame and share the result. Mouse motion is a per-packet d
 Follow [testing and evidence](references/testing.md): run host behavior/protocol tests, execute compiled original-68000 code, compare ARM64/AMD64 builds and test available devices in ares. The audited ares version has pads and mouse but no multitap device option. Team Player and EA paths need physical qualification; scripted traffic proves software behavior, not electrical timing or real compatibility.
 
 Project/boot setup belongs to `megadev-project`, hardware facts to `megadev-hardware`, rendering to `megadev-graphics`, and gameplay/multiplayer policy to the game. Main owns the base-console I/O ports; the Sub CPU receives snapshots through the game's communication contract rather than dereferencing Main RAM or those port addresses directly.
+
+## Optional remote test input
+
+For a user-requested development-ROM USB controller, the testing skill owns the [optional input hook](https://github.com/ewrogers/megadev-skills/blob/main/skills/megadev-testing/references/usb-input.md). Feed it this input owner's sampled states and route gameplay through its logical result; do not add a second physical sampler, replace SDK globals or reinterpret mouse bits as pad directions. The two USB slots can independently replace pad/mouse state until a short lease expires. This does not test electrical ports, add multitap support or control the BIOS before application entry. The hook is optional instrumentation, not a requirement for ordinary games.

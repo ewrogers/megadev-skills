@@ -65,3 +65,10 @@ void lab_present(void) {drawing=0;lab_display_on();}
 void lab_heartbeat(u16 tick) {
     lab_text((tick&32)?"* RUNNING":"  RUNNING",28,26,2);
 }
+
+void lab_clear_region(u16 x,u16 y,u16 width,u16 height) {
+    if(x+width>40 || y+height>28)return;
+    u16 sr=lock();
+    for(u16 row=0;row<height;row++) {address(0xc000,x,y+row);for(u16 i=0;i<width;i++)vdp_data_16=0;}
+    unlock(sr);
+}

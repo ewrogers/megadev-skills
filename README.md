@@ -53,7 +53,7 @@ and build conventions; these skills do not require SGDK.
 
 | Skill | What to ask it for |
 | --- | --- |
-| [megadev-testing](skills/megadev-testing/SKILL.md) | Record replays, compare PAL/NTSC, check integration and capture console video. |
+| [megadev-testing](skills/megadev-testing/SKILL.md) | Record replays, compare PAL/NTSC, check integration, capture console video and optionally inject USB pad/mouse input. |
 | [megadev-debug](skills/megadev-debug/SKILL.md) | Diagnose faults and stalled jobs using exact-build symbols, bounded traces and first-fault evidence. |
 | [megadev-performance](skills/megadev-performance/SKILL.md) | Compare CPU, VRAM and ASIC workloads while accounting for measurement overhead and timing limits. |
 
