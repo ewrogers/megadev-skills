@@ -342,3 +342,12 @@ publication; dialogue owns reveal/choices; input owns device mapping; save owns
 versioned persistence. It does not replace those services or pass UTF-8 to BIOS
 printing. Language Lab's four Latin-script locales are examples, not a universal
 Unicode renderer or translation policy.
+
+## Video milestone
+
+`megadev-video` owns frame packaging, read-ahead, complete-frame presentation
+and audio synchronization policy. It reuses streaming/system ownership, graphics
+publication and audio services. It does not duplicate the compression skill or
+claim a general FMV codec. Native Cinema Lab art is illustrative; photographic
+footage conversion, changed-tile codecs and audio-clock playback are extensions
+that need their own measured bounds and tests.

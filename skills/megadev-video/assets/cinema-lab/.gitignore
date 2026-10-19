@@ -1,0 +1,5 @@
+build/
+disc/
+*.iso
+*.cue
+__pycache__/
