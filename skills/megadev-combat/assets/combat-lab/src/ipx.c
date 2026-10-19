@@ -84,6 +84,9 @@ void combat_publish(void){
   if(world.help){panel(f,1,2,"A SWING / HOLD B FACE GUARD");panel(f,2,2,"C CAST / START PAUSE");panel(f,3,2,"P2 START JOINS / A BEGIN");}
   else{panel(f,1,7,world.complete?"COURT CLEAR!":"SPARRING ENDED");panel(f,3,8,"B TO TRY AGAIN");}
  }
+ /* Critical sprites fit the proven 18-entry / 304-pixel worst scanline.
+    Admit every live bolt/body/weapon before optional flashes and HP pips. */
+ for(u16 i=0;i<CO_BOLTS;i++)if(world.bolt[i].life)sprite(f,world.bolt[i].x-4,world.bolt[i].y+28,8,8,ART_BOLT,1);
  for(u16 i=0;i<CO_ACTORS;i++){
   CoActor const *a=&world.actor[i];if(!a->joined || !a->hp)continue;
   u16 tile=i<2?(u16)(ART_HERO+a->face*12u+((a->moving && ((world.tick>>3)&1u))?6u:0)):(u16)(ART_ENEMY+(i-2u)*32u+a->face*8u+((a->moving && ((world.tick>>4)&1u))?4u:0));
@@ -104,10 +107,12 @@ void combat_publish(void){
     sprite(f,x,y,32,32,(u16)(ART_SWORD+a->face*48u+phase*16u),1);
    }
   }
+ }
+ for(u16 i=0;i<CO_ACTORS;i++){
+  CoActor const *a=&world.actor[i];if(!a->joined || !a->hp)continue;
   if(a->flash)sprite(f,a->x-4,a->y+12,8,8,ART_HIT,1);
   if(i>=2){for(u16 n=0;n<a->hp;n++)sprite(f,(s16)(a->x-10+n*6u),a->y+8,8,8,ART_BAR,1);}
  }
- for(u16 i=0;i<CO_BOLTS;i++)if(world.bolt[i].life)sprite(f,world.bolt[i].x-4,world.bolt[i].y+28,8,8,ART_BOLT,1);
  __asm__ volatile("" ::: "memory");published=stage+1u;stage^=1u;
 }
 static void initialize(void){

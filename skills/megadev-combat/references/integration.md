@@ -45,6 +45,10 @@ index, count and early VBlank before uploading; late work stays pending. Opaque
 end/help panels update only on state changes. Sprite priority falls below the
 panel while it is displayed. Normal updates never write CRAM. H40 scanline
 admission remains the graphics owner's job, including sword/guard effects.
+The Lab admits bolts, bodies and weapons before optional hit flashes/HP pips.
+Their worst coincident H40 row is 18 sprites and 304 pixels, within 20/320;
+the native publisher test exercises that row. Extra combat entities or wider
+weapons need a new budget; never silently hide a collidable projectile.
 
 One Lab-only PSG owner plays finite cues and a finite victory fanfare. Its simple
 music is illustrative. Route events into the game's existing CD/PCM/FM/PSG policy

@@ -50,6 +50,14 @@ def check_combat(u,sym):
   call('vblank_user')
  assert shield_tiles==list(range(shield_tiles[0],shield_tiles[0]+16,4))
  writes.clear()
+ # Worst critical row: all five active weapons/bodies and eight live bolts
+ # must survive admission even with optional flashes and health pips enabled.
+ call('combat_dense_probe');call('combat_publish')
+ dense=frame+(word(sym['published'])-1)*1962
+ sizes=[word(dense+i*8+2)&0x0f00 for i in range(word(dense+1312))]
+ assert sizes[:8]==[0]*8 and sizes[:18].count(0x0f00)==5
+ assert sum(s in (0x0500,0x0600) for s in sizes[:18])==5
+ call('vblank_user');writes.clear()
  # Force a won state through a narrow ABI adapter; panel is staged, not drawn
  # by simulation, and is cleared through the same callback on restart.
  call('combat_win_probe');call('combat_publish')
