@@ -30,6 +30,8 @@ a different interrupt policy need an appropriate adapter.
   The compiled tour is executed until all eight pages have been committed.
 - Reproducible native art/palettes, standalone installation with telemetry off,
   and eight PNG previews rendered from the actual C tilemaps.
+  Preview exchanges tilemap bytes through a binary file; Windows text-mode
+  stdout must not expand line-feed bytes inside pattern indices.
 
 In ares, try title → Journey, coins/HP, Pack → Details/Character → Back, pause,
 Settings from both routes, font/pulse changes, title and Credits. Check clipping,

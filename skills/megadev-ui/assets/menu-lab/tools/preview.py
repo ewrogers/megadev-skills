@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 """Render the actual C tilemaps and native patterns to PNG for layout review."""
 import argparse
+import os
 from pathlib import Path
 import shutil
 import struct
@@ -14,10 +15,15 @@ def preview(output):
     cc=next((p for n in ('cc','clang','gcc') if (p:=shutil.which(n))),None)
     if not cc:raise RuntimeError('A host C compiler is required')
     with tempfile.TemporaryDirectory() as folder:
-        src=Path(folder)/'preview.c';exe=Path(folder)/'preview'
-        src.write_text('#include "ui.h"\n#include <stdio.h>\nint main(void){UiModel m;UiCanvas c;ui_init(&m);for(unsigned i=0;i<8;i++){m.page=i;ui_draw(&c,&m,60);for(unsigned j=0;j<UI_CELLS;j++){putchar(c.cells[j]>>8);putchar(c.cells[j]&255);}}return 0;}\n')
+        src=Path(folder)/'preview.c';exe=Path(folder)/('preview'+('.exe' if os.name=='nt' else ''))
+        # Windows stdout defaults to text mode and expands byte 0x0A to CR/LF.
+        # A binary file preserves the exact map words on every supported host.
+        raw=Path(folder)/'maps.bin'
+        src.write_text('#include "ui.h"\n#include <stdio.h>\nint main(int argc,char **argv){if(argc!=2)return 1;FILE *out=fopen(argv[1],"wb");if(!out)return 1;UiModel m;UiCanvas c;ui_init(&m);for(unsigned i=0;i<8;i++){m.page=i;ui_draw(&c,&m,60);for(unsigned j=0;j<UI_CELLS;j++){fputc(c.cells[j]>>8,out);fputc(c.cells[j]&255,out);}}return fclose(out)!=0;}\n')
         subprocess.run([cc,'-std=c17','-I',str(root/'src'),str(root/'src/ui.c'),str(src),'-o',str(exe)],check=True,capture_output=True)
-        maps=subprocess.run([str(exe)],check=True,capture_output=True).stdout
+        subprocess.run([str(exe),str(raw)],check=True,capture_output=True)
+        maps=raw.read_bytes()
+        if len(maps)!=8*2240:raise ValueError('C preview returned an incomplete tilemap catalog')
     patterns=bytearray(0x1C8*32)
     for name,base in [('fonts',0x20),('heading',0xE0),('panels',0x170),('icons',0x180),('portrait',0x1A0),('backdrop',0x1C4)]:
         data=(root/'res'/f'{name}.bin').read_bytes();patterns[base*32:base*32+len(data)]=data
