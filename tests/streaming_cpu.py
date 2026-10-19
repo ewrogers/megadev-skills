@@ -1,7 +1,7 @@
 """Execute both compiled adapters; modeled drive writes are not BIOS/seek timing evidence."""
 from startup import check,symbols
 
-def check_streaming(project,hz,entry_controls=True,with_audio=False):
+def check_streaming(project,hz,entry_controls=True,with_audio=False,publication=True):
     from unicorn import UC_HOOK_MEM_READ,UC_HOOK_MEM_WRITE,UC_HOOK_CODE
     from unicorn.m68k_const import UC_M68K_REG_A7,UC_M68K_REG_PC,UC_M68K_REG_SR,UC_M68K_REG_D0,UC_M68K_REG_A0
     contexts={}
@@ -172,35 +172,36 @@ def check_streaming(project,hz,entry_controls=True,with_audio=False):
     assert word(main,ms['stream_phase'])==6 and owner=='sub' and not call('main','stream_start',(0,))
     finish();assert word(main,ms['stream_result'])==7 and not word(main,ms['stream_ready'])
     assert call('main','stream_start',(0,))==1;drive_delay=0;finish();assert word(main,ms['stream_ready'])
-    # Publisher snapshots Word RAM bytes before VBlank; no queued pointer survives a grant.
-    main.mem_map(0xC00000,0x10000)
-    put(main,ms['stream_phase'],5);put(main,ms['stream_uploaded'],0);put(main,ms['stream_cache_tiles'],438)
-    put(main,ms['loaded_slot'],0);put(main,ms['active'],0)
-    expected=bytes(physical[64:64+256]);call('main','stream_prepare')
-    physical[64:64+256]=bytes(256);written=[]
-    def vdp_write(u,access,address,size,value,user):written.append((address,size,value&((1<<(size*8))-1)))
-    hook=main.hook_add(UC_HOOK_MEM_WRITE,vdp_write,begin=0xC00000,end=0xC00007)
-    before_reads=reads;call('main','vblank_user')
-    assert reads==before_reads,'VBlank retained a Word RAM pointer'
-    payload=b''.join(value.to_bytes(size,'big') for address,size,value in written[-128:])
-    assert payload==expected,'Publisher did not keep immutable copied bytes'
-    assert word(main,ms['upload_ack'])==256 and not word(main,ms['published'])
-    before=len(written);call('main','vblank_user');assert len(written)==before,'Frame submitted twice'
-    # CRAM is never written during active display or late blank; unchanged lines stay resident.
-    put(main,ms['stream_phase'],0);put(main,ms['palettes']+33*2,0x0eec)
-    blank=False;vertical=224
-    def vdp_read(u,access,address,size,value,user):
-        if address==0xC00004:u.mem_write(address,(8 if blank else 0).to_bytes(2,'big'))
-        if address==0xC00008:u.mem_write(address,(vertical<<8).to_bytes(2,'big'))
-    rh=main.hook_add(UC_HOOK_MEM_READ,vdp_read,begin=0xC00004,end=0xC00009)
-    def cram_commands():return [v for a,n,v in written if a==0xC00004 and n==4 and (v&0xC0000030)==0xC0000000]
-    written.clear();call('main','stream_prepare');call('main','vblank_user');assert not cram_commands()
-    blank=True;vertical=235
-    written.clear();call('main','stream_prepare');call('main','vblank_user');assert not cram_commands()
-    vertical=224
-    written.clear();call('main','stream_prepare');call('main','vblank_user');assert len(cram_commands())==1,[(hex(a),n,hex(v)) for a,n,v in written if a==0xC00004]
-    written.clear();call('main','stream_prepare');call('main','vblank_user');assert not cram_commands()
-    main.hook_del(rh);main.hook_del(hook)
+    if publication:
+        # Publisher snapshots Word RAM bytes before VBlank; no queued pointer survives a grant.
+        main.mem_map(0xC00000,0x10000)
+        put(main,ms['stream_phase'],5);put(main,ms['stream_uploaded'],0);put(main,ms['stream_cache_tiles'],438)
+        put(main,ms['loaded_slot'],0);put(main,ms['active'],0)
+        expected=bytes(physical[64:64+256]);call('main','stream_prepare')
+        physical[64:64+256]=bytes(256);written=[]
+        def vdp_write(u,access,address,size,value,user):written.append((address,size,value&((1<<(size*8))-1)))
+        hook=main.hook_add(UC_HOOK_MEM_WRITE,vdp_write,begin=0xC00000,end=0xC00007)
+        before_reads=reads;call('main','vblank_user')
+        assert reads==before_reads,'VBlank retained a Word RAM pointer'
+        payload=b''.join(value.to_bytes(size,'big') for address,size,value in written[-128:])
+        assert payload==expected,'Publisher did not keep immutable copied bytes'
+        assert word(main,ms['upload_ack'])==256 and not word(main,ms['published'])
+        before=len(written);call('main','vblank_user');assert len(written)==before,'Frame submitted twice'
+        # CRAM is never written during active display or late blank; unchanged lines stay resident.
+        put(main,ms['stream_phase'],0);put(main,ms['palettes']+33*2,0x0eec)
+        blank=False;vertical=224
+        def vdp_read(u,access,address,size,value,user):
+            if address==0xC00004:u.mem_write(address,(8 if blank else 0).to_bytes(2,'big'))
+            if address==0xC00008:u.mem_write(address,(vertical<<8).to_bytes(2,'big'))
+        rh=main.hook_add(UC_HOOK_MEM_READ,vdp_read,begin=0xC00004,end=0xC00009)
+        def cram_commands():return [v for a,n,v in written if a==0xC00004 and n==4 and (v&0xC0000030)==0xC0000000]
+        written.clear();call('main','stream_prepare');call('main','vblank_user');assert not cram_commands()
+        blank=True;vertical=235
+        written.clear();call('main','stream_prepare');call('main','vblank_user');assert not cram_commands()
+        vertical=224
+        written.clear();call('main','stream_prepare');call('main','vblank_user');assert len(cram_commands())==1,[(hex(a),n,hex(v)) for a,n,v in written if a==0xC00004]
+        written.clear();call('main','stream_prepare');call('main','vblank_user');assert not cram_commands()
+        main.hook_del(rh);main.hook_del(hook)
     # Unconfirmed grant: no speculative read or write, and no buffer reuse.
     grants=False;before=(bytes(physical),reads,writes);assert call('main','stream_start',(1,))==1
     for i in range(hz*30+2):frame()

@@ -16,11 +16,12 @@ from disc import digest
 
 def main():
     parser=argparse.ArgumentParser(description=__doc__)
-    parser.add_argument('--skill',default='megadev-project',choices=['megadev-project','megadev-hardware','megadev-assets','megadev-graphics','megadev-input','megadev-system','megadev-memory','megadev-streaming','megadev-audio','megadev-scenes','megadev-save','megadev-scaling','megadev-debug','megadev-testing','megadev-performance','megadev-best-practices','megadev-ui','megadev-dialogue','megadev-gameplay','megadev-animation','megadev-collision','megadev-levels','megadev-math'])
+    parser.add_argument('--skill',default='megadev-project',choices=['megadev-project','megadev-hardware','megadev-assets','megadev-graphics','megadev-input','megadev-system','megadev-memory','megadev-streaming','megadev-audio','megadev-scenes','megadev-save','megadev-scaling','megadev-debug','megadev-testing','megadev-performance','megadev-best-practices','megadev-ui','megadev-dialogue','megadev-gameplay','megadev-animation','megadev-collision','megadev-levels','megadev-math','cross-skill-validation'])
     parser.add_argument('--image',default='ewrogers/megadev:latest')
     parser.add_argument('--platform',required=True,choices=['linux/arm64','linux/amd64'])
     parser.add_argument('--output',type=Path,required=True);args=parser.parse_args()
-    creator=load(ROOT/'skills'/args.skill/'scripts/create_project.py','selected_creator').create
+    creator_path=ROOT/'validation/create_project.py' if args.skill=='cross-skill-validation' else ROOT/'skills'/args.skill/'scripts/create_project.py'
+    creator=load(creator_path,'selected_creator').create
     output=args.output.resolve();output.mkdir(parents=True,exist_ok=False)
     base=['docker','run','--rm','--cpus=2','--platform',args.platform]
     if hasattr(os,'getuid'):base+=['--user',f'{os.getuid()}:{os.getgid()}']
@@ -41,7 +42,7 @@ def main():
             os.utime(path,(946684800,946684800),follow_symlinks=False)
     matrix=[('us-release','US','NTSC',[]),('jp-release','JP','NTSC',[]),
                                   ('eu-release','EU','PAL',[]),('us-debug','US','NTSC',['OPT_FLAGS=-Og -g -fconserve-stack -fomit-frame-pointer','DEBUG=1'])]
-    if args.skill in ('megadev-hardware','megadev-assets','megadev-graphics','megadev-input','megadev-system','megadev-memory','megadev-streaming','megadev-audio','megadev-scenes','megadev-save','megadev-scaling','megadev-debug','megadev-testing','megadev-performance','megadev-best-practices','megadev-ui','megadev-dialogue','megadev-gameplay','megadev-animation','megadev-collision','megadev-levels','megadev-math'):matrix.append(('us-tour','US','NTSC',['TOUR=1']))
+    if args.skill in ('megadev-hardware','megadev-assets','megadev-graphics','megadev-input','megadev-system','megadev-memory','megadev-streaming','megadev-audio','megadev-scenes','megadev-save','megadev-scaling','megadev-debug','megadev-testing','megadev-performance','megadev-best-practices','megadev-ui','megadev-dialogue','megadev-gameplay','megadev-animation','megadev-collision','megadev-levels','megadev-math','cross-skill-validation'):matrix.append(('us-tour','US','NTSC',['TOUR=1']))
     if args.skill=='megadev-hardware':matrix.append(('us-usb-off','US','NTSC',['USB_LAB=0']))
     if args.skill=='megadev-input':matrix.append(('us-ea','US','NTSC',['EA_MODE=1']))
     for key,region,video,flags in matrix:
@@ -68,9 +69,12 @@ def main():
         log=(output/(key+'.log')).read_text()
         unexpected=[line for line in log.splitlines() if 'warning:' in line and 'has a LOAD segment with RWX permissions' not in line]
         assert not unexpected,unexpected
+        if args.skill=='cross-skill-validation' and key=='us-release':
+            from glass_cpu import check_rebuild
+            assert check_rebuild(project,run)
         image=project/'project_lab.iso'
         expected_files=['IPX.MMD','SPX.SMD','ROOM.MMD']
-        if args.skill in ('megadev-assets','megadev-streaming','megadev-audio','megadev-scenes','megadev-testing','megadev-best-practices'):expected_files+=['GARDEN.MDA','CAVERN.MDA']
+        if args.skill in ('megadev-assets','megadev-streaming','megadev-audio','megadev-scenes','megadev-testing','megadev-best-practices','cross-skill-validation'):expected_files+=['GARDEN.MDA','CAVERN.MDA']
         if args.skill=='megadev-graphics':expected_files+=['SKY.MDA','QUAY.MDA']
         got=inspect(image,region,expected_files)
         for wrong_region, expected in [('JP' if region!='JP' else 'US', []), (region, ['MISSING.MMD'])]:
@@ -80,7 +84,7 @@ def main():
         payloads={file.name.upper():digest(file.read_bytes()) for file in (project/'disc').iterdir() if file.is_file()}
         assert got['files']==payloads,'disc contents differ from compiled modules'
         tracks={}
-        if args.skill in ('megadev-audio','megadev-scenes','megadev-testing','megadev-best-practices'):
+        if args.skill in ('megadev-audio','megadev-scenes','megadev-testing','megadev-best-practices','cross-skill-validation'):
             cue_tool=load(project/'tools/make_cue.py','audio_cue')
             cue_tool.write_cue(image)
             for track in (2,3):
@@ -122,6 +126,9 @@ def main():
             if args.skill=='megadev-collision' and kind=='main':
                 from collision_cpu import check_collision
                 extra=check_collision
+            if args.skill=='cross-skill-validation' and kind=='main':
+                from glass_cpu import check_glass_model
+                extra=check_glass_model
             if args.skill=='megadev-math' and kind=='main':
                 from math_cpu import check_math
                 extra=check_math
@@ -159,11 +166,11 @@ def main():
             assert check_streaming(project,50 if video=='PAL' else 60)
             startup['main']['probe_execution']=True
             startup['sub']['probe_execution']=True
-        if args.skill in ('megadev-audio','megadev-scenes','megadev-testing','megadev-best-practices'):
+        if args.skill in ('megadev-audio','megadev-scenes','megadev-testing','megadev-best-practices','cross-skill-validation'):
             from audio_cpu import check_audio
             from streaming_cpu import check_streaming
             assert check_audio(project,50 if video=='PAL' else 60)
-            if args.skill!='megadev-testing':
+            if args.skill not in ('megadev-testing','cross-skill-validation'):
                 assert check_streaming(project,50 if video=='PAL' else 60,entry_controls=False)
             if args.skill in ('megadev-scenes','megadev-best-practices'):
                 from scenes_cpu import check_scenes
@@ -213,6 +220,15 @@ def main():
             startup['main']['animation_execution']=True
         if args.skill=='megadev-collision':
             startup['main']['collision_execution']=True
+        if args.skill=='cross-skill-validation':
+            from streaming_cpu import check_streaming
+            from glass_cpu import check_glass_save
+            assert check_streaming(project,50 if video=='PAL' else 60,entry_controls=False,with_audio=True,publication=False)
+            assert check_glass_save(project,50 if video=='PAL' else 60)
+            startup['main']['integration_execution']=True
+            startup['main']['game_execution']=True
+            if key=='us-release':startup['main']['incremental_execution']=True
+            startup['sub']['checkpoint_execution']=True
         if args.skill=='megadev-math':
             startup['main']['math_execution']=True
         if args.skill=='megadev-levels':

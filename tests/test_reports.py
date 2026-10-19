@@ -395,3 +395,23 @@ class ReportTests(unittest.TestCase):
                            lambda q:q['cases']['eu-release']['startup']['main'].pop('probe_execution')]:
                 bad=copy.deepcopy(b);mutate(bad)
                 with self.assertRaises(ValueError):run(bad)
+
+    def test_cross_skill_requires_combined_and_incremental_evidence(self):
+        case={'disc':{'files':{'IPX.MMD':'ipx','GARDEN.MDA':'garden','CAVERN.MDA':'cavern'}},'audio_tracks':{'2':'two','3':'three'},'boot_payloads':{'sp.bin':'sp'},'sub_callback':True,
+              'startup':{'main':{'game_execution':True,'integration_execution':True,'incremental_execution':True,'probe_execution':True},'sub':{'probe_execution':True,'checkpoint_execution':True},'room':{}}}
+        a={'passed':True,'skill':'cross-skill-validation','platform':'linux/arm64','cases':{k:copy.deepcopy(case) for k in CASES|{'us-tour'}}}
+        b=copy.deepcopy(a);b['platform']='linux/amd64'
+        with tempfile.TemporaryDirectory() as folder:
+            paths=[Path(folder)/'a.json',Path(folder)/'b.json']
+            def run(right):
+                for p,r in zip(paths,[a,right]):p.write_text(json.dumps(r))
+                return compare(paths)
+            self.assertTrue(run(b))
+            for mutate in [lambda q:q['cases'].pop('us-tour'),
+                           lambda q:q['cases']['us-debug']['startup']['main'].pop('game_execution'),
+                           lambda q:q['cases']['eu-release']['startup']['main'].pop('probe_execution'),
+                           lambda q:q['cases']['us-release']['startup']['main'].pop('incremental_execution'),
+                           lambda q:q['cases']['us-debug']['startup']['sub'].pop('checkpoint_execution'),
+                           lambda q:q['cases']['us-debug'].pop('audio_tracks')]:
+                bad=copy.deepcopy(b);mutate(bad)
+                with self.assertRaises(ValueError):run(bad)

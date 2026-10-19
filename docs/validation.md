@@ -846,3 +846,11 @@ The audited SDK division/conversion wrappers have defects; the skill documents
 them and uses checked application replacements while executing the SDK's real
 word-multiply helpers. This does not patch upstream. The three views provide
 emulator motion checks, not cycle-accurate or hardware qualification.
+
+## Original-game cross-skill milestone
+
+[Glasshouse After Hours](cross-skill-validation.md) joins scene/loading/audio,
+UI/text and checkpoint owners in an original exploration game. The new CI profile
+checks both architectures and five build variants, shared audio/loading fault
+regressions, paired checkpoint/BIOS execution and an incremental generated-art/
+header rebuild. It is not a new skill and does not prescribe its design.
