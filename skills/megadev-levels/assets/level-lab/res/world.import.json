@@ -1,0 +1,17 @@
+{
+  "version": 1,
+  "inputs": {
+    "archive.tmj": "a788ad11e8ad29ddedc7ca09d80601c09f1afffcdd44660596d45a9f4d6ba4f5",
+    "orchard.tmj": "294a69833dd838f6ecb26bbbc297159ea7c6c9bb3f05540d7859f471e8446100",
+    "palettes.json": "87235d040817e028646cc46d623df664d4327579525795fe8237fe4a94d356c2",
+    "terrain.png": "ceaba70afc7f8126223bb941d9c06266960fb1f50cbee54662f54cf99cdce5e3",
+    "terrain.tsj": "09163d28e574c7bc7ec95d2827ffd5920a7f58fe29bb4001664abef0e7c30b14",
+    "world.json": "0f0ed238f6c9610019a036e1c0e89c370862fabcbbbb2733361b5cdd0b9b546f"
+  },
+  "outputs": {
+    "world.bin": "51964594ecf950fc1f8fecf7eaa49f65bbea64256d8b2e838c36993d68bb828a",
+    "ground.bin": "cc40292d425bc7dcf80a92c4e13ae7f5bcff8731b36aa6da3dddea7b53c0f8c6",
+    "tileattrs.bin": "afc4375051f9d84a0f00553755a197c33e7137a9dce98fdd53a382f6391ae710",
+    "palettes.bin": "d7af4975f22b8d8fca75e5ac08dd6a642c4db3e050292f9c2b455048f7081d63"
+  }
+}
