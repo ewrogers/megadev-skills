@@ -26,7 +26,8 @@
         "megadev-scenes",
         "megadev-save",
         "megadev-ui",
-        "megadev-dialogue"
+        "megadev-dialogue",
+        "megadev-gameplay"
       ]
     },
     {

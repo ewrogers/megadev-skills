@@ -627,3 +627,41 @@ NTSC and final PAL dialogue, branches, paired panels, voice and controls in ares
 The Lab preloads
 short PCM excerpts; it does not prove runtime voice CD reads, optical timing,
 real PCM acoustics or physical-console behavior.
+
+## Gameplay milestone
+
+Adventure Lab adds a Main-owned quarter-pixel simulation, 60 Hz fixed steps from
+300 Hz elapsed time, bounded catch-up, edge consumption, pause, foot-box collision,
+axis sliding, camera clamps, persistent area pickups and a twelve-slot cosmetic
+pool. Host checks include equal-time PAL/NTSC state, damage/stun/cooldown rules,
+respawn, gate re-entry, pool exhaustion/reuse and long deterministic movement.
+A reachability flood verifies that all collectibles and both gates are connected.
+Native-resolution original art/palette bytes regenerate exactly.
+
+The 103-test host suite passes. All twenty-one skills install into a disposable
+project with telemetry disabled, and the installed gameplay generator/checker
+runs independently. README and skills.sh groups include the new skill.
+
+Original-68000 execution checks the actual simulation and immutable publisher:
+late-blank deferral, invalid sprite-count refusal, exact SAT/scroll/HUD transfers
+and no normal-frame CRAM writes. Paired Main/Sub execution retains the existing
+healthy/rejected/cancelled/delayed/ownership-fault regressions while movement runs.
+Gameplay reset cannot revoke a live service, and its service keeps retiring while
+gameplay is paused. Coordination and graphics owner implementations remain
+unchanged; no competing mailbox/input/VDP owner is installed in an existing game.
+
+US/JP NTSC, EU PAL, debug and automatic-tour matrices pass locally on native ARM64
+and emulated AMD64 with matching complete target payloads. CI repeats them on
+native runners. Containers use two CPUs and the selected latest image reports
+GCC 16.2.0 and Megadev `7a7246c14b845ad2f1bd3c7d73afb04cf67d83ef`.
+The initial link caught promoted signed-division helpers that the direct module
+link does not provide; bounded decimal formatting and a simple effect-age shift
+remove those dependencies. This is not a claim that every C division needs to
+be replaced or that later-68000 instructions are acceptable.
+
+The user confirmed NTSC play and the final PAL build in ares on 2026-10-19,
+including movement, pulse recharge, pause and the original tune/finite cues.
+The observed NTSC screen also reached all twelve collected gems. Small resident
+maps switch with display disabled; no live CD streaming is claimed. MMIO capture,
+model timing and emulator acceptance do not certify physical frame deadlines,
+stack high-water, CD/audio contention, BIOS variants or controller hardware.

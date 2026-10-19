@@ -64,8 +64,11 @@ Implemented: `megadev-system` for command lifetimes and bounded Main/Sub work,
 `megadev-scenes` for game flow, transitions and safe resource cleanup, and
 `megadev-save` for internal/cartridge BIOS files, versioning and corruption recovery.
 
-Next add gameplay, collision, animation,
-levels, UI/dialogue/localization and multiplayer patterns as needed.
+Also implemented: `megadev-ui`, `megadev-dialogue` and `megadev-gameplay`.
+Gameplay owns timing, movement, collision/camera bounds and actor lifetimes;
+it connects existing platform owners without installing competing services.
+Next add deeper collision, animation, levels, localization and multiplayer
+patterns as needed.
 
 This group is specifically about Mega CD integration, not just adding CD reads:
 main/sub command handshakes and BIOS responsibilities; Program RAM and Word RAM

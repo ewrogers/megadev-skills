@@ -2,3 +2,5 @@
 *.palette.json text eol=lf
 *.png binary
 *.mda binary
+
+skills/megadev-gameplay/assets/adventure-lab/res/*.bin binary
