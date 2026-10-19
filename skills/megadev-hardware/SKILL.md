@@ -33,3 +33,5 @@ Use `scripts/inspect_disc.py` for this data-only image's region/filesystem check
 ## Report evidence precisely
 
 Separate source-backed facts, host-model checks, actual CPU execution, emulator observations and physical-console results. A passed scratch buffer is not a complete RAM test. A nominal PAL flag is not measured frame timing. A data-only disc says nothing about CD-DA coexistence. State untested modes and peripherals explicitly, and choose a focused next proof rather than claiming the whole machine is qualified.
+
+The readiness ROM also includes the testing skill's optional USB input hook. Its input view distinguishes logical pad/mouse state from the current physical source and shows independent pointer tracks. Use fresh capture frames and the host's sampled ACKs to test slot 1, slot 2, both mice and lease expiry. This is cooperating-ROM instrumentation; physical device qualification and the game's existing input owner remain separate.

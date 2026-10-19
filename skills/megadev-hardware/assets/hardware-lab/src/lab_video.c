@@ -41,14 +41,33 @@ void lab_hex(u16 value,u16 x,u16 y) {
     for(u16 i=0;i<4;i++)text[i]=h[(value>>(12-i*4))&15];
     text[4]=0;lab_line(text,x,y);
 }
-void lab_screen(char const *title) {
+/* Closed rounded perimeter; every label and pointer stays in the interior. */
+static void panel(u16 x,u16 y,u16 width,u16 height) {
+    for(u16 row=0;row<height;row++) {
+        address(0xe000,x,y+row);
+        for(u16 col=0;col<width;col++) {
+            u16 tile=97;
+            if(!row)tile=98;
+            else if(row==height-1)tile=LAB_PANEL_BOTTOM;
+            else if(!col)tile=99;
+            else if(col==width-1)tile=LAB_PANEL_RIGHT;
+            if((!row || row==height-1) && (!col || col==width-1))
+                tile=LAB_PANEL_CORNERS+(row?2:0)+(col?1:0);
+            vdp_data_16=tile;
+        }
+    }
+}
+static void screen(char const *title,u16 split) {
     lab_display_off();drawing=1;u16 sr=lock();
     for(u16 y=0;y<32;y++) {
         address(0xc000,0,y);for(u16 x=0;x<64;x++)vdp_data_16=0;
-        address(0xe000,0,y);
-        for(u16 x=0;x<64;x++)vdp_data_16=(x>=2&&x<38&&y>=6&&y<25)?(y==6?98:(x==2?99:97)):0;
+        address(0xe000,0,y);for(u16 x=0;x<64;x++)vdp_data_16=0;
     }
-    for(u16 y=0;y<6;y++){address(0xc000,30,y+8);for(u16 x=0;x<6;x++)vdp_data_16=100+y*6+x;}
+    if(split) {panel(2,6,17,17);panel(21,6,17,17);}
+    else {
+        panel(2,6,36,19);
+        for(u16 y=0;y<6;y++){address(0xc000,30,y+8);for(u16 x=0;x<6;x++)vdp_data_16=100+y*6+x;}
+    }
     unlock(sr);
     lab_text("MEGADEV / CD",3,1,1);lab_text(LAB_BUILD_ID,30,1,3);
     sr=lock();
@@ -61,6 +80,8 @@ void lab_screen(char const *title) {
     }
     unlock(sr);
 }
+void lab_screen(char const *title) {screen(title,0);}
+void lab_input_screen(void) {screen("INPUT LAB",1);}
 void lab_present(void) {drawing=0;lab_display_on();}
 void lab_heartbeat(u16 tick) {
     lab_text((tick&32)?"* RUNNING":"  RUNNING",28,26,2);

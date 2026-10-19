@@ -50,7 +50,9 @@ evidence, not authentication.
 Only detected EDIO is polled, at idle Main/Sub job boundaries. Each iteration
 consumes at most 32 available FIFO bytes from `$A130D1`, using the count at
 `$A130D2 & 07FF`. Replies use bounded CMD_USB_WR `2B D4 22 DD`, length 000C,
-and the packet, never a busy wait. The existing resident VBlank counter supplies
+and the packet, never a busy wait. The optional input hook is now the single
+FIFO owner, demultiplexing HLV1 and UIV1; one input ACK plus two legacy replies
+costs at most 82 outgoing command bytes per input iteration. The existing resident VBlank counter supplies
 time; no second clock or ISR is installed. Pending/partial messages expire in
 one second. The reloadable room calls the resident service only after CD completion.
 No `ed_init`, FIFO flush, disk init, mount, save access or Sub-side USB service.
@@ -60,3 +62,8 @@ and [implementation](https://github.com/krikzz/mega-ed-pub/blob/23dbd5ef527999eb
 define the registers and commands. The MCU also serves CD reads: idle checks do
 not qualify concurrent streaming, PCM or CD-DA. There are no CPU breakpoints,
 single-step execution or arbitrary debugger operations in this Lab protocol.
+
+The testing skill owns the optional cooperating-ROM input protocol and reusable
+module. See its [USB input integration notes](https://github.com/ewrogers/megadev-skills/blob/main/skills/megadev-testing/references/usb-input.md)
+when available. The readiness link and input leases have separate purposes but
+share the existing counter and one FIFO owner.

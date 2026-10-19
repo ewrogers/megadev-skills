@@ -1,6 +1,6 @@
 ---
 name: megadev-testing
-description: Build repeatable QA for Megadev Sega CD/Mega CD games using deterministic input replay, state checks, PAL/NTSC coverage and Main/Sub integration regressions. Use for regression suites and automation; debugging diagnoses failures, while this skill establishes reproducible checks without replacing runtime service owners.
+description: Build repeatable QA for Megadev Sega CD/Mega CD games using deterministic input replay, state checks, PAL/NTSC coverage and Main/Sub integration regressions. Supports optional EverDrive USB pad/mouse injection in cooperating development ROMs. Use for regression suites and automation; debugging diagnoses failures, while this skill establishes reproducible checks without replacing runtime service owners.
 ---
 
 # Test Megadev games
@@ -30,3 +30,7 @@ Use [region and evidence matrix](references/qualification.md) for PAL/NTSC, host
 For user-authorized console observation, use [direct capture-card evidence](references/console-capture.md). The bundled host Python/FFmpeg helper captures bounded video frames through macOS AVFoundation, independently of a preview window. Inspect the build ID, results and changing heartbeat/counters; keep capture success distinct from runtime verification. `megadev-project` owns EverDrive disc upload/reset. The updated firmware supports running-disc replacement; the initial 4.20 setup required menu return. The configured BIOS still needs Start, so the complete hardware loop is not unattended.
 
 Scope seams: `megadev-debug` captures and explains failures; system/memory own lifetimes and handshakes; streaming/audio/scenes own their runtime services; graphics owns frame publication. This skill tests those contracts. Lab art, controls, music, progression and game rules illustrate a fixture and must not become requirements for the user's game.
+
+## Optional USB input for development ROMs
+
+When the user wants agent-driven real-console input, use [cooperative USB input](references/usb-input.md). The bundled portable C module and host client support two independent pad/mouse slots, gated by EverDrive EDIO detection, with bounded leases and physical fallback. Install it only into an opted-in ROM and connect it after the game's existing physical sampler; gameplay must read the resulting logical snapshot. Keep one FIFO owner, preserve SDK polling/interrupts and never claim physical-controller or BIOS-input emulation. Hardware Lab includes the hook and an input view; use direct capture plus ACKs to verify both ports, one-shot mouse movement and expiry.

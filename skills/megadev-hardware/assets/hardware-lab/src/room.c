@@ -25,6 +25,6 @@ void main(void) {
     #ifdef HW_AUTOTEST
     while((u16)(main_ticks-until)>=0x8000);
 #else
-    while(!(bios_joy1_hit&(PAD_A|PAD_START)));
+    while(!(lab_input_pressed()&(PAD_A|PAD_START)));
 #endif
 }
