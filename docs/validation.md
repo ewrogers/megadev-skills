@@ -587,3 +587,22 @@ release packages are verified. Installation checks include all eighteen skills
 with telemetry disabled. CPU models do not certify real BIOS save latency, drive
 seeks, interrupt timing, stack high-water or analog audio continuity; these remain
 emulator/physical-console qualification tasks.
+
+## UI milestone
+
+Menu Lab checks native bitmap fonts, nine-slice bounds, fixed counters, bounded
+navigation/history and focus restoration without adding a competing scene or
+input manager. Host O0/O3 checks cover malformed state, shorter fields, held
+buttons, equal nominal PAL/NTSC repeat time and publication lifetimes.
+
+Original-MC68000 execution captures the real row publisher: deferred late/active
+callbacks, immutable in-flight storage, physical row stride, final-only page
+switches, BIOS register-cache consistency and fail-closed invalid batches.
+ARM64/AMD64 build US/JP NTSC, EU PAL, debug and tour variants with matching payloads.
+Installation covers nineteen skills with telemetry disabled. Native-resolution
+PNGs come from the actual C tilemaps and prepared pattern/palette bytes.
+
+The user confirmed NTSC and PAL navigation and steady display in ares, including Pack,
+Details/Character, focus restoration, Settings and pause. Host/CPU tests do not
+emulate the VDP or certify transfer timing, safe video margins, input latency or
+physical-console/BIOS compatibility. Those remain separate checks.

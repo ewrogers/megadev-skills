@@ -24,7 +24,8 @@
         "megadev-streaming",
         "megadev-audio",
         "megadev-scenes",
-        "megadev-save"
+        "megadev-save",
+        "megadev-ui"
       ]
     },
     {
