@@ -1,0 +1,14 @@
+{
+  "version": 1,
+  "palette": "palettes.json",
+  "areas": [
+    {
+      "id": "orchard",
+      "map": "orchard.tmj"
+    },
+    {
+      "id": "archive",
+      "map": "archive.tmj"
+    }
+  ]
+}

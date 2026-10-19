@@ -1,0 +1,496 @@
+{
+  "type": "tileset",
+  "version": "1.10",
+  "name": "Native terrain",
+  "tilewidth": 16,
+  "tileheight": 16,
+  "tilecount": 32,
+  "columns": 8,
+  "margin": 0,
+  "spacing": 0,
+  "image": "terrain.png",
+  "imagewidth": 128,
+  "imageheight": 64,
+  "tiles": [
+    {
+      "id": 0,
+      "properties": [
+        {
+          "name": "palette",
+          "type": "int",
+          "value": 2
+        },
+        {
+          "name": "priority",
+          "type": "bool",
+          "value": false
+        }
+      ]
+    },
+    {
+      "id": 1,
+      "properties": [
+        {
+          "name": "palette",
+          "type": "int",
+          "value": 2
+        },
+        {
+          "name": "priority",
+          "type": "bool",
+          "value": false
+        }
+      ]
+    },
+    {
+      "id": 2,
+      "properties": [
+        {
+          "name": "palette",
+          "type": "int",
+          "value": 2
+        },
+        {
+          "name": "priority",
+          "type": "bool",
+          "value": false
+        }
+      ]
+    },
+    {
+      "id": 3,
+      "properties": [
+        {
+          "name": "palette",
+          "type": "int",
+          "value": 2
+        },
+        {
+          "name": "priority",
+          "type": "bool",
+          "value": false
+        }
+      ]
+    },
+    {
+      "id": 4,
+      "properties": [
+        {
+          "name": "palette",
+          "type": "int",
+          "value": 2
+        },
+        {
+          "name": "priority",
+          "type": "bool",
+          "value": false
+        }
+      ]
+    },
+    {
+      "id": 5,
+      "properties": [
+        {
+          "name": "palette",
+          "type": "int",
+          "value": 2
+        },
+        {
+          "name": "priority",
+          "type": "bool",
+          "value": false
+        }
+      ]
+    },
+    {
+      "id": 6,
+      "properties": [
+        {
+          "name": "palette",
+          "type": "int",
+          "value": 2
+        },
+        {
+          "name": "priority",
+          "type": "bool",
+          "value": false
+        }
+      ]
+    },
+    {
+      "id": 7,
+      "properties": [
+        {
+          "name": "palette",
+          "type": "int",
+          "value": 2
+        },
+        {
+          "name": "priority",
+          "type": "bool",
+          "value": false
+        }
+      ]
+    },
+    {
+      "id": 8,
+      "properties": [
+        {
+          "name": "palette",
+          "type": "int",
+          "value": 2
+        },
+        {
+          "name": "priority",
+          "type": "bool",
+          "value": false
+        }
+      ]
+    },
+    {
+      "id": 9,
+      "properties": [
+        {
+          "name": "palette",
+          "type": "int",
+          "value": 2
+        },
+        {
+          "name": "priority",
+          "type": "bool",
+          "value": true
+        }
+      ]
+    },
+    {
+      "id": 10,
+      "properties": [
+        {
+          "name": "palette",
+          "type": "int",
+          "value": 2
+        },
+        {
+          "name": "priority",
+          "type": "bool",
+          "value": false
+        }
+      ]
+    },
+    {
+      "id": 11,
+      "properties": [
+        {
+          "name": "palette",
+          "type": "int",
+          "value": 2
+        },
+        {
+          "name": "priority",
+          "type": "bool",
+          "value": false
+        }
+      ]
+    },
+    {
+      "id": 12,
+      "properties": [
+        {
+          "name": "palette",
+          "type": "int",
+          "value": 2
+        },
+        {
+          "name": "priority",
+          "type": "bool",
+          "value": false
+        }
+      ]
+    },
+    {
+      "id": 13,
+      "properties": [
+        {
+          "name": "palette",
+          "type": "int",
+          "value": 2
+        },
+        {
+          "name": "priority",
+          "type": "bool",
+          "value": false
+        }
+      ]
+    },
+    {
+      "id": 14,
+      "properties": [
+        {
+          "name": "palette",
+          "type": "int",
+          "value": 2
+        },
+        {
+          "name": "priority",
+          "type": "bool",
+          "value": false
+        }
+      ]
+    },
+    {
+      "id": 15,
+      "properties": [
+        {
+          "name": "palette",
+          "type": "int",
+          "value": 2
+        },
+        {
+          "name": "priority",
+          "type": "bool",
+          "value": false
+        }
+      ]
+    },
+    {
+      "id": 16,
+      "properties": [
+        {
+          "name": "palette",
+          "type": "int",
+          "value": 3
+        },
+        {
+          "name": "priority",
+          "type": "bool",
+          "value": false
+        }
+      ]
+    },
+    {
+      "id": 17,
+      "properties": [
+        {
+          "name": "palette",
+          "type": "int",
+          "value": 3
+        },
+        {
+          "name": "priority",
+          "type": "bool",
+          "value": false
+        }
+      ]
+    },
+    {
+      "id": 18,
+      "properties": [
+        {
+          "name": "palette",
+          "type": "int",
+          "value": 3
+        },
+        {
+          "name": "priority",
+          "type": "bool",
+          "value": false
+        }
+      ]
+    },
+    {
+      "id": 19,
+      "properties": [
+        {
+          "name": "palette",
+          "type": "int",
+          "value": 3
+        },
+        {
+          "name": "priority",
+          "type": "bool",
+          "value": false
+        }
+      ]
+    },
+    {
+      "id": 20,
+      "properties": [
+        {
+          "name": "palette",
+          "type": "int",
+          "value": 3
+        },
+        {
+          "name": "priority",
+          "type": "bool",
+          "value": false
+        }
+      ]
+    },
+    {
+      "id": 21,
+      "properties": [
+        {
+          "name": "palette",
+          "type": "int",
+          "value": 3
+        },
+        {
+          "name": "priority",
+          "type": "bool",
+          "value": false
+        }
+      ]
+    },
+    {
+      "id": 22,
+      "properties": [
+        {
+          "name": "palette",
+          "type": "int",
+          "value": 3
+        },
+        {
+          "name": "priority",
+          "type": "bool",
+          "value": false
+        }
+      ]
+    },
+    {
+      "id": 23,
+      "properties": [
+        {
+          "name": "palette",
+          "type": "int",
+          "value": 3
+        },
+        {
+          "name": "priority",
+          "type": "bool",
+          "value": false
+        }
+      ]
+    },
+    {
+      "id": 24,
+      "properties": [
+        {
+          "name": "palette",
+          "type": "int",
+          "value": 3
+        },
+        {
+          "name": "priority",
+          "type": "bool",
+          "value": false
+        }
+      ]
+    },
+    {
+      "id": 25,
+      "properties": [
+        {
+          "name": "palette",
+          "type": "int",
+          "value": 3
+        },
+        {
+          "name": "priority",
+          "type": "bool",
+          "value": true
+        }
+      ]
+    },
+    {
+      "id": 26,
+      "properties": [
+        {
+          "name": "palette",
+          "type": "int",
+          "value": 3
+        },
+        {
+          "name": "priority",
+          "type": "bool",
+          "value": false
+        }
+      ]
+    },
+    {
+      "id": 27,
+      "properties": [
+        {
+          "name": "palette",
+          "type": "int",
+          "value": 3
+        },
+        {
+          "name": "priority",
+          "type": "bool",
+          "value": false
+        }
+      ]
+    },
+    {
+      "id": 28,
+      "properties": [
+        {
+          "name": "palette",
+          "type": "int",
+          "value": 3
+        },
+        {
+          "name": "priority",
+          "type": "bool",
+          "value": false
+        }
+      ]
+    },
+    {
+      "id": 29,
+      "properties": [
+        {
+          "name": "palette",
+          "type": "int",
+          "value": 3
+        },
+        {
+          "name": "priority",
+          "type": "bool",
+          "value": false
+        }
+      ]
+    },
+    {
+      "id": 30,
+      "properties": [
+        {
+          "name": "palette",
+          "type": "int",
+          "value": 3
+        },
+        {
+          "name": "priority",
+          "type": "bool",
+          "value": false
+        }
+      ]
+    },
+    {
+      "id": 31,
+      "properties": [
+        {
+          "name": "palette",
+          "type": "int",
+          "value": 3
+        },
+        {
+          "name": "priority",
+          "type": "bool",
+          "value": false
+        }
+      ]
+    }
+  ]
+}

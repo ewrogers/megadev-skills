@@ -29,7 +29,8 @@
         "megadev-dialogue",
         "megadev-gameplay",
         "megadev-animation",
-        "megadev-collision"
+        "megadev-collision",
+        "megadev-levels"
       ]
     },
     {

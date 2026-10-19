@@ -783,3 +783,46 @@ redraw issue is gone. This does not imply physical-console qualification.
 The user also confirmed the final European/PAL build in ares on 2026-10-19:
 the three views, aiming/sliding, wall changes and pause work without the redraw.
 Both emulator reviews are recorded separately from the arithmetic/CPU matrix.
+
+
+## Tiled levels, cameras and connected areas
+
+`megadev-levels` adds Level Lab and a bounded Tiled JSON importer. Two editable
+48×32 maps share a native 16×16 atlas, separate ground/foreground/collision layers
+and named spawn/exit objects. The prepared world bundle is 15,572 bytes, resident
+in Main RAM. Shared art remains resident; larger CD/preload integration belongs
+to the existing streaming owner.
+
+Host checks cover exact art preparation, palette/alpha/GID/geometry failures,
+invalid connections, stale prepared data and preserving source edits during
+builds. An independent two-plane cache oracle checks every visible cell while
+rows/columns wrap in both directions, including flipped metatile quadrants.
+O0/O3 with UBSan check binary bounds, collision, camera limits, pause, catch-up
+and PAL/NTSC equivalence.
+
+Original-68000 execution covers the parser, walking, travel, cache, tour and
+immutable publication. It checks explicit H64/V32 VDP configuration, exact patch
+words, scroll/SAT/HUD data, late-frame retention, invalid run rejection and no
+foreground VDP writes during walking. Data payloads are capped at 776 bytes per
+callback; register/command overhead and physical raster timing are separate.
+
+The first ares review exposed two real display faults: an opaque font SPACE
+pattern used for empty foreground cells, then cache wrapping against the BIOS's
+taller plane size. Empty world cells now use an explicitly transparent pattern,
+and register 16 is explicitly H64/V32. Both have target regressions. On
+2026-10-19 the user confirmed that the corrected NTSC build's movement,
+cameras and connected-area travel work.
+
+US/JP NTSC, EU PAL, debug and automatic-tour builds are compared on ARM64 and
+AMD64. Local AMD64 is emulated; native CI provides separate architecture evidence.
+No host/CPU/emulator result qualifies physical-console cadence, VDP FIFO margin,
+BIOS variants, combined CD/audio load or arbitrary larger authoring profiles.
+
+
+The completed milestone passes all 161 host tests and a telemetry-disabled
+installation of all 24 skills, including fresh standalone generation/import.
+Local ARM64 and AMD64 regional/debug/tour matrices pass with identical payloads
+and executed results. The user confirmed the final PAL build in ares on
+2026-10-19: scrolling, camera tour, collision view, connected travel and pause
+work without missing background rows. This acceptance is separate from the
+CPU-model and native CI evidence.

@@ -305,3 +305,19 @@ query semantics, not a game design. Host Fraction oracles and original-68000
 execution check arithmetic and optimization behavior; native CI compares regional,
 debug and automatic-tour payloads across ARM64/AMD64. Emulator presentation and
 physical-console performance remain separate qualification steps.
+
+
+## Levels milestone
+
+`megadev-levels` owns the Tiled authoring-to-runtime contract: validated layers,
+metatile/GID transforms, independent collision cells, named spawn/exit links,
+camera bounds and scrolling tile-cache integration. It reuses the existing
+simulation/graphics/input contracts and leaves fast geometry queries to
+`megadev-collision`. Art and traversal design remain illustrative.
+
+Level Lab keeps two prepared areas and their shared art resident in Main RAM.
+It does not duplicate CD loading or claim seamless streaming of arbitrary worlds.
+Large-area residency and cancellation remain with `megadev-streaming`,
+`megadev-system` and `megadev-memory`; scene flow remains with `megadev-scenes`.
+The importer can be extended deliberately when a project needs other Tiled
+orientations, additional layers, animated tiles or larger budgets.
