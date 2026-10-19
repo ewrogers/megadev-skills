@@ -180,6 +180,15 @@ def check_video(project,hz):
   else:raise AssertionError('Bad input did not retire '+defect)
   assert get(sub,0xff8022)==wanted_result,(defect,get(sub,0xff8022))
   put(sub,0xff8010,0);sub_tick();files['C00.CIN;1']=original
+ # Restart after an odd number of flips preserves the actual visible page.
+ # Resetting it to zero would upload the first replay into live slot one.
+ for active in (0,1):
+  put(main,ms['cinema']+6,active);put(main,ms['link'],0)
+  put(main,0xa12002,1);put(main,0xa12010,0);put(main,0xa12020,0)
+  call('main','cinema_restart')
+  assert get(main,ms['cinema']+6)==active and get(main,ms['cinema']+2)==65535
+  assert not get(main,ms['prefetched']) and get(main,ms['link'])==1
+ put(main,ms['link'],0);put(main,0xa12010,0)
  # Cancellation does not reclaim a live reader; Main retires only the matching reply.
  put(main,ms['stopping'],0);put(main,0xa12002,1);call('main','cinema_request',(0,));put(main,0xa12002,2);call('main','cinema_receive',(5,))
  call('main','cinema_receive',(9000,));assert get(main,ms['stopping']) and get(main,ms['failed'])==6

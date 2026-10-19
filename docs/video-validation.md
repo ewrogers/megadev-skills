@@ -28,7 +28,8 @@ both image pages. This is tested through actual register writes, not source text
 
 The producer regression reproduces the image-4 failure: a cached next frame
 must suppress a duplicate request even after its mailbox retires. It fails on
-the faulty compiled player and passes with the cache guard.
+the faulty compiled player and passes with the cache guard. Restart tests
+cover either visible page after skip, so the next upload stays off screen.
 The producer regression also covers a flip acknowledged during foreground
 work: no duplicate packet may publish before that acknowledgement is retired.
 The checked original-68000 copy preserves callee-saved registers and writes

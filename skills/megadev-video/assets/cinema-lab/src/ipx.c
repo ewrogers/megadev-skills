@@ -141,6 +141,13 @@ void cinema_publish(void){
    }
   }
 }
+/* Skip may leave either page visible. Preserve that page when resetting the
+   timeline so the first replay upload still targets the hidden pattern slot. */
+void cinema_restart(void){
+ V16 active=cinema.slot;ci_init(&cinema);cinema.slot=active;
+ loaded=0;prefetched=0;stopping=0;failed=0;failure_site=0;playing=1;
+ *ga_reg_comcmd5=0;*ga_reg_comcmd4=1;cinema_request(0);
+}
 void main(void){
  disable_interrupts();stream_install();
 #if VIDEO == PAL
@@ -163,7 +170,7 @@ void main(void){
   if(hit&PAD_C)stop_at(0,0);
   if((hit&PAD_START) && playing){cinema.paused^=1u;*ga_reg_comcmd4=cinema.paused?2:1;}
   if(hit&PAD_B)slow^=1u;
-  if((hit&PAD_A) && !playing && !link && !published && !ack && !*ga_reg_comstat7){ci_init(&cinema);loaded=0;prefetched=0;stopping=0;failed=0;failure_site=0;playing=1;*ga_reg_comcmd5=0;*ga_reg_comcmd4=1;cinema_request(0);}
+  if((hit&PAD_A) && !playing && !link && !published && !ack && !*ga_reg_comstat7){cinema_restart();}
   if(stopping && !link && !published && !ack && !*ga_reg_comstat7){loaded=0;prefetched=0;cinema.uploaded=0;}
   cinema_publish();
   if(video_fault)stop_at(CI_FORMAT,10);
