@@ -40,7 +40,8 @@
       "title": "Advanced",
       "description": "Use Mega CD hardware features with explicit resource and timing budgets.",
       "skills": [
-        "megadev-scaling"
+        "megadev-scaling",
+        "megadev-raster"
       ]
     },
     {

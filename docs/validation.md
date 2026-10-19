@@ -873,3 +873,11 @@ results, measurement boundaries and remaining console evidence.
 [Effects validation](effects-validation.md) records the bounded pool/SAT/upload
 contracts, original-68000 publisher checks, native architecture comparison and
 performance measurement limits for Winter Observatory.
+
+## Raster milestone
+
+`megadev-raster` adds separate water/reflection and split-screen demos, with
+immutable plans, bounded HBlank batches and Main Work RAM DMA publication.
+Both demos have US/JP/EU release, US debug and US tour cases per architecture.
+See [raster validation](raster-validation.md) for the moving-water regression,
+original-68000 interrupt tests, upload/RAM bounds and physical-hardware limits.
