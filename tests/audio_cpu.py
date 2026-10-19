@@ -1,7 +1,7 @@
 """Execute original-68000 audio adapters with modeled BIOS completion and PCM MMIO."""
 from startup import check,symbols
 
-def check_audio(project,hz):
+def check_audio(project,hz,dialogue=False):
     from unicorn import UC_HOOK_MEM_READ,UC_HOOK_MEM_WRITE,UC_HOOK_CODE
     from unicorn.m68k_const import UC_M68K_REG_A7,UC_M68K_REG_PC,UC_M68K_REG_SR,UC_M68K_REG_D0,UC_M68K_REG_A0
     contexts={}
@@ -60,18 +60,23 @@ def check_audio(project,hz):
         u,sym=contexts[kind];stack=0xFFDF00 if kind=='main' else 0x1FF00;stop=0x300000
         u.reg_write(UC_M68K_REG_SR,0x2700);u.reg_write(UC_M68K_REG_A7,stack)
         u.mem_write(stack,stop.to_bytes(4,'big')+b''.join((v&0xffffffff).to_bytes(4,'big') for v in args))
-        try:u.emu_start(sym[name],stop,count=1000000)
+        try:u.emu_start(sym[name],stop,count=3000000 if dialogue else 1000000)
         except Exception as error:raise AssertionError(f'{kind} {name}: PC {u.reg_read(UC_M68K_REG_PC):x}') from error
         assert u.reg_read(UC_M68K_REG_PC)==stop,name+' did not return'
         assert u.reg_read(UC_M68K_REG_A7)==stack+4,name+' changed stack'
         return u.reg_read(UC_M68K_REG_D0)
     call('sub','audio_init')
-    assert pcm_writes==16390 and disabled==0xff
+    assert pcm_writes==(49158 if dialogue else 16390) and disabled==0xff
     for index,name in enumerate(['bed','bell','pluck','drum']):
         data=(project/'res'/f'{name}.pcm').read_bytes()
         assert bytes(pcm[index*4096:index*4096+len(data)])==data
         assert pcm[index*4096+len(data)]==0xff and 0xff not in data
     assert pcm[0x3f00:0x3f02]==b'\x80\xff','One-shot silence loop missing'
+    if dialogue:
+        for base,name in [(0x4000,'welcome'),(0x8000,'listen')]:
+            data=(project/'res'/f'voice_{name}.pcm').read_bytes()
+            assert 1<=len(data)<=12000 and 0xff not in data
+            assert bytes(pcm[base:base+len(data)])==data and pcm[base+len(data)]==0xff
     now=0
     def frame():
         nonlocal now,busy
@@ -103,6 +108,27 @@ def check_audio(project,hz):
     assert field(2)==3 and commands[-1]==(0x13,3),'Music did not restart after releasing drive'
     send(7);advance();assert disabled==0xff and not field(0) and not field(7) and not field(2)
     before=(len(commands),bytes(mailbox));assert not call('main','audio_request',(1,1));assert before==(len(commands),bytes(mailbox)),'Invalid track changed the request'
+    if dialogue:
+        for op,arg in [(8,0),(8,3),(9,1)]:
+            before=bytes(mailbox);assert not call('main','audio_request',(op,arg));assert bytes(mailbox)==before
+        model=ms['dialogue']
+        call('main','d_init',(model,));assert call('main','d_start',(model,0))
+        call('main','d_present',(model,word(main,model+1080)))
+        call('main','dialogue_audio_tick',(5,0))
+        assert word(main,ms['audio_pending'])==1
+        # Cancel while a start is committed but before Sub has consumed it.
+        call('main','d_step',(model,16,0,0));call('main','dialogue_audio_tick',(5,0))
+        advance(4);assert not disabled&8,'Delayed start did not exercise the stale-result case'
+        assert bytes(registers[3])==bytes([0x90,0x88,0xf7,1,0,0x3f,0x40])
+        call('main','dialogue_audio_tick',(5,0))
+        assert word(main,ms['audio_pending'])==1,'Stale start was not followed by an ordered stop'
+        advance(4);call('main','dialogue_audio_tick',(5,0));assert disabled&8 and not word(main,ms['speech']+4)
+        call('main','d_start',(model,1));call('main','d_present',(model,word(main,model+1080)))
+        call('main','dialogue_audio_tick',(5,0));advance(4);call('main','dialogue_audio_tick',(5,0))
+        assert not disabled&8 and registers[3][6]==0x80
+        send(4,1);send(9);assert disabled&8 and disabled&6!=6,'Speech stop also silenced an independent effect'
+        send(8,2);advance(hz*2+5);assert disabled&8,'Voice did not stop at its finite lifetime'
+        assert bytes(pcm[0x4000:0x4000+len((project/'res/voice_welcome.pcm').read_bytes())])==(project/'res/voice_welcome.pcm').read_bytes()
     # A BIOS command that never completes quarantines drive ownership; PCM remains serviceable.
     forever=True;send(1,2);advance(hz*30+5)
     assert field(11)==1 and not call('sub','audio_drive_acquire')
@@ -113,4 +139,7 @@ def check_audio(project,hz):
     for i in range(hz*30+1):call('main','audio_main_tick',(300//hz,))
     assert word(main,ms['audio_pending'])==3 and word(main,ms['audio_link_fault'])==1
     assert not call('main','audio_request',(4,1))
+    if dialogue:
+        call('main','dialogue_audio_tick',(5,0))
+        assert word(main,ms['speech']+16)==1,'Lost owner acknowledgement did not make voice unavailable'
     return True
