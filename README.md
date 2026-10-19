@@ -33,6 +33,7 @@ and build conventions; these skills do not require SGDK.
 | [megadev-graphics](skills/megadev-graphics/SKILL.md) | Scroll backgrounds, add parallax, animate sprites and use palette effects. |
 | [megadev-ui](skills/megadev-ui/SKILL.md) | Build fonts, panels, menus and HUDs with bounded redraws. Includes Menu Lab. |
 | [megadev-animation](skills/megadev-animation/SKILL.md) | Add named clips, frame holds, timed events and gameplay hitboxes. Includes Animation Lab. |
+| [megadev-collision](skills/megadev-collision/SKILL.md) | Test fast swept boxes, finite rays and bounded wall sliding. Includes Collision Lab. |
 | [megadev-gameplay](skills/megadev-gameplay/SKILL.md) | Build responsive movement, collision, cameras and bounded object lifetimes across PAL/NTSC. Includes Adventure Lab. |
 | [megadev-dialogue](skills/megadev-dialogue/SKILL.md) | Add portrait conversations, timed styled text, choices and safe optional PCM voice. Includes Dialogue Lab. |
 | [megadev-input](skills/megadev-input/SKILL.md) | Handle pads, mouse, multitaps and joining with explicit device-validation limits. |
@@ -92,6 +93,7 @@ Ask for the task you want, and name a skill when you want to be explicit:
 - "Use megadev-planning to budget an exploration game with voice and large backgrounds."
 - "Use megadev-ui to build a readable pause menu and inventory for my game's style."
 - "Use megadev-animation to synchronize attack poses, events and hitboxes with my game clock."
+- "Use megadev-collision to stop fast shots tunneling and slide along walls."
 - "Use megadev-gameplay to connect movement, collisions and cameras without blocking on Sub work."
 - "Use megadev-dialogue to add branching portrait conversations with optional voice."
 - "Check this Main/Sub handoff with megadev-system and megadev-best-practices."

@@ -17,7 +17,7 @@ Keep a bounded amount of work per foreground iteration. Decide explicitly what h
 
 Use [movement and lifetimes](references/movement-and-lifetimes.md) for coordinate ranges, collision boxes, axis sliding, camera bounds, pools and area state. Let collision and pickups depend on world state, not sprite visibility or successful rendering. Keep collision bounds independent of artwork dimensions.
 
-Choose collision techniques for the actual maximum movement: small bounded substeps work for slow actors, while fast shots need swept tests. Avoid presenting the Lab's simple tile test as a general collision engine.
+Choose collision techniques for the actual maximum movement: small bounded substeps work for slow actors, while fast shots need swept tests. Avoid presenting the Lab's simple tile test as a general collision engine. Use `megadev-collision` for exact swept boxes, finite rays and bounded static-wall sliding.
 
 ## Keep background work optional to each step
 

@@ -69,7 +69,8 @@ Gameplay owns timing, movement, collision/camera bounds and actor lifetimes;
 it connects existing platform owners without installing competing services.
 `megadev-animation` now adds clip timing, transitions, events and hitboxes on
 the existing simulation/rendering contracts.
-Next add deeper collision, levels, localization and multiplayer patterns as needed.
+Precise sweeps/rays/sliding now live in `megadev-collision`. Add levels,
+localization and multiplayer patterns as needed.
 
 This group is specifically about Mega CD integration, not just adding CD reads:
 main/sub command handshakes and BIOS responsibilities; Program RAM and Word RAM
@@ -289,3 +290,18 @@ subtitles remain usable if audio becomes unavailable.
 Preloaded voice demonstrates the coordination boundary. Long-form streamed
 voice, localization/shaping and gameplay/level systems remain separate work.
 The Lab's story, art, pacing and controls remain illustrative.
+
+
+## Collision milestone
+
+`megadev-collision` owns swept AABB geometry, finite rays, exact first-contact
+selection and bounded static-wall sliding. It extends precise queries beyond
+`megadev-gameplay`'s ordinary movement example. The existing game clock, animation
+hitbox timing, damage rules, renderer and Main/Sub resource owners stay in charge.
+It does not supply a physics solver, slopes, platform pushing or a second runtime.
+
+Collision Lab's three technical views and shared art/geometry layouts demonstrate
+query semantics, not a game design. Host Fraction oracles and original-68000
+execution check arithmetic and optimization behavior; native CI compares regional,
+debug and automatic-tour payloads across ARM64/AMD64. Emulator presentation and
+physical-console performance remain separate qualification steps.

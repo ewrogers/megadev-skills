@@ -5,3 +5,4 @@
 
 skills/megadev-gameplay/assets/adventure-lab/res/*.bin binary
 skills/megadev-animation/assets/animation-lab/res/*.bin binary
+skills/megadev-collision/assets/collision-lab/res/*.bin binary
