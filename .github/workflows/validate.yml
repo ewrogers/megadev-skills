@@ -179,6 +179,12 @@ jobs:
           - arch: amd64
             runner: ubuntu-24.04
             skill: megadev-math
+          - arch: arm64
+            runner: ubuntu-24.04-arm
+            skill: cross-skill-validation
+          - arch: amd64
+            runner: ubuntu-24.04
+            skill: cross-skill-validation
     runs-on: ${{ matrix.runner }}
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
@@ -234,3 +240,4 @@ jobs:
       - run: python tests/compare_reports.py build/reports/target-megadev-collision-arm64/report.json build/reports/target-megadev-collision-amd64/report.json
       - run: python tests/compare_reports.py build/reports/target-megadev-levels-arm64/report.json build/reports/target-megadev-levels-amd64/report.json
       - run: python tests/compare_reports.py build/reports/target-megadev-math-arm64/report.json build/reports/target-megadev-math-amd64/report.json
+      - run: python tests/compare_reports.py build/reports/target-cross-skill-validation-arm64/report.json build/reports/target-cross-skill-validation-amd64/report.json

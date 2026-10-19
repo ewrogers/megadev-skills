@@ -28,3 +28,12 @@ clean:
 assets:
 	@python3 tools/make_assets.py
 	@python3 tools/make_audio.py
+
+# Local objects must track headers and assembly-incbin resources. The SDK's
+# generic rules only track the source; compile $<, never all prerequisites ($^).
+LOCAL_C := $(notdir $(wildcard $(SRC_PATH)/*.c))
+LOCAL_S := $(notdir $(wildcard $(SRC_PATH)/*.s))
+$(addprefix $(BUILD_PATH)/,$(addsuffix .o,$(LOCAL_C))): $(BUILD_PATH)/%.c.o: $(SRC_PATH)/%.c $(wildcard $(SRC_PATH)/*.h) $(wildcard $(BUILD_PATH)/*assets.h)
+	@$(CC) $(CC_FLAGS) $(INC) -c $< -o $@
+$(addprefix $(BUILD_PATH)/,$(addsuffix .o,$(LOCAL_S))): $(BUILD_PATH)/%.s.o: $(SRC_PATH)/%.s $(wildcard $(SRC_PATH)/*.h) $(wildcard $(RES_PATH)/*) $(wildcard $(BUILD_PATH)/*assets.h)
+	@$(CC) $(CC_FLAGS) $(AS_FLAGS) $(INC) $(AS_INC) -x assembler-with-cpp -c $< -o $@

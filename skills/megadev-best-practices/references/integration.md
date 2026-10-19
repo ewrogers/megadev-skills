@@ -70,3 +70,22 @@ The integration exposes internal save/load only, with its own `MDBESTLAB_A/B`
 filenames. It never formats, deletes or damages a save. Cart support, format
 confirmation and deeper codec recovery remain with the save owner. Unavailable or
 unformatted backup RAM is reported; it is not silently initialized or redirected.
+
+## Adapting a combined example
+
+Keep the protocol and replace the game's semantics. A CRC-valid record can still
+contain an impossible position or objective state. Use a private record namespace
+and validate the new payload at request and decode; do not inherit a sample's
+flags/coin bounds merely because its commit protocol is correct. Revoke Continue
+intent when the user chooses a different title flow, not only when a scene changes.
+
+A generated resource on disk is not proof that it reached the disc. The selected
+Megadev generic object rules do not infer local headers or assembler `incbin`
+files. Track those dependencies explicitly, compile only the source prerequisite,
+and test an incremental header/art change followed by restoration. Fresh-build
+reproducibility alone cannot catch a stale assembled resource. The standalone Lab
+Makefiles use conservative local-header/resource dependencies for this reason.
+
+Check authored glyph coverage against actual tiles as well as index bounds. An
+uppercase-only font can accept lowercase code points yet render blank tiles.
+Keep a presentation acknowledgement before advancing newly opened text/menus.

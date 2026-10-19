@@ -122,6 +122,10 @@ for ownership boundaries and remaining areas.
 
 [Harbor Relay](skills/megadev-best-practices/assets/harbor-relay/README.md) checks
 scene travel, loading, audio, checkpoint saves and release packaging together.
+[Glasshouse After Hours](validation/glasshouse/README.md) validates an original
+exploration game across loading, dialogue, UI, audio and saves. See the
+[cross-skill findings](docs/cross-skill-validation.md) for the regressions and limits.
+
 The [Audio Lab](skills/megadev-audio/assets/audio-lab/README.md) also proves mixed-mode
 release validation without adding a second audio implementation.
 

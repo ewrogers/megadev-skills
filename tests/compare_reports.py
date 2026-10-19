@@ -9,14 +9,16 @@ def compare(paths):
     if len(reports)!=2 or {r.get('platform') for r in reports}!={'linux/arm64','linux/amd64'}:
         raise ValueError('Need one ARM64 and one AMD64 report')
     kinds={r.get('skill','megadev-project') for r in reports}
-    if len(kinds)!=1 or not kinds <= {'megadev-project','megadev-hardware','megadev-assets','megadev-graphics','megadev-input','megadev-system','megadev-memory','megadev-streaming','megadev-audio','megadev-scenes','megadev-save','megadev-scaling','megadev-debug','megadev-testing','megadev-performance','megadev-best-practices','megadev-ui','megadev-dialogue','megadev-gameplay','megadev-animation','megadev-collision','megadev-levels','megadev-math'}:
+    if len(kinds)!=1 or not kinds <= {'megadev-project','megadev-hardware','megadev-assets','megadev-graphics','megadev-input','megadev-system','megadev-memory','megadev-streaming','megadev-audio','megadev-scenes','megadev-save','megadev-scaling','megadev-debug','megadev-testing','megadev-performance','megadev-best-practices','megadev-ui','megadev-dialogue','megadev-gameplay','megadev-animation','megadev-collision','megadev-levels','megadev-math','cross-skill-validation'}:
         raise ValueError('Need matching supported skill reports')
-    expected=CASES | ({'us-tour'} if kinds & {'megadev-hardware','megadev-assets','megadev-graphics','megadev-input','megadev-system','megadev-memory','megadev-streaming','megadev-audio','megadev-scenes','megadev-save','megadev-scaling','megadev-debug','megadev-testing','megadev-performance','megadev-best-practices','megadev-ui','megadev-dialogue','megadev-gameplay','megadev-animation','megadev-collision','megadev-levels','megadev-math'} else set())
+    expected=CASES | ({'us-tour'} if kinds & {'megadev-hardware','megadev-assets','megadev-graphics','megadev-input','megadev-system','megadev-memory','megadev-streaming','megadev-audio','megadev-scenes','megadev-save','megadev-scaling','megadev-debug','megadev-testing','megadev-performance','megadev-best-practices','megadev-ui','megadev-dialogue','megadev-gameplay','megadev-animation','megadev-collision','megadev-levels','megadev-math','cross-skill-validation'} else set())
     if 'megadev-hardware' in kinds:expected|={'us-usb-off'}
     if 'megadev-input' in kinds:expected|={'us-ea'}
     for r in reports:
         if r.get('passed') is not True or set(r.get('cases',{}))!=expected:
             raise ValueError('Failed or incomplete matrix')
+        if 'cross-skill-validation' in kinds and r['cases']['us-release'].get('startup',{}).get('main',{}).get('incremental_execution') is not True:
+            raise ValueError('Missing incremental generated-art/header regression evidence')
         for case in r['cases'].values():
             if case.get('sub_callback') is not True or set(case.get('startup',{}))!={'main','sub','room'}:
                 raise ValueError('Missing startup/callback checks')
@@ -39,7 +41,7 @@ def compare(paths):
             if 'megadev-streaming' in kinds:
                 if any(case['startup'][kind].get('probe_execution') is not True for kind in ('main','sub')) or not {'GARDEN.MDA','CAVERN.MDA'} <= case.get('disc',{}).get('files',{}).keys():
                     raise ValueError('Missing executed streaming adapters or disc areas')
-            if kinds & {'megadev-audio','megadev-scenes','megadev-testing','megadev-best-practices'}:
+            if kinds & {'megadev-audio','megadev-scenes','megadev-testing','megadev-best-practices','cross-skill-validation'}:
                 if any(case['startup'][kind].get('probe_execution') is not True for kind in ('main','sub')) or set(case.get('audio_tracks',{}))!={'2','3'} or not {'GARDEN.MDA','CAVERN.MDA'} <= case.get('disc',{}).get('files',{}).keys():
                     raise ValueError('Missing executed audio adapters, CD tracks or disc areas')
             if kinds & {'megadev-audio','megadev-best-practices'}:
@@ -74,6 +76,8 @@ def compare(paths):
                 raise ValueError('Missing executed level parser/cache/publication checks')
             if 'megadev-math' in kinds and any(case['startup']['main'].get(k) is not True for k in ('math_execution','probe_execution')):
                 raise ValueError('Missing executed arithmetic/oracle/publication checks')
+            if 'cross-skill-validation' in kinds and (any(case['startup']['main'].get(k) is not True for k in ('game_execution','integration_execution','probe_execution')) or case['startup']['sub'].get('checkpoint_execution') is not True):
+                raise ValueError('Missing executed original-game and checkpoint integration evidence')
             if not case.get('boot_payloads') or not case.get('disc',{}).get('files'):
                 raise ValueError('Missing target payload hashes')
     if reports[0]['cases']!=reports[1]['cases']:
