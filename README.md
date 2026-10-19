@@ -21,7 +21,7 @@ and build conventions; these skills do not require SGDK.
 
 | Skill | What to ask it for |
 | --- | --- |
-| [megadev-project](skills/megadev-project/SKILL.md) | Start a project, build a bootable disc and check the actual SDK API. |
+| [megadev-project](skills/megadev-project/SKILL.md) | Start a project, build a disc, check SDK APIs and optionally upload to Mega EverDrive Pro. |
 | [megadev-planning](skills/megadev-planning/SKILL.md) | Turn a game idea into a first milestone, CPU responsibilities, memory budgets and loading plans. |
 | [megadev-best-practices](skills/megadev-best-practices/SKILL.md) | Write or review C/assembly contracts, module boundaries and safe integration between services. Includes Harbor Relay. |
 
@@ -53,7 +53,7 @@ and build conventions; these skills do not require SGDK.
 
 | Skill | What to ask it for |
 | --- | --- |
-| [megadev-testing](skills/megadev-testing/SKILL.md) | Record deterministic input replays, compare PAL/NTSC and check loading/audio integration. |
+| [megadev-testing](skills/megadev-testing/SKILL.md) | Record replays, compare PAL/NTSC, check integration and capture console video. |
 | [megadev-debug](skills/megadev-debug/SKILL.md) | Diagnose faults and stalled jobs using exact-build symbols, bounded traces and first-fault evidence. |
 | [megadev-performance](skills/megadev-performance/SKILL.md) | Compare CPU, VRAM and ASIC workloads while accounting for measurement overhead and timing limits. |
 

@@ -14,9 +14,9 @@ From the generated project directory, POSIX shell:
 
 ```sh
 docker pull ewrogers/megadev:latest
-docker run --rm ewrogers/megadev:latest doctor
-docker run --rm --mount "type=bind,source=$(pwd),target=/workspace" ewrogers/megadev:latest build
-docker run --rm --mount "type=bind,source=$(pwd),target=/workspace" ewrogers/megadev:latest cue my_game.iso
+docker run --rm --cpus=2 ewrogers/megadev:latest doctor
+docker run --rm --cpus=2 --mount "type=bind,source=$(pwd),target=/workspace" ewrogers/megadev:latest build
+docker run --rm --cpus=2 --mount "type=bind,source=$(pwd),target=/workspace" ewrogers/megadev:latest cue my_game.iso
 ```
 
 PowerShell uses `source=$($PWD.Path)` in the mount argument. The Windows command is otherwise the same; use Linux containers, not Windows-container mode. On Linux, optionally add `--user "$(id -u):$(id -g)"` to avoid root-owned outputs. Paths containing spaces work when the entire mount argument is quoted.
@@ -24,8 +24,8 @@ PowerShell uses `source=$($PWD.Path)` in the mount argument. The Windows command
 Builds default to US/NTSC. For another target, clean before changing configuration:
 
 ```sh
-docker run --rm --mount "type=bind,source=$(pwd),target=/workspace" ewrogers/megadev:latest build clean
-docker run --rm --mount "type=bind,source=$(pwd),target=/workspace" ewrogers/megadev:latest build REGION=EU VIDEO=PAL
+docker run --rm --cpus=2 --mount "type=bind,source=$(pwd),target=/workspace" ewrogers/megadev:latest build clean
+docker run --rm --cpus=2 --mount "type=bind,source=$(pwd),target=/workspace" ewrogers/megadev:latest build REGION=EU VIDEO=PAL
 ```
 
 Use JP/NTSC for Japan. The Makefile's `OPT_FLAGS` supports a Lab debug build, e.g. `OPT_FLAGS=-Og -g -fconserve-stack -fomit-frame-pointer` plus `DEBUG=1`, each passed as one argument where needed. Do not set `CC_FLAGS` on make's command line: doing so can suppress framework `+=` flags. Other projects may expose different override variables; inspect their Makefiles.
