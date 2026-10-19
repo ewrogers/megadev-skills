@@ -25,7 +25,7 @@ writes, opaque panels below sprite priority, restart cleanup and finite fanfare.
 
 RAM: five actors and eight bolts, two 1962-byte publication frames, plus the
 contract's static fixtures. The CPU harness checks total Main BSS against the
-reserved stack region. Art is resident: 347 sprite patterns, 24 ground patterns,
+reserved stack region. Art is resident: 359 sprite patterns, 24 ground patterns,
 96 font patterns and four palettes. No runtime allocation, disc load or Word RAM
 transfer occurs during combat. These are Lab budgets, not engine limits.
 

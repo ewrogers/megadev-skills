@@ -90,9 +90,9 @@ void combat_publish(void){
   u16 pal=i<2?1:3;
   /* Earlier SAT entries win overlap: the small shield sits in front of arms. */
   if(a->guard){
-   s16 x=(s16)(a->x+(a->face==2?-11:a->face==3?3:-4));
-   s16 y=(s16)(a->y+(a->face==0?27:a->face==1?11:22));
-   sprite(f,x,y,8,8,(u16)(ART_SHIELD+a->face),1);
+   s16 x=(s16)(a->x+(a->face==2?-17:a->face==3?1:-8));
+   s16 y=(s16)(a->y+(a->face==0?25:a->face==1?5:17));
+   sprite(f,x,y,16,16,(u16)(ART_SHIELD+a->face*4u),1);
   }
   if(!a->iframes || (world.tick&4u))sprite(f,a->x-8,a->y+12,i<2?16:16,i<2?24:16,tile,pal);
   if(a->state==CO_SWING){

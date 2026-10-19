@@ -89,16 +89,27 @@ def blade(face,phase):
    if 27**2<d<29**2 and (x+y)&1:p[y][x]=11
  return rotate(p,face)
 def shield(face):
- # One hardware tile, simple kite shield. No scaling or oversized aura.
- rows=[
-  ['.222222.','26AAAA62','2A1AA3A2','2A1113A2','2A1AA3A2','.2AA3A2.','..2AA2..','...22...'],
-  ['..2222..','.266662.','26444462','24422442','24422442','.244442.','..2442..','...22...'],
-  ['..222...','.26A42..','26AA42..','26A142..','26AA42..','.26A42..','..2A42..','...22...']
- ][min(face,2)]
- p=canvas(8,8)
- for y,row in enumerate(rows):
-  for x,c in enumerate(row):p[y][x]=0 if c=='.' else int(c,16)
- if face==3:p=[list(reversed(row)) for row in p]
+ # Match one 16x16 ground cell, with distinct, legible directional views.
+ p=canvas(16,16)
+ if face in (0,1):
+  for y in range(1,16):
+   inset=0 if y<9 else (y-8)//2
+   for x in range(1+inset,15-inset):
+    edge=x in (1+inset,14-inset) or y==1
+    rim=x in (2+inset,13-inset) or y==2
+    p[y][x]=2 if edge else 6 if rim and x<8 else 4 if rim else 11 if x<5 else 10 if x<10 else 3
+  rect(p,7,4,2,8,1);rect(p,4,6,8,2,1);rect(p,3,3,2,1,1)
+  if face==1:
+   # Raised guard: broad upper rim, pale crest stays visible from behind.
+   p=list(reversed(p));rect(p,3,1,10,1,6);rect(p,5,2,6,1,1)
+ else:
+  for y in range(1,16):
+   inset=1 if y in (1,15) else 0
+   for x in range(2+inset,14-inset):
+    edge=x in (2+inset,13-inset) or y in (1,15)
+    p[y][x]=2 if edge else 6 if x<=4 else 11 if x<6 else 10 if x<10 else 4
+  rect(p,6,4,2,8,1);rect(p,4,6,6,2,1)
+  if face==3:p=[list(reversed(row)) for row in p]
  return p
 def build():
  actors=bytearray();meta={}

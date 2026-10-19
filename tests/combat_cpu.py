@@ -40,6 +40,16 @@ def check_combat(u,sym):
  controls=[v for a,n,v in writes if a==0xc00004]
  assert len(controls)==5 and 0xc0000000 not in controls,'Unexpected VDP/CRAM operation'
  writes.clear();call('vblank_user');assert not writes
+ # Guard is a 16x16 entry before the body, with four distinct art views.
+ shield_tiles=[]
+ for face in range(4):
+  call('combat_guard_probe',(face,));call('combat_publish')
+  guard_frame=frame+(word(sym['published'])-1)*1962
+  assert word(guard_frame+2)&0x0f00==0x0500,'Guard must match one 16x16 ground cell'
+  shield_tiles.append(word(guard_frame+4)&0x7ff)
+  call('vblank_user')
+ assert shield_tiles==list(range(shield_tiles[0],shield_tiles[0]+16,4))
+ writes.clear()
  # Force a won state through a narrow ABI adapter; panel is staged, not drawn
  # by simulation, and is cleared through the same callback on restart.
  call('combat_win_probe');call('combat_publish')
