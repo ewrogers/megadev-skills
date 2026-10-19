@@ -31,6 +31,9 @@ rejects missing cases and missing collision/publication execution evidence.
 
 ## Presentation and physical checks
 
+On 2026-10-19 the user confirmed the redraw fix in NTSC and the final PAL build
+with all three views, aiming/sliding, wall changes and pause working.
+
 In ares, review all three views on NTSC and PAL: a fast pink shot should tunnel,
 blue should stop at the wall, rays should clip at the first contact and fast
 movement should slide without entering the walls. Check pause, view changes,

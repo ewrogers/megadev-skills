@@ -779,3 +779,7 @@ commits it with the pending sprite/HUD frame. The target regression checks late
 submission retention, patch bytes and that ordinary ray/rover movement has no
 foreground VDP writes. On 2026-10-19 the user confirmed the reloaded NTSC build's
 redraw issue is gone. This does not imply physical-console qualification.
+
+The user also confirmed the final European/PAL build in ares on 2026-10-19:
+the three views, aiming/sliding, wall changes and pause work without the redraw.
+Both emulator reviews are recorded separately from the arithmetic/CPU matrix.
