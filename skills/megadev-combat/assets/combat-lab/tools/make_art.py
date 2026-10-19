@@ -89,33 +89,16 @@ def blade(face,phase):
    if 27**2<d<29**2 and (x+y)&1:p[y][x]=11
  return rotate(p,face)
 def shield(face):
- p=canvas(32,32)
- if face==0:
-  # Front: a full kite shield, copper rim, blue steel and a white crest.
-  for y in range(8,29):
-   inset=0 if y<20 else (y-19)//2
-   for x in range(7+inset,25-inset):
-    edge=x in (7+inset,24-inset) or y in (8,28)
-    rim=x in (8+inset,23-inset) or y==9
-    p[y][x]=2 if edge else 6 if rim and x<16 else 4 if rim else 11 if x<12 else 10 if x<18 else 3
-  rect(p,14,12,3,11,1);rect(p,11,15,9,3,1);rect(p,9,10,2,2,1)
- elif face==1:
-  # Raised away from camera: foreshortened top rim and leather inner straps.
-  for y in range(2,15):
-   inset=2 if y in (2,14) else 1 if y in (3,13) else 0
-   for x in range(7+inset,25-inset):
-    edge=x in (7+inset,24-inset) or y in (2,14)
-    p[y][x]=2 if edge else 6 if y<=4 else 4 if x<12 else 3
-  rect(p,10,6,12,2,5);rect(p,14,5,3,7,4);rect(p,15,6,1,5,6)
- else:
-  # Side: curved edge, narrow visible blue face, studs and copper spine.
-  for y in range(6,28):
-   inset=2 if y in (6,27) else 1 if y in (7,26) else 0
-   for x in range(3+inset,13-inset):
-    edge=x in (3+inset,12-inset) or y in (6,27)
-    p[y][x]=2 if edge else 6 if x==4+inset else 11 if x<7 else 10 if x<10 else 4
-  rect(p,5,10,2,2,1);rect(p,5,22,2,2,1)
-  if face==3:p=[list(reversed(row)) for row in p]
+ # One hardware tile, simple kite shield. No scaling or oversized aura.
+ rows=[
+  ['.222222.','26AAAA62','2A1AA3A2','2A1113A2','2A1AA3A2','.2AA3A2.','..2AA2..','...22...'],
+  ['..2222..','.266662.','26444462','24422442','24422442','.244442.','..2442..','...22...'],
+  ['..222...','.26A42..','26AA42..','26A142..','26AA42..','.26A42..','..2A42..','...22...']
+ ][min(face,2)]
+ p=canvas(8,8)
+ for y,row in enumerate(rows):
+  for x,c in enumerate(row):p[y][x]=0 if c=='.' else int(c,16)
+ if face==3:p=[list(reversed(row)) for row in p]
  return p
 def build():
  actors=bytearray();meta={}

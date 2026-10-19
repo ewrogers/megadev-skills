@@ -49,6 +49,8 @@ class CombatTests(unittest.TestCase):
    with self.assertRaises(ValueError):create(Path(folder)/'bad',project_id='../bad')
    self.assertTrue(load(root/'tools/check_combat.py','combat_check').check()['passed'])
    art=load(root/'tools/make_art.py','combat_art');files,header=art.build()
+   for face in range(4):
+    shield=art.shield(face);self.assertEqual(len(shield),8);self.assertTrue(all(len(row)==8 for row in shield))
    for name,data in files.items():self.assertEqual(data,(root/'res'/name).read_bytes())
    self.assertEqual(header,(root/'src/art_meta.h').read_text())
    self.assertLess(128+len(files['actors.bin'])//32,640)

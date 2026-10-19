@@ -88,8 +88,13 @@ void combat_publish(void){
   CoActor const *a=&world.actor[i];if(!a->joined || !a->hp)continue;
   u16 tile=i<2?(u16)(ART_HERO+a->face*12u+((a->moving && ((world.tick>>3)&1u))?6u:0)):(u16)(ART_ENEMY+(i-2u)*32u+a->face*8u+((a->moving && ((world.tick>>4)&1u))?4u:0));
   u16 pal=i<2?1:3;
+  /* Earlier SAT entries win overlap: the small shield sits in front of arms. */
+  if(a->guard){
+   s16 x=(s16)(a->x+(a->face==2?-11:a->face==3?3:-4));
+   s16 y=(s16)(a->y+(a->face==0?27:a->face==1?11:22));
+   sprite(f,x,y,8,8,(u16)(ART_SHIELD+a->face),1);
+  }
   if(!a->iframes || (world.tick&4u))sprite(f,a->x-8,a->y+12,i<2?16:16,i<2?24:16,tile,pal);
-  if(a->guard){s16 x=a->x-16,y=a->y+16;sprite(f,x,y,32,32,(u16)(ART_SHIELD+a->face*16u),1);}
   if(a->state==CO_SWING){
    if(a->age<6)sprite(f,a->x-4,a->y+4,8,8,ART_ALERT,1);
    else if(a->age<13){
