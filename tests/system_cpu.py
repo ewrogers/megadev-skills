@@ -1,6 +1,6 @@
 """Execute both compiled CPUs; model only mailbox/2M ownership, not BIOS timing."""
 from startup import check,symbols
-def check_system(project,hz,diagnostics=False):
+def check_system(project,hz,diagnostics=False,gameplay=False):
     from unicorn import UC_HOOK_MEM_READ,UC_HOOK_MEM_WRITE,UC_HOOK_CODE
     from unicorn.m68k_const import UC_M68K_REG_A7,UC_M68K_REG_PC,UC_M68K_REG_SR,UC_M68K_REG_D0
     contexts={}
@@ -56,6 +56,7 @@ def check_system(project,hz,diagnostics=False):
         assert u.reg_read(UC_M68K_REG_A7)==stack+4,name+' changed stack'
         return u.reg_read(UC_M68K_REG_D0)
     for u,sym in contexts.values():u.mem_map(0x300000,0x1000)
+    if gameplay:call('main','gp_init',(ms['game'],))
     now=0
     def frame():
         nonlocal now
@@ -68,6 +69,11 @@ def check_system(project,hz,diagnostics=False):
                 before=(bytes(buffer),regword(0x24))
                 call('sub','sy_sub_tick',(now,hz))
                 assert before==(bytes(buffer),regword(0x24)),'Duplicate worker tick advanced work'
+        if gameplay:
+            before_tick=word(main,ms['game']+150)
+            call('main','gp_advance',(ms['game'],300//hz,8,0))
+            if word(main,ms['game']+156):assert word(main,ms['game']+150)==before_tick,'Pause advanced gameplay'
+            else:assert word(main,ms['game']+150)>before_tick,'Gameplay stalled during service work'
         if now&1:worker()
         call('main','sy_main_tick',(300//hz,))
         if now%3==0:call('main','sy_main_tick',(0,))
@@ -76,6 +82,11 @@ def check_system(project,hz,diagnostics=False):
     for profile,slow,cancel,stale in [(0,0,False,False),(1,0,False,False),(2,0,False,False),(0,0,True,False),(0,1,False,False),(0,0,False,True)]:
         assert call('main','sy_main_start',(profile,slow))==1
         token=word(main,ms['client']+2)
+        if gameplay:
+            live=bytes(main.mem_read(ms['client'],14))
+            call('main','gp_init',(ms['game'],))
+            assert bytes(main.mem_read(ms['client'],14))==live,'Gameplay reset revoked live service'
+            if slow:call('main','gp_advance',(ms['game'],5,0,128))
         assert not call('main','sy_main_start',(0,0)),'Accepted overlapping request'
         for count in range(300):
             if stale and count==2:mailbox[0x20:0x22]=(token-1).to_bytes(2,'big')
