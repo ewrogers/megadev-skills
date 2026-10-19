@@ -200,7 +200,13 @@ def inputs(manifest):
    if 'source' in ts:
     source=local(root,folder,ts['source']);paths.add(source);ts=read(source);folder=source.parent
    paths.add(local(root,folder,ts.get('image')))
- return {p.relative_to(root).as_posix():hashlib.sha256(p.read_bytes()).hexdigest() for p in sorted(paths)}
+ hashes={}
+ for p in sorted(paths):
+  payload=p.read_bytes()
+  # Git/Tiled may use CRLF on Windows; JSON line endings do not change assets.
+  if p.suffix.lower() in ('.json','.tmj','.tsj'):payload=payload.replace(b'\r\n',b'\n')
+  hashes[p.relative_to(root).as_posix()]=hashlib.sha256(payload).hexdigest()
+ return hashes
 
 def verify(manifest,destination):
  destination=Path(destination);report=read(destination.with_suffix('.import.json'))

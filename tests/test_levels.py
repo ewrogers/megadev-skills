@@ -30,6 +30,9 @@ class LevelsTests(unittest.TestCase):
   files=api.compile_world(self.res/'world.json')
   for name,data in files.items():self.assertEqual(data,(self.res/name).read_bytes())
   self.assertTrue(api.verify(self.res/'world.json',self.res/'world.bin'))
+  source=self.res/'orchard.tmj';raw=source.read_bytes().replace(b'\r\n',b'\n');source.write_bytes(raw.replace(b'\n',b'\r\n'))
+  self.assertTrue(api.verify(self.res/'world.json',self.res/'world.bin'))
+  source.write_bytes(raw)
   for name in ['world.bin','ground.bin','tileattrs.bin','palettes.bin']:
    p=self.res/name;old=p.read_bytes();p.write_bytes(old+b'!')
    with self.assertRaises(ValueError):api.verify(self.res/'world.json',self.res/'world.bin')
