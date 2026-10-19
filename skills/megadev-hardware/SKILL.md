@@ -26,6 +26,8 @@ Read [machine contracts](references/machine-contracts.md) for CPU-specific maps,
 
 [Hardware Lab](assets/hardware-lab/README.md) is a self-contained disc with bounded scratch-pattern primitives, a 2M round trip, ping and module reloads. `scripts/create_project.py` creates a new copy without replacing existing files. Its optional automatic tour exercises runtime operations when emulator input automation is unavailable; it does not test physical controller mappings.
 
+The Lab also supplies native tile graphics, a source/configuration build ID, Main/Sub startup checks, heartbeat and [EverDrive EDIO detection](references/everdrive-link.md). Detection establishes an interface, not the console model or host USB connectivity. The updated Pro firmware was verified retaining USB in CD mode and completing live guest handshakes. The initial 4.20 setup lost USB and required menu return for uploads. Check actual port availability; `USB_LAB=0` disables guest polling on unsupported setups. Do not import cartridge startup flags or blocking disk initialization into a Megadev program.
+
 Use `scripts/inspect_disc.py` for this data-only image's region/filesystem checks. The helper is not a full mixed-mode release validator. Building/bootstrapping a new game belongs to `megadev-project`; feasibility and lifetime budgets belong to `megadev-planning`. This skill owns the hardware assumptions and evidence, not a rival project architecture.
 
 ## Report evidence precisely

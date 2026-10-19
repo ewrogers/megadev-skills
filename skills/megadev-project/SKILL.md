@@ -1,6 +1,6 @@
 ---
 name: megadev-project
-description: Create, build or troubleshoot a Megadev Sega CD/Mega CD project, including Main/Sub startup, module layouts and bootable disc output. Use for project foundations rather than SGDK cartridge builds.
+description: Create, build or troubleshoot a Megadev Sega CD/Mega CD project, including Main/Sub startup, module layouts, bootable discs and optional Mega EverDrive Pro USB deployment. Use for project foundations rather than SGDK cartridge builds.
 ---
 
 # Megadev project
@@ -26,5 +26,7 @@ Read [startup and ownership](references/startup.md) when touching boot code, lin
 ## Verify the result
 
 Use [validation and troubleshooting](references/validation.md). Validate disc contents and regional boot data, then boot the CUE in an emulator. Exercise a second module load and return, not just the first screen. Report host, CPU-execution, emulator and real-hardware evidence separately.
+
+For a user-selected Mega EverDrive Pro target, use [disc USB deployment](references/everdrive-usb.md). The bundled host Python helper stages ISO/CUE dependencies and supports build-then-deploy. Default to hard reset for each upload; soft requires an explicit user request. Updated firmware was physically verified keeping USB available in CD mode, including replacement of a running disc. The initial 4.20 setup lost USB and required menu return before upload. Check the actual setup; the stock BIOS still requires controller Start, so the whole loop is not unattended. Capture-card observation belongs to `megadev-testing`; hardware diagnostics belong to `megadev-hardware`.
 
 The starter's UI, memory reservations, handshake and controls are teaching choices. Reuse the relevant contracts without importing its visual design or treating its small example limits as hardware limits. Advanced CD streaming, audio, graphics ASIC, backup RAM and release authoring need their own source-backed work; this skill establishes their project foundation.

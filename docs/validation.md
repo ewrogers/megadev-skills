@@ -627,3 +627,50 @@ NTSC and final PAL dialogue, branches, paired panels, voice and controls in ares
 The Lab preloads
 short PCM excerpts; it does not prove runtime voice CD reads, optical timing,
 real PCM acoustics or physical-console behavior.
+
+## EverDrive disc iteration and capture
+
+`megadev-project` adds native host Python/pySerial disc deployment and build-then-
+deploy, with hard reset as the default. `megadev-testing` adds bounded direct
+FFmpeg/AVFoundation capture. `megadev-hardware` extends its existing Lab with
+native graphics, source/configuration build ID, resident heartbeat, EDIO
+detection and a bounded cooperative host handshake. Each skill carries its own
+runtime resources; no SGDK or repository-test dependency is installed.
+
+Host tests cover complete multi-file transcripts under fragmented I/O, legacy
+and extended Pro discovery, explicit soft override, reset-release cleanup,
+transfer/install failures without launch, failed build without USB, unsafe CUE
+paths/aliases/symlinks, immutable ISO/CUE snapshots, PCM track validation and a
+copied CLI using real pySerial over a pseudo-terminal. Capture tests cover
+explicit devices, no audio, no overwrite, bounded sampling and incomplete output.
+
+The Hardware Lab target matrix includes US/JP NTSC, EU PAL, US debug, automatic
+tour and guest polling disabled. Original-MC68000 execution checks Main/Sub
+scratch primitives and the guest signature/CRC/nonce/parser/lease contracts,
+including absent hardware, corruption, stale ACK and timeout negatives. CPU
+execution does not emulate USB, the MCU, BIOS, VDP or optical I/O. Local ARM64
+and emulated AMD64 builds are compared; CI runs both architectures natively.
+
+Selected image was pulled before validation: Megadev
+`7a7246c14b845ad2f1bd3c7d73afb04cf67d83ef`, GCC 16.2.0, binutils
+2.47.20260726 and genisoimage 1.1.11. All build containers use `--cpus=2`.
+
+Physical acceptance on 2026-10-19: the initial user-reported MEGAOS 4.20 setup
+accepted ISO+CUE deployment and passed the Lab, but lost host USB during CD/BIOS
+startup. After the user's firmware update, USB stayed available and repeated
+live handshakes passed. `build-deploy` hard-reset and replaced the running disc.
+The user pressed Start at the stock US BIOS 2.00 prompt. Direct HD60 X frames
+showed replacement build `01768DE5`, Main/Sub startup PASS, all four buffer
+checks PASS, three RAM checks, two reloads, AUTO TOUR PASS, EDIO DETECTED, USB
+VERIFIED and changing counters/heartbeat. Detailed identities, hashes and
+primary sources are in [the research record](research/mega-everdrive-pro-sega-cd.md).
+
+This is EverDrive FPGA CD-core acceptance, with base console model unspecified.
+It does not qualify a physical Sega CD drive, all regional BIOSes, PCM/CD-DA
+coexistence, 1M mode, ASIC, saves, input mappings or fully unattended BIOS boot.
+Generated discs, captures and logs remain ignored under `build/`.
+
+The final UI caption follow-up compiled and ran as build `FAAC2829`, retaining
+AUTO TOUR PASS and showing PASS/LIVE during fresh exchanges, then PASS/IDLE after
+the host stopped. The completed five-second lease no longer looks like a failed
+readiness result; PASS/IDLE explicitly records the earlier successful check.

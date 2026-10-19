@@ -12,8 +12,8 @@ From that new directory, build with the current Docker image:
 
 ```sh
 docker pull ewrogers/megadev:latest
-docker run --rm --mount "type=bind,source=$(pwd),target=/workspace" ewrogers/megadev:latest build
-docker run --rm --mount "type=bind,source=$(pwd),target=/workspace" ewrogers/megadev:latest cue hardware.iso
+docker run --rm --cpus=2 --mount "type=bind,source=$(pwd),target=/workspace" ewrogers/megadev:latest build
+docker run --rm --cpus=2 --mount "type=bind,source=$(pwd),target=/workspace" ewrogers/megadev:latest cue hardware.iso
 ```
 
 PowerShell uses `source=$($PWD.Path)` in the mount argument. Optional Linux `--user "$(id -u):$(id -g)"` avoids root-owned output. Use Linux containers on Windows/macOS. The copied template itself has Makefile metadata placeholders; generate a project before building it.
@@ -32,7 +32,7 @@ Use a matching BIOS already supplied by the user; none is included or downloaded
 - B: ping Sub. The reply should change and both counters should keep advancing.
 - C: load the disc module. Its startup checks should pass. A/Start returns; try loading it twice.
 
-Counters and raw mode/status values are hexadecimal. The raw mode word contains unrelated flags as well as ownership. It is not a byte count. The initial reply may be 0064, the bootstrap's successful CD result.
+Counters are hexadecimal. Main/Sub C startup checks cover initialized data and zeroed BSS. The top-right eight-digit build ID hashes source, art generator and build configuration; it is not the ISO hash. The footer heartbeat and both counters must change across observations. Native fonts, a pixel disc graphic and a colored panel use resident Main RAM assets and VDP tiles; no SGDK runtime or external art tool is required.
 
 Only 256-byte scratch arrays on each CPU and a 1024-byte Word RAM buffer are tested. PASS does not mean the entire console RAM or all hardware passed. No saves are changed.
 
@@ -42,6 +42,38 @@ Clean before changing build flags, then build with `TOUR=1` and recreate the CUE
 
 To restore manual controls, clean and rebuild with `TOUR=0` (the default). Build to a separate directory and reload a fresh disc; do not overwrite an image ares is still using.
 
-For EU/PAL use `REGION=EU VIDEO=PAL`; Japan uses `REGION=JP VIDEO=NTSC`, with a matching BIOS and a clean rebuild. Default is US/NTSC. CPU-only CI covers all three region builds, US debug and US automatic tour. Regional builds are not regional real-console boot tests.
+For EU/PAL use `REGION=EU VIDEO=PAL`; Japan uses `REGION=JP VIDEO=NTSC`, with a matching BIOS and a clean rebuild. Default is US/NTSC. CPU-only CI covers all three region builds, US debug, US automatic tour and guest-polling-disabled builds. Regional builds are not regional real-console boot tests.
 
 The Lab intentionally leaves 1M-bank switching, ASIC rendering, PCM/CD-DA audio, save media and drive-error recovery to focused system tests. Its existing BIOS and ownership polling helpers are not all bounded by the runtime command timeout.
+
+## Mega EverDrive Pro and capture
+
+The separately installed `megadev-project` skill supplies `scripts/everdrive.py`:
+deploy `hardware.iso` (it generates the CUE) or `hardware.cue` plus all tracks.
+Hard reset is the default; soft requires an explicit user request. This Lab
+does not use SGDK's cartridge `main(hard_reset)` flag or infer a console model.
+
+The updated Pro firmware retained USB during CD execution and passed repeated
+live handshakes plus replacement of a running disc with hard reset. The initial
+MEGAOS 4.20 setup lost USB during CD/BIOS startup and required menu return before
+another upload. Check the actual firmware/setup. The configured BIOS still
+needs controller Start. EDIO DETECTED only reports the signature/strobe at A130D4.
+
+`USB_LAB=1` (default) runs a bounded idle-only nonce/CRC handshake and displays
+NOT RUN, PASS/LIVE (five-second renewed lease) or PASS/IDLE (last successful
+check, host no longer renewing). These are host-check states, not cable detection. `USB_LAB=0` disables FIFO access and displays
+USB UPLOAD / MENU MODE for unsupported setups. The link neither initializes disk
+access nor competes with a live Main/Sub job. CD/audio streaming coexistence
+needs separate validation.
+
+`megadev-testing` supplies direct capture through host FFmpeg/AVFoundation.
+Record the build ID and inspect multiple frames, including counters/heartbeat.
+The Pro emulates the CD add-on in FPGA; these checks do not qualify an optical
+drive or physical Sega CD. No BIOS, saves, audio or camera settings are modified.
+
+Resident budgets remain Main code/rodata FF0000..FF9FFF (40 KiB), BSS
+FFA000..FFA7FF (2 KiB), stack FFD000..FFDFFF (4 KiB), separate from BIOS workspace.
+Tiles occupy VRAM 0000..1E7F (244 tiles); plane A C000..CFFF, plane B E000..EFFF,
+SAT F800..FA7F and hscroll FC00..FC03. Static redraw blanks the display; dynamic
+text writes at most 40 words after the existing BIOS VBlank wait, with interrupts
+briefly masked around VDP address/data writes. There is no new ISR or frame clock.
