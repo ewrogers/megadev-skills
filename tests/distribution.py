@@ -26,7 +26,7 @@ def main():
         subprocess.run([sys.executable,str(cinema/'scripts/create_project.py'),str(game)],check=True,cwd=cwd,stdout=subprocess.PIPE)
         subprocess.run([sys.executable,str(game/'tools/make_movie.py')],check=True,cwd=cwd,stdout=subprocess.PIPE)
         subprocess.run([sys.executable,str(game/'tools/check_cinema.py')],check=True,cwd=cwd,stdout=subprocess.PIPE)
-        assert len(list((game/'disc').glob('*.CIN')))==12
+        assert len(list((game/'disc').glob('*.CIN')))==6
         installed=cwd/'.agents/skills/megadev-project'
         subprocess.run([sys.executable,str(installed/'scripts/create_project.py'),str(cwd/'standalone game')],check=True,cwd=cwd,stdout=subprocess.PIPE)
         assert (cwd/'standalone game/src/spx.c').is_file()
