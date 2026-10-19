@@ -57,7 +57,8 @@ add explicit local-object dependencies and compile only the source prerequisite
 The regression changes the actual font generator and movement header, rebuilds
 without cleaning, executes the altered target movement and checks linked glyph
 bytes, restores the inputs, then demands the original module payload back. This
-checks rebuild behavior, not just a Makefile string. Tiny Labs conservatively
+checks rebuild behavior, not just a Makefile string. The Hardware Lab retains its existing generated-art object recipe instead of
+overriding that specialized contract. Tiny Labs conservatively
 track all local headers/resources; a larger project can use precise dependency
 manifests/depfiles. Clean/fresh builds remain necessary when changing flags or region.
 

@@ -26,7 +26,7 @@ art:
 	python3 tools/make_art.py $(REGION) $(VIDEO) $(CC_FLAGS)
 $(BUILD_PATH)/art.h: art
 $(DISC_PATH)/ipx.mmd: art
-$(BUILD_PATH)/lab_video.c.o: $(SRC_PATH)/lab_video.c $(BUILD_PATH)/art.h
+$(BUILD_PATH)/lab_video.c.o: $(SRC_PATH)/lab_video.c $(BUILD_PATH)/art.h $(wildcard $(SRC_PATH)/*.h)
 	$(CC) $(CC_FLAGS) $(INC) -c $(SRC_PATH)/lab_video.c -o $@
 all: $(DISC_PATH)/ipx.mmd $(DISC_PATH)/spx.smd $(DISC_PATH)/room.mmd $(PROJECT_ID).iso
 $(DISC_PATH)/ipx.mmd: ipx_layout.s resident_init.s ipx.c model.c probe.c lab_video.c everdrive_link.c usb_input.c bridge.s io.macros.s
@@ -37,7 +37,7 @@ clean:
 
 # Local objects must track headers and assembly-incbin resources. The SDK's
 # generic rules only track the source; compile $<, never all prerequisites ($^).
-LOCAL_C := $(notdir $(wildcard $(SRC_PATH)/*.c))
+LOCAL_C := $(filter-out lab_video.c,$(notdir $(wildcard $(SRC_PATH)/*.c)))
 LOCAL_S := $(notdir $(wildcard $(SRC_PATH)/*.s))
 $(addprefix $(BUILD_PATH)/,$(addsuffix .o,$(LOCAL_C))): $(BUILD_PATH)/%.c.o: $(SRC_PATH)/%.c $(wildcard $(SRC_PATH)/*.h) $(wildcard $(BUILD_PATH)/*assets.h)
 	@$(CC) $(CC_FLAGS) $(INC) -c $< -o $@
