@@ -28,7 +28,8 @@
         "megadev-ui",
         "megadev-dialogue",
         "megadev-gameplay",
-        "megadev-animation"
+        "megadev-animation",
+        "megadev-collision"
       ]
     },
     {

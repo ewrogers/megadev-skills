@@ -745,3 +745,37 @@ colors look better and all animation controls/behaviors work. This acceptance
 is separate from compiled PAL/NTSC timing checks and CPU/model evidence.
 Physical raster/FIFO margin, BIOS/controller variants, sustained mixed services,
 stack high-water and console frame cadence remain unqualified.
+
+
+## Collision queries and sliding
+
+`megadev-collision` adds a standalone three-view Collision Lab: discrete versus
+swept shots, clipped rays and fast wall sliding. At this milestone all 151 host
+tests pass. Collision checks include O0/O3 with UBSan, 12,000 seeded exact-Fraction
+oracle queries, invalid inputs, boundary semantics, tied contacts, a 3,000-step
+nonpenetrating slide route and PAL/NTSC simulation equivalence.
+
+Both local architecture matrices pass US/JP NTSC, EU PAL, debug and automatic
+tour, with matching payload hashes and executed results. ARM64 is native here;
+AMD64 uses Docker emulation. CI repeats on native runners. Each target variant
+executes 1,200 independent oracle inputs on the original-68000 model, plus sliding,
+clock/pause/catch-up and immutable SAT/HUD publication. The maximum callback
+submission is 624 bytes. Late frames remain pending; invalid counts reject safely;
+ordinary frames do not touch CRAM. A full inline broad-phase variant failed an
+inside-point target regression despite passing the host oracle. Keeping that
+helper out of line fixes the tested target cases; the fixed reproducer is retained.
+This is a qualified target-code discrepancy, not a claim that host validation
+proves all compiler optimizations safe.
+
+Wall art and geometry share one JSON source. Native palettes use explicit RGB to
+VDP BGR packing and deterministic generation. No BIOS, commercial assets or built
+disc is distributed. Physical VDP/FIFO margin, sustained combined workload, exact
+cycle cost and real-console acceptance remain unqualified.
+
+
+The first ares review reported a whole-screen redraw. The Shots wall toggle was
+blanking and reinstalling the map; it now stages only its 24-word column and
+commits it with the pending sprite/HUD frame. The target regression checks late
+submission retention, patch bytes and that ordinary ray/rover movement has no
+foreground VDP writes. On 2026-10-19 the user confirmed the reloaded NTSC build's
+redraw issue is gone. This does not imply physical-console qualification.
