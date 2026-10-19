@@ -33,6 +33,7 @@ and build conventions; these skills do not require SGDK.
 | [megadev-graphics](skills/megadev-graphics/SKILL.md) | Scroll backgrounds, add parallax, animate sprites and use palette effects. |
 | [megadev-ui](skills/megadev-ui/SKILL.md) | Build fonts, panels, menus and HUDs with bounded redraws. Includes Menu Lab. |
 | [megadev-animation](skills/megadev-animation/SKILL.md) | Add named clips, frame holds, timed events and gameplay hitboxes. Includes Animation Lab. |
+| [megadev-effects](skills/megadev-effects/SKILL.md) | Add bounded particles, explosions, trails, weather and screen shake with effect priorities. Includes Effects Lab. |
 | [megadev-levels](skills/megadev-levels/SKILL.md) | Import Tiled maps, separate collision, scroll cameras and connect areas. Includes Level Lab. |
 | [megadev-collision](skills/megadev-collision/SKILL.md) | Test fast swept boxes, finite rays and bounded wall sliding. Includes Collision Lab. |
 | [megadev-gameplay](skills/megadev-gameplay/SKILL.md) | Build responsive movement, collision, cameras and bounded object lifetimes across PAL/NTSC. Includes Adventure Lab. |
@@ -102,6 +103,7 @@ Ask for the task you want, and name a skill when you want to be explicit:
 - "Use megadev-gameplay to connect movement, collisions and cameras without blocking on Sub work."
 - "Use megadev-dialogue to add branching portrait conversations with optional voice."
 - "Check this Main/Sub handoff with megadev-system and megadev-best-practices."
+- "Use megadev-effects to add bounded feedback through my existing renderer, preserving my game’s art direction."
 - "Use megadev-compression to compare raw and packed assets, decode safely and budget loading RAM."
 - "Use megadev-release to validate and package this mixed-mode disc."
 

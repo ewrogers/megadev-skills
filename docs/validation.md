@@ -867,3 +867,9 @@ buffer budgets, failure tests, regional auditions and hardware limits.
 validation before the SDK decoder, and loading/preloading integration. See
 [compression validation](compression-validation.md) for the matrix, sector/RAM
 results, measurement boundaries and remaining console evidence.
+
+## Effects
+
+[Effects validation](effects-validation.md) records the bounded pool/SAT/upload
+contracts, original-68000 publisher checks, native architecture comparison and
+performance measurement limits for Winter Observatory.

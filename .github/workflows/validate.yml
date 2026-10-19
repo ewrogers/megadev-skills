@@ -191,6 +191,12 @@ jobs:
           - arch: amd64
             runner: ubuntu-24.04
             skill: megadev-compression
+          - arch: arm64
+            runner: ubuntu-24.04-arm
+            skill: megadev-effects
+          - arch: amd64
+            runner: ubuntu-24.04
+            skill: megadev-effects
     runs-on: ${{ matrix.runner }}
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
@@ -248,3 +254,4 @@ jobs:
       - run: python tests/compare_reports.py build/reports/target-megadev-math-arm64/report.json build/reports/target-megadev-math-amd64/report.json
       - run: python tests/compare_reports.py build/reports/target-cross-skill-validation-arm64/report.json build/reports/target-cross-skill-validation-amd64/report.json
       - run: python tests/compare_reports.py build/reports/target-megadev-compression-arm64/report.json build/reports/target-megadev-compression-amd64/report.json
+      - run: python tests/compare_reports.py build/reports/target-megadev-effects-arm64/report.json build/reports/target-megadev-effects-amd64/report.json

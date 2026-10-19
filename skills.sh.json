@@ -32,7 +32,8 @@
         "megadev-gameplay",
         "megadev-animation",
         "megadev-collision",
-        "megadev-levels"
+        "megadev-levels",
+        "megadev-effects"
       ]
     },
     {
