@@ -567,3 +567,23 @@ Existing original-68000 reader/audio/callback tests remain in the matrix.
 Installation covers seventeen skills with telemetry disabled. Archive structure
 and CPU models do not certify BIOS compatibility, optical media or real drive/PCM
 timing. Interactive emulator and physical-console results remain separate evidence.
+
+## Best-practices integration milestone
+
+Harbor Relay adds checkpoint glue to the existing scene, streaming and audio
+implementation. Owner-policy/adapter copies, save codec and release helper have
+byte-identity regression checks; only the BRAM filenames differ from the save ABI
+wrapper. No competing interrupt hook, renderer, reader or audio manager is added.
+
+Host O0/O3 checks cover byte alignment, bounded arithmetic and equal nominal
+PAL/NTSC elapsed time. Compiled original-68000 tests join both register views and
+a named-file BIOS model: copied inputs, busy/retirement rejection, drive exclusion,
+failed/unavailable saves, older-record recovery, scene leases, stale menu intent,
+map-commit restoration and timeout quarantine. Format/delete are rejected.
+
+Native ARM64/AMD64 matrices build US/JP NTSC, EU PAL, debug and non-writing tour
+variants. Existing scene/CD/audio regressions remain active, and mixed-mode
+release packages are verified. Installation checks include all eighteen skills
+with telemetry disabled. CPU models do not certify real BIOS save latency, drive
+seeks, interrupt timing, stack high-water or analog audio continuity; these remain
+emulator/physical-console qualification tasks.

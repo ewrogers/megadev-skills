@@ -20,6 +20,7 @@ The skill includes a standalone starter and instructions for building a disc wit
 | --- | --- | --- |
 | Foundations | [megadev-project](skills/megadev-project/SKILL.md) | Toolchain setup, Main/Sub startup, memory layouts, module loading and a bootable disc. |
 | Foundations | [megadev-planning](skills/megadev-planning/SKILL.md) | CPU responsibilities, memory lifetimes, Word RAM ownership and loading plans, with an editable budget checker. |
+| Foundations | [megadev-best-practices](skills/megadev-best-practices/SKILL.md) | C/assembly contracts, code boundaries and safe cross-system integration, with a checkpoint journey example. |
 | Foundations | [megadev-hardware](skills/megadev-hardware/SKILL.md) | CPU memory views, ownership and safe diagnostic checks, with a Hardware Lab disc. |
 | Foundations | [megadev-assets](skills/megadev-assets/SKILL.md) | Native PNG preparation, palettes, patterns and sprite sheets, with validated disc assets and Word RAM uploads. |
 | Foundations | [megadev-input](skills/megadev-input/SKILL.md) | Pad, mouse and multitap protocols, stable input snapshots and joining, with explicit device-validation limits. |
@@ -59,6 +60,8 @@ Megadev has its own APIs and build conventions; these skills do not require SGDK
 [Test Lab](skills/megadev-testing/assets/test-lab/README.md) records/replays a small course, detects an intentional bug and runs live CD/audio recovery checks.
 
 [Performance Lab](skills/megadev-performance/assets/performance-lab/README.md) compares Main CPU, VRAM and ASIC workloads with HUD/timer overhead controls and explicit measurement limits.
+
+[Harbor Relay](skills/megadev-best-practices/assets/harbor-relay/README.md) joins scene travel, CD/audio, preloading and explicit checkpoint saves while preserving existing service owners.
 
 [Save Lab](skills/megadev-save/assets/save-lab/README.md) saves versioned BIOS files, verifies readback and recovers an older record after an explicit corruption test.
 Labs demonstrate implementation techniques. Their appearance, controls and game design are examples, not requirements for your game.
