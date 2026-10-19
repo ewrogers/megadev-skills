@@ -29,8 +29,10 @@ system_irq:
   movem.l d0-d7/a0-a6, -(sp)
   /* Keep the Sub INT2/CD access service alive without BIOS_COMM_SYNC polling. */
   jsr BIOS_TRIGGER_IFL2
-  jsr BIOS_READ_JOYPAD
+  /* Publish the bounded frame before the variable-duration pad scan. */
   jsr vblank_user
+  jsr BIOS_READ_JOYPAD
+  jsr input_user
   movem.l (sp)+, d0-d7/a0-a6
 .global system_irq_return
 system_irq_return:

@@ -16,9 +16,14 @@ typedef struct {
  FxU count,omitted,culled;FxS shake_x,shake_y;
  unsigned char bands[FX_BANDS];
 } FxView;
-void fx_init(FxWorld *w);
-FxU fx_advance(FxWorld *w,FxU units,FxU held,FxU hit);
-void fx_burst(FxWorld *w);
-void fx_build(FxWorld const *w,FxView *v);
-FxU fx_alive(FxWorld const *w,FxU first,FxU end);
+#if defined(_WIN32) && defined(FX_HOST_DLL)
+#define FX_API __declspec(dllexport)
+#else
+#define FX_API
+#endif
+FX_API void fx_init(FxWorld *w);
+FX_API FxU fx_advance(FxWorld *w,FxU units,FxU held,FxU hit);
+FX_API void fx_burst(FxWorld *w);
+FX_API void fx_build(FxWorld const *w,FxView *v);
+FX_API FxU fx_alive(FxWorld const *w,FxU first,FxU end);
 #endif

@@ -10,20 +10,19 @@ class View(c.Structure):_fields_=[('sat',(c.c_ushort*4)*56)]+[(n,c.c_ushort) for
 class EffectsTests(unittest.TestCase):
  @classmethod
  def setUpClass(cls):
-  cls.tmp=tempfile.TemporaryDirectory();cls.path=Path(cls.tmp.name);cls.cc=shutil.which('clang') or shutil.which('cc')
+  cls.tmp=tempfile.TemporaryDirectory();cls.path=Path(cls.tmp.name);cls.addClassCleanup(cls.tmp.cleanup);cls.cc=shutil.which('clang') or shutil.which('cc')
   if not cls.cc:
    if os.environ.get('MEGADEV_REQUIRE_HOST_CC')=='1':raise RuntimeError('C17 compiler required')
    raise unittest.SkipTest('C17 compiler required')
   p=cls.path/('effects.dll' if sys.platform=='win32' else 'effects.so')
-  subprocess.run([cls.cc,'-shared','-O3',*(['-fPIC'] if sys.platform!='win32' else []),str(LAB/'src/fx.c'),'-o',str(p)],check=True,capture_output=True)
-  cls.lib=c.CDLL(str(p));cls.lib.fx_init.argtypes=[c.POINTER(World)];cls.lib.fx_burst.argtypes=[c.POINTER(World)]
-  cls.lib.fx_advance.argtypes=[c.POINTER(World),c.c_ushort,c.c_ushort,c.c_ushort];cls.lib.fx_build.argtypes=[c.POINTER(World),c.POINTER(View)]
- @classmethod
- def tearDownClass(cls):
+  subprocess.run([cls.cc,'-shared','-DFX_HOST_DLL','-O3',*(['-fPIC'] if sys.platform!='win32' else []),str(LAB/'src/fx.c'),'-o',str(p)],check=True,capture_output=True)
+  cls.lib=c.CDLL(str(p))
   if sys.platform=='win32':
    import _ctypes
-   _ctypes.FreeLibrary(cls.lib._handle)
-  cls.tmp.cleanup()
+   cls.addClassCleanup(_ctypes.FreeLibrary,cls.lib._handle)
+  cls.lib.fx_init.argtypes=[c.POINTER(World)];cls.lib.fx_burst.argtypes=[c.POINTER(World)]
+  cls.lib.fx_advance.argtypes=[c.POINTER(World),c.c_ushort,c.c_ushort,c.c_ushort];cls.lib.fx_build.argtypes=[c.POINTER(World),c.POINTER(View)]
+
  def world(self):
   w=World();self.lib.fx_init(c.byref(w));return w
  def step(self,w,units=5,held=0,hit=0):return self.lib.fx_advance(c.byref(w),units,held,hit)
@@ -66,6 +65,8 @@ class EffectsTests(unittest.TestCase):
    self.assertLessEqual(entries,20);self.assertLessEqual(pixels,320)
   for p in w.p:p.x=-128
   v=self.view(w);self.assertEqual(v.count,1);self.assertEqual(v.culled,64)
+  w.p[0].x=-1;v=self.view(w);self.assertEqual(v.count,1)
+  w.p[0].x=0;v=self.view(w);self.assertEqual(v.count,2)
  def test_shake_is_presentation_and_restores(self):
   w=self.world();self.lib.fx_burst(c.byref(w));before=bytes(w);v=self.view(w)
   self.assertEqual(bytes(w),before);self.assertLessEqual(abs(v.shake_x),2)

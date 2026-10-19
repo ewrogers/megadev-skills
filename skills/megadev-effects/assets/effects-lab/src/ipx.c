@@ -35,8 +35,9 @@ void lab_line(char const *s,u16 x,u16 y) {
 }
 void lab_hex(u16 v,u16 x,u16 y){char s[5];for(u16 i=0;i<4;i++)s[i]="0123456789ABCDEF"[(v>>(12-i*4))&15];s[4]=0;lab_line(s,x,y);}
 void lab_screen(char const *s){lab_line(s,1,0);}
+void input_user(void){input_hits|=bios_joy1_hit;}
 void vblank_user(void) {
- main_ticks++;input_hits|=bios_joy1_hit;
+ main_ticks++;
  u16 index=published;if(!index)return;
  if(index>2){video_fault=1;published=0;return;}
  Frame const *f=&frames[index-1];u16 count=f->sprites.count;
@@ -122,7 +123,7 @@ void main(void) {
  fx_init(&world);initialize();enable_interrupts();effects_publish();
  do{lab_wait();}while(published);lab_display_on();u16 previous=main_ticks;window_start=previous;
 #ifdef FX_AUTOTEST
- effects_tour();
+ effects_tour();previous=main_ticks;window_start=previous;last_submitted=submitted;
 #endif
  for(;;){
   lab_wait();u16 now=main_ticks,delta=(u16)(now-previous);previous=now;

@@ -28,7 +28,11 @@ and limits describe the Lab; they are not a promise about arbitrary game art.
 fixed-point movement/gravity, lifetimes, pool rejection, timing equivalence,
 scanline admission and immutable publication. It executes the VBlank consumer
 and compares every SAT, scroll and HUD data word with its snapshot. It verifies
-ordinary frames do not write CRAM. This is executable behavioral evidence,
+ordinary frames do not write CRAM. The actual IRQ dispatch is executed around
+modeled BIOS calls to verify publish → pad scan → edge latch ordering. A fixed
+saturated workload also bounds executed foreground instructions in optimized
+builds, catching the repeated-search/general-sprite regression. This is a
+regression threshold, not an instruction-to-cycle conversion. This is executable behavioral evidence,
 not cycle-accurate timing or physical-console evidence.
 
 Build US/JP/EU release, US debug and the automatic tour on native ARM64 and

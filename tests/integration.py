@@ -132,7 +132,7 @@ def main():
                 extra=check_glass_model
             if args.skill=='megadev-effects' and kind=='main':
                 from effects_cpu import check_effects
-                extra=check_effects
+                extra=lambda u,sym:check_effects(u,sym,key!='us-debug')
             if args.skill=='megadev-math' and kind=='main':
                 from math_cpu import check_math
                 extra=check_math

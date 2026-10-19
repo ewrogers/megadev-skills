@@ -1,8 +1,8 @@
 """Run actual original-68000 effect model, SAT admission and VBlank consumer."""
 import struct
 
-def check_effects(u,sym):
- from unicorn import UC_HOOK_MEM_READ,UC_HOOK_MEM_WRITE
+def check_effects(u,sym,optimized=True):
+ from unicorn import UC_HOOK_MEM_READ,UC_HOOK_MEM_WRITE,UC_HOOK_CODE
  from unicorn.m68k_const import UC_M68K_REG_A7,UC_M68K_REG_PC,UC_M68K_REG_D0
  stop=0x300000;stack=0xFFDF00;p=0x210000;view=p+1024
  u.mem_map(stop,4096);u.mem_map(0xC00000,4096)
@@ -44,6 +44,16 @@ def check_effects(u,sym):
  assert max(u.mem_read(view+458,28))<=16
  for i in range(64):put(p+i*12,-128)
  call('fx_build',(p,view));assert word(view+448)==1 and word(view+452)==64
+ # A saturated fixed workload must not regress to repeated pool scans or
+ # the generic per-sprite builder. Instruction count is not a cycle budget.
+ game=sym['world'];u.mem_write(game,b'\0'*792);call('fx_init',(game,))
+ for i in range(300):call('fx_advance',(game,5,0,64 if i%12==0 else 0))
+ put(sym['hz'],60);put(sym['published'],0)
+ executed=[0]
+ def instruction(cpu,address,size,user):executed[0]+=1
+ h=u.hook_add(UC_HOOK_CODE,instruction);u.ctl_flush_tb()
+ call('fx_advance',(game,5,0,64));call('effects_publish');u.hook_del(h)
+ if optimized:assert executed[0]<14000,('Combined foreground instruction regression',executed[0])
  # Snapshot publication remains immutable until its consumer retires it.
  game=sym['world'];u.mem_write(game,b'\0'*792);call('fx_init',(game,));call('fx_burst',(game,))
  put(sym['hz'],60);put(sym['published'],0);call('effects_publish');pending=word(sym['published']);assert pending in (1,2)
@@ -66,6 +76,20 @@ def check_effects(u,sym):
  writes.clear();call('vblank_user');assert not writes
  put(frame+448,57);put(sym['published'],pending);call('vblank_user');assert not writes and word(sym['video_fault'])==1
  put(sym['video_fault'],0);put(sym['published'],3);call('vblank_user');assert not writes and word(sym['video_fault'])==1
+ # Execute the actual IRQ dispatch around modeled BIOS services, stopping
+ # before RTE. Publication must precede pad scan; latch follows that scan.
+ put(sym['video_fault'],0);put(sym['published'],0);call('effects_publish')
+ u.mem_write(0x360,b'\x4e\x75')
+ u.mem_write(0x298,bytes.fromhex('13fc004000fffe214e75'))
+ u.mem_write(0xFFFE21,b'\0');put(sym['input_hits'],0);order=[]
+ def irq(cpu,address,size,user):
+  for a,label in [(0x360,'trigger'),(sym['vblank_user'],'publish'),(0x298,'pad'),(sym['input_user'],'latch')]:
+   if address==a:order.append(label)
+ h=u.hook_add(UC_HOOK_CODE,irq);u.ctl_flush_tb();u.reg_write(UC_M68K_REG_A7,stack)
+ u.emu_start(sym['system_irq'],sym['system_irq_return'],count=300000)
+ assert u.reg_read(UC_M68K_REG_PC)==sym['system_irq_return'] and u.reg_read(UC_M68K_REG_A7)==stack
+ assert order==['trigger','publish','pad','latch'] and word(sym['input_hits'])==64,(order,word(sym['input_hits']),bytes(u.mem_read(0xFFFE21,1)))
+ u.hook_del(h)
  u.hook_del(hr);u.hook_del(hw)
  if 'effects_tour' in sym:call('effects_tour',limit=30000000);assert word(sym['tour_ok'])==1
  return True

@@ -55,6 +55,22 @@ The FPS display counts consumed snapshots, not simulation steps or host VPS.
 The automatic tour combines maximum snow and periodic bursts after its model
 checks; manual presentation/controls remain a separate audition.
 
+## Performance refinement
+
+The initial automatic snow/burst test published about 30–33 FPS. Phase checks
+showed the VBlank guard was not deferring uploads: simulation/list construction
+ran past the next frame. A generic per-sprite builder and repeated free-slot
+searches for a burst were the main avoidable costs. The final path batches pool
+admission and specializes SAT construction for the known 16px hero/8px effects.
+It retains capacities, lifetimes, priorities and scanline bounds. Whole-cell
+culling for decoration is explicit and tested.
+
+The refined NTSC automatic workload was observed at 60 FPS. A compiled fixed
+workload instruction regression catches the expensive paths returning, while
+behavioral/scanline tests protect correctness. Instruction counts are not
+hardware cycle counts. The publisher also precedes pad scanning in the single
+IRQ owner, with edge latching afterward; an executed dispatch check covers it.
+
 ## Limits and lessons
 
 The original 68000 has no native 32-bit multiply/divide instruction. An apparently

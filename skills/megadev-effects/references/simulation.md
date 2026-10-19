@@ -13,6 +13,8 @@ to the game rather than copying the Lab's setting or mechanics.
 The Lab stores 64 particles of 12 bytes each. Slots 0–23 reserve sparks/smoke,
 24–31 reserve trails and 32–63 reserve weather. Admission scans only its partition;
 a full partition rejects the new effect and saturates a diagnostic counter.
+A burst scans its 24-slot partition once for the entire batch, rather than
+restarting a free-slot search for each requested spark.
 Weather never occupies the impact reserve. This simple partition can leave
 capacity idle; a shared priority pool is also valid if eviction is bounded and
 cannot invalidate handles or overwrite gameplay state.

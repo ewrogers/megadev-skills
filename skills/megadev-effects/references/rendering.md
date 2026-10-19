@@ -9,7 +9,9 @@ Use the actual definitions in
 and [`main/io.def.h`](https://github.com/drojaazu/megadev/blob/7a7246c14b845ad2f1bd3c7d73afb04cf67d83ef/lib/main/io.def.h).
 The Lab's bridge preserves C callee-saved registers for BIOS services, keeps
 Sub INT2/CD service alive and polls joypads once through the existing VBlank
-owner. It never installs an effects-specific interrupt or mailbox.
+owner. The bounded publisher runs before the variable-duration joypad scan;
+input edges latch after that scan. It never installs an effects-specific
+interrupt or mailbox.
 
 ## Sprite limits are not particle limits
 
@@ -28,7 +30,9 @@ hardware limits, even for sprites crossing band boundaries. This only proves
 the Lab's fixed sizes; adapt the accounting for other dimensions and any other
 sprite owner. It is conservative and may hide effects that hardware could fit.
 
-Offscreen particles still simulate and expire but do not enter the SAT. Render
+Decorative 8px cells use whole-cell left/top culling (a cell with a negative
+position is omitted rather than partially clipped). The hero is constrained
+inside the viewport. Offscreen particles still simulate and expire but do not enter the SAT. Render
 rejection does not mutate the model or its random state. The list's final link
 is zero; an empty list must clear the first SAT entry to prevent stale sprites.
 A game may use a rotating admission cursor for fairer decoration, provided it
@@ -62,6 +66,11 @@ The same snapshot offsets world sprites and background scroll. The window HUD
 stays anchored. Collision/model coordinates remain unchanged; direction reversals
 and pause cannot accumulate displacement. Fill the camera's border/overscan so
 small offsets do not reveal uninitialized map cells. Up+Start disables shake.
+
+The fixed-size builder emits the 16px hero directly and uses a specialized
+8px path for decorations. It avoids a generic sprite function call, signed
+division and variable-size band loops per particle. This optimization depends
+on the verified fixed dimensions; it must not silently handle arbitrary sprites.
 
 Measure simulation, list construction and publication separately. Use dense
 weather **and** bursts, not isolated cases. Common improvements are resident art,

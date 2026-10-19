@@ -10,7 +10,11 @@ static void emit(FxWorld *w,FxU first,FxU end,FxU kind,FxS x,FxS y,FxS vx,FxS vy
 void fx_burst(FxWorld *w){
  static const FxS vx[12]={-40,-28,0,28,40,28,0,-28,-12,12,-20,20};
  static const FxS vy[12]={0,-28,-40,-28,0,28,40,28,-16,-20,-24,-28};
- for(FxU i=0;i<12;i++)emit(w,0,24,i<8?1:2,(FxS)(w->x<<4),(FxS)(w->y<<4),vx[i],vy[i],i<8?32:52);
+ FxU n=0;
+ for(FxParticle *p=w->p;p<w->p+24 && n<12;p++)if(!p->life){
+  p->x=(FxS)(w->x<<4);p->y=(FxS)(w->y<<4);p->vx=vx[n];p->vy=vy[n];p->life=n<8?32:52;p->kind=n<8?1:2;n++;
+ }
+ FxU refused=(FxU)(12-n);w->denied=w->denied>65535u-refused?65535u:(FxU)(w->denied+refused);
  if(w->shake)w->left=18;
 }
 static void step(FxWorld *w,FxU held){
@@ -50,34 +54,35 @@ FxU fx_advance(FxWorld *w,FxU units,FxU held,FxU hit){
  if(units>20){units=20;if(w->clamped!=65535)w->clamped++;}
  w->remainder+=units;FxU n=0;while(w->remainder>=5){w->remainder-=5;step(w,held);n++;}return n;
 }
-/* 8px effects conservatively charge every intersected 8-scanline band.
-   Fewer than 16 entries per band leaves headroom below H40's 20/320 limits.
-   The 16px hero charges two entries, accounting for its width as well. */
-static void sprite(FxView *v,FxS x,FxS y,FxU tile,FxU hero){
- FxU size=hero?16:8;
- if(x<=-(FxS)size || x>=320 || y<32 || y>=224){v->culled++;return;}
- FxU top=(FxU)y>>3,bottom=(FxU)(y+size-1)>>3;if(bottom>27)bottom=27;
- if(v->count>=FX_SAT){v->omitted++;return;}
- for(FxU b=top;b<=bottom;b++)if(v->bands[b]+(hero?2:1)>16){v->omitted++;return;}
- for(FxU b=top;b<=bottom;b++)v->bands[b]+=(unsigned char)(hero?2:1);
- FxU n=v->count;if(n)v->sat[n-1][1]|=n;
- v->sat[n][0]=(FxU)(y+128);v->sat[n][1]=hero?0x500:0;
- v->sat[n][2]=(FxU)(0xE000u|tile);v->sat[n][3]=(FxU)(x+128);v->count++;
-}
+/* Fixed-size fast path. Charge every intersected 8-line band; the hero
+   costs two width units and 8px effects cost one. */
 void fx_build(FxWorld const *w,FxView *v){
- v->count=v->omitted=v->culled=0;v->shake_x=v->shake_y=0;
+ v->count=1;v->omitted=v->culled=0;v->shake_x=v->shake_y=0;
  for(FxU b=0;b<28;b++)v->bands[b]=0;
  if(w->left && w->shake){FxS amount=w->left>8?2:1;v->shake_x=(w->left&1u)?amount:-amount;v->shake_y=(w->left&2u)?amount:-amount;}
- for(FxU k=0;k<4;k++)v->sat[0][k]=0;
- sprite(v,(FxS)(w->x-8)+v->shake_x,(FxS)(w->y-8)+v->shake_y,0x80,1);
- for(FxU i=0;i<FX_POOL;i++){
-  FxParticle const *p=&w->p[i];if(!p->life)continue;
+ FxS hx=(FxS)(w->x-8)+v->shake_x,hy=(FxS)(w->y-8)+v->shake_y;
+ v->sat[0][0]=(FxU)(hy+128);v->sat[0][1]=0x500;v->sat[0][2]=0xE080;v->sat[0][3]=(FxU)(hx+128);
+ FxU first=(FxU)hy>>3,last=(FxU)(hy+15)>>3;
+ for(FxU b=first;b<=last;b++)v->bands[b]=2;
+ FxU n=1;
+ for(FxParticle const *p=w->p;p<w->p+FX_POOL;p++){
+  if(!p->life)continue;
+  /* Decorations use whole-cell culling; reject negative Q12.4 values before
+     logical shifts, avoiding signed division in this hot path. */
+  if(p->x<0 || p->x>=5120 || p->y<512 || p->y>=3584){v->culled++;continue;}
+  FxS x=(FxS)((FxU)p->x>>4)+v->shake_x,y=(FxS)((FxU)p->y>>4)+v->shake_y;
+  if(x<0 || x>=320 || y<32 || y>=224){v->culled++;continue;}
+  FxU top=(FxU)y>>3,bottom=(FxU)(y+7)>>3;if(bottom>27)bottom=27;
+  if(n==FX_SAT || v->bands[top]>=16 || v->bands[bottom]>=16){v->omitted++;continue;}
+  v->bands[top]++;if(bottom!=top)v->bands[bottom]++;
   FxU tile=0x84;
   if(p->kind==1)tile+=(p->life>20?0:p->life>10?1:2);
   else if(p->kind==2)tile+=3+(p->life<24);
   else if(p->kind==3)tile+=5+(p->life<12);
   else if(p->kind==4)tile+=7;
   else tile+=8;
-  sprite(v,(FxS)(p->x/16)+v->shake_x,(FxS)(p->y/16)+v->shake_y,tile,0);
+  v->sat[n-1][1]|=n;
+  v->sat[n][0]=(FxU)(y+128);v->sat[n][1]=0;v->sat[n][2]=(FxU)(0xE000|tile);v->sat[n][3]=(FxU)(x+128);n++;
  }
+ v->count=n;
 }
