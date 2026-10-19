@@ -1,6 +1,6 @@
 ---
 name: megadev-audio
-description: Implement and troubleshoot Megadev Sega CD audio using verified CD-DA BIOS services, PCM samples and explicit sound/drive ownership, including authoring, channel policy and data-load handoffs.
+description: Implement and troubleshoot Megadev Sega CD audio using verified CD-DA BIOS services, resident or streamed PCM samples and explicit sound/drive ownership, including long voice clips, authoring and data-load handoffs.
 ---
 
 # Megadev audio
@@ -13,6 +13,8 @@ exist. These paths have different data formats, owners and loading constraints.
   sample encoding, mixed-mode discs and the FM/PSG boundary.
 - Read [Runtime ownership](references/runtime.md) for voice priorities,
   Main/Sub requests and CD music/data handoffs.
+- Read [Streamed PCM](references/streamed-pcm.md) for long voice/sample chunks,
+  bounded buffering, playhead-based refill, underruns and cancellation.
 - Read [Validation](references/testing.md) for asset checks, executable tests,
   PAL/NTSC auditions and remaining hardware evidence.
 
@@ -34,10 +36,13 @@ Essential contracts:
 - Keep BIOS/CD service alive while Main changes pages, fades or pauses gameplay.
   A mailbox acknowledgement is not audible playback completion. A timeout must
   not authorize another drive command or reuse of a still-owned buffer.
+- Stream only into reserved inactive PCM ranges. Arm the next half after it is
+  complete and validated; use a known silence loop on underrun. Never equate a
+  request acknowledgement, a completed CD read and audible sample completion.
 
 The self-contained [Audio Lab](assets/audio-lab/README.md) has a generator at
 `scripts/create_project.py`, original music/PCM authoring tools and a mixed-mode
-CUE builder. Its `audio_*`/`stream_*` helpers are project code, not SDK APIs.
+CUE builder. Its `audio_*`/`stream_*`/`voice_*` helpers are project code, not SDK APIs.
 Build/test containers use at most two CPUs.
 
 Reuse the game's existing system, memory, streaming and graphics owners.

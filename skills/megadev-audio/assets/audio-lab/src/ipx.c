@@ -28,7 +28,7 @@ static Frame frames[2];
 static u16 displayed[HUD_WORDS],displayed_palette[64];
 static u16 maps[2][STREAM_MAP],palettes[64],cached[2],stage,active=2,target,loaded_slot;
 static u16 player_x=48,player_y=120,hz,transition,map_row,fade=8,actor_tick;
-static u16 errors,previous_pass,page,selection,pan_selection=1,music_started;
+static u16 errors,previous_pass,page,selection,pan_selection=1,music_started,slow_voice;
 #ifdef AUDIO_AUTOTEST
 static u16 tour_step,tour_ok;
 #endif
@@ -90,7 +90,7 @@ static u16 shade(u16 c,u16 amount){u16 result=0;for(u16 s=0;s<12;s+=4){u16 n=(c>
 void stream_prepare(void) {
     Frame *f=&frames[stage];f->words=0;f->row=0;
     for(u16 i=0;i<HUD_WORDS;i++)f->hud[i]=0x8020;
-    static char const * const pages[]={"CD MUSIC","PCM DESK","DRIVE TEST"};
+    static char const * const pages[]={"CD MUSIC","PCM DESK","DRIVE TEST","VOICE STREAM"};
     static char const * const samples[]={"BELL","PLUCK","DRUM"};
     static char const * const pans[]={"LEFT","CENTER","RIGHT"};
     static char const * const cds[]={"STOPPED","PLAYING","PAUSED","DATA LOAD","COMMAND","FAULT"};
@@ -103,12 +103,21 @@ void stream_prepare(void) {
     } else if(page==1) {
         text(f,1,2,samples[selection]);text(f,12,2,"PAN");text(f,17,2,pans[pan_selection]);
         text(f,1,3,"A PLAY   B PAN   C PCM BED");
-    } else {
+    } else if(page==2) {
         text(f,1,2,stream_phase?"READ / CHECK / UPLOAD IN PROGRESS":"A LOADS THE OTHER AREA");
         text(f,1,3,"A LOAD   B CD PLAY   C PCM BED");
+    } else {
+        static char const * const states[]={"IDLE","BUFFERING","PLAYING","DRAINING","FINISHED","FAULT"};
+        u16 state=(status>>4)&7u;
+        text(f,1,2,selection?"LONG CHIMES":"SPOKEN VOICE");text(f,16,2,state<6?states[state]:"UNKNOWN");
+        text(f,29,2,slow_voice?"SLOW TEST":"NORMAL");
+        text(f,1,3,"A PLAY  B EFFECT  C STOP  UP CLIP");
+        text(f,1,4,status&0x80u?"UNDERRUN: SILENCE THEN REBUFFER":"DOWN SLOW TEST  32K PCM + 16K RAM");
     }
-    text(f,1,4,"PCM");text(f,5,4,status&1?"BED":"---");text(f,9,4,status&2?"FX1":"---");text(f,13,4,status&4?"FX2":"---");
-    text(f,20,4,"CD");text(f,24,4,cd<=5?cds[cd]:"STARTING");
+    if(page!=3) {
+        text(f,1,4,"PCM");text(f,5,4,status&1?"BED":"---");text(f,9,4,status&2?"FX1":"---");text(f,13,4,status&4?"FX2":"---");
+        text(f,20,4,"CD");text(f,24,4,cd<=5?cds[cd]:"STARTING");
+    }
     text(f,1,5,"MAIN");number(f,6,5,main_ticks);text(f,13,5,"LOADS");number(f,19,5,stream_pass);
     text(f,25,5,"ERR");number(f,29,5,(u16)(stream_errors+errors+video_fault+audio_link_fault+(cd==5)));
     text(f,34,5,hz==50?"PAL":"NTSC");
@@ -205,9 +214,10 @@ void main(void) {
             } else tour_ok=stream_pass>=2 && seen_data && !stream_errors && !errors && !video_fault && (*ga_reg_comstat4>>8)!=5;
         }
 #endif
-        if(hit&PAD_RIGHT){page++;if(page==3)page=0;selection=0;}
-        if(hit&PAD_LEFT){page=page? (u16)(page-1):2;selection=0;}
-        if(hit&(PAD_UP|PAD_DOWN)){selection++;if(selection>=(page==1?3:2))selection=0;}
+        if(hit&PAD_RIGHT){page++;if(page==4)page=0;selection=0;}
+        if(hit&PAD_LEFT){page=page? (u16)(page-1):3;selection=0;}
+        if(page==3 && (hit&PAD_DOWN))slow_voice^=1;
+        if(hit&(page==3?PAD_UP:(PAD_UP|PAD_DOWN))){selection++;if(selection>=(page==1?3:2))selection=0;}
         if(hit&PAD_START)audio_request(AU_PANIC,0);
         else if(page==0) {
             if(hit&PAD_A)audio_request(AU_PLAY,(u16)(selection+2));
@@ -217,10 +227,14 @@ void main(void) {
             if(hit&PAD_A)audio_request(AU_EFFECT,selection);
             else if(hit&PAD_B){pan_selection++;if(pan_selection==3)pan_selection=0;audio_request(AU_PAN,pan_selection);}
             else if(hit&PAD_C)audio_request(AU_BED,0);
-        } else {
+        } else if(page==2) {
             if((hit&PAD_A) && active<2 && !transition)request(active^1u);
             else if(hit&PAD_B)audio_request(AU_PLAY,2);
             else if(hit&PAD_C)audio_request(AU_BED,0);
+        } else {
+            if(hit&PAD_A)audio_request(AU_STREAM,(u16)(selection|(slow_voice<<1)));
+            else if(hit&PAD_B)audio_request(AU_EFFECT,0);
+            else if(hit&PAD_C)audio_request(AU_STREAM_STOP,0);
         }
         actor_tick++;player_x=(u16)(48+((main_ticks>>3)&31u));
         if(transition==1){if(fade)fade--;else if(area_is_black()){transition=2;map_row=0;}}

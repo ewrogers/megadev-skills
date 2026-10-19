@@ -39,7 +39,7 @@ and build conventions; these skills do not require SGDK.
 | [megadev-dialogue](skills/megadev-dialogue/SKILL.md) | Add portrait conversations, timed styled text, choices and safe optional PCM voice. Includes Dialogue Lab. |
 | [megadev-input](skills/megadev-input/SKILL.md) | Handle pads, mouse, multitaps and joining with explicit device-validation limits. |
 | [megadev-math](skills/megadev-math/SKILL.md) | Checked fixed-point math, vectors, trig and interpolation. Includes Math Lab. |
-| [megadev-audio](skills/megadev-audio/SKILL.md) | Play CD music and PCM effects, manage voices and coordinate music with data loading. |
+| [megadev-audio](skills/megadev-audio/SKILL.md) | Play CD music, resident effects and streamed long voices/samples with bounded buffers and safe drive handoffs. |
 | [megadev-scenes](skills/megadev-scenes/SKILL.md) | Connect game flow, transitions, preloads and cleanup, including failed-load recovery. |
 | [megadev-save](skills/megadev-save/SKILL.md) | Save to internal or cartridge backup RAM, version records and recover corrupted saves. |
 

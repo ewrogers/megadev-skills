@@ -1,6 +1,7 @@
 #include "shared.h"
 #include "stream.h"
 #include "audio.h"
+#include "voice.h"
 #include <sub/cdrom.h>
 #include <sub/gate_arr.h>
 #include <sub/memmap.h>
@@ -31,5 +32,5 @@ void main(void) {
     u16 hz=60;
 #endif
     audio_init();
-    for(;;){u16 now=*ga_reg_comstat3;audio_sub_tick(now,hz);stream_sub_tick(now,hz);}
+    for(;;){u16 now=*ga_reg_comstat3;audio_sub_tick(now,hz);voice_sub_tick(now,hz);stream_sub_tick(now,hz);}
 }

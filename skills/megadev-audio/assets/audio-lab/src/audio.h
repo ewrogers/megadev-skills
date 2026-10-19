@@ -3,7 +3,8 @@
 /* Original application policy; none of these audio_* functions is an SDK API. */
 typedef unsigned short A16;
 typedef unsigned int A32;
-enum { AU_PLAY=1,AU_PAUSE,AU_STOP,AU_EFFECT,AU_BED,AU_PAN,AU_PANIC };
+enum { AU_PLAY=1,AU_PAUSE,AU_STOP,AU_EFFECT,AU_BED,AU_PAN,AU_PANIC,
+       AU_STREAM=10,AU_STREAM_STOP };
 enum { CD_NONE,CD_STOP,CD_PLAY,CD_PAUSE,CD_RESUME };
 typedef struct {A16 remaining,priority,sample,pan;} AudioVoice;
 typedef struct {

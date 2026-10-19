@@ -77,6 +77,9 @@ def main():
         subprocess.run([sys.executable,str(audio/'scripts/create_project.py'),str(game)],check=True,cwd=cwd,stdout=subprocess.PIPE)
         subprocess.run([sys.executable,str(game/'tools/make_audio.py')],check=True,cwd=game,stdout=subprocess.PIPE)
         assert (game/'res/track02.wav').is_file() and (game/'res/bell.pcm').is_file()
+        subprocess.run([sys.executable,str(game/'tools/make_voice.py')],check=True,cwd=game,stdout=subprocess.PIPE)
+        assert len((game/'disc/V000.pcm').read_bytes())==16384
+        assert len((game/'disc/L000.pcm').read_bytes())==16384
         scenes=cwd/'.agents/skills/megadev-scenes'
         game=cwd/'transition game'
         subprocess.run([sys.executable,str(scenes/'scripts/create_project.py'),str(game)],check=True,cwd=cwd,stdout=subprocess.PIPE)

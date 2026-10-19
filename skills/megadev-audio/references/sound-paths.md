@@ -9,6 +9,10 @@ Inspect the image again when that changes.
 | Sega CD PCM | `sub/pcm.h`, `pcm.def.h`, `pcm.s` | Resident effects, loops, sampled instruments/voices |
 | FM/PSG | Base-console hardware and Z80/register definitions; no bundled sequencer found in the audited source | A separately selected/integrated driver or deliberately scoped register implementation |
 
+For samples longer than PCM RAM, see [Streamed PCM](streamed-pcm.md). That path
+adds an application-owned chunk reader and refill policy over these registers;
+it is not an SDK-provided streaming driver.
+
 ## CD audio
 
 Primary sources: [disc mastering](https://github.com/drojaazu/megadev/blob/7a7246c14b845ad2f1bd3c7d73afb04cf67d83ef/docs/disc.md),

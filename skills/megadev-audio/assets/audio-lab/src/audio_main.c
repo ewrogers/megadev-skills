@@ -4,7 +4,9 @@ A16 audio_pending,audio_rejected,audio_link_fault;
 static A16 serial=1,age;
 int audio_request(A16 op,A16 arg) {
     if(audio_pending || *ga_reg_comcmd4 || *ga_reg_comstat7){audio_rejected++;return 0;}
-    if(op<AU_PLAY || op>AU_PANIC || (op==AU_PLAY && (arg<2 || arg>3)) ||
+    if((op<AU_PLAY || (op>AU_PANIC && op!=AU_STREAM && op!=AU_STREAM_STOP)) ||
+       (op==AU_STREAM && (arg>3 || *ga_reg_comcmd0)) || (op==AU_STREAM_STOP && arg) ||
+       (op==AU_PLAY && (arg<2 || arg>3)) ||
        ((op==AU_EFFECT || op==AU_PAN) && arg>2))return 0;
     serial++;if(serial<2)serial=2;
     *ga_reg_comcmd5=op;*ga_reg_comcmd6=arg;
