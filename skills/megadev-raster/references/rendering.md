@@ -41,7 +41,9 @@ only entities visible in both, and budget the combined SAT. Sprites do not
 inherit background scroll. Use explicit clipping/decomposition, or reserved
 opaque boundaries; the VDP cannot scissor an arbitrary sprite to a viewport.
 The Lab's two actors remain inside their own view. It demonstrates camera
-transforms, not a general clipping engine. B disables the split for comparison.
+transforms, not a general clipping engine. B disables the divider and both
+scroll splits, using P1’s camera for a single-view comparison. Fully visible
+actors are projected into that camera; partial actors are omitted.
 
 ## Seam and resource limits
 

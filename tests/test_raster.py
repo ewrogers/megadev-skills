@@ -78,7 +78,9 @@ class RasterTests(unittest.TestCase):
   for i,screen in [(0,32),(1,136)]:
    offset=v.plan.top_b if i==0 else v.plan.scroll_b
    self.assertEqual((screen+offset)&255,w.y[i]-48)
-  self.advance(w,0,0,16);self.assertEqual(self.view(w).plan.enabled,0)
+  self.advance(w,0,0,16);v=self.view(w);self.assertEqual(v.plan.enabled,0)
+  self.assertTrue(all(r[0]==r[1]==v.scroll[0][0] for r in v.scroll))
+  self.assertLessEqual(v.count,2)
  def test_hardware_sprite_bounds_and_links(self):
   for demo in [0,1]:
    w=self.world(demo)

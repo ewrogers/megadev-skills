@@ -48,6 +48,9 @@ def check_raster(u,sym,demo=False):
  assert not call('rt_plan_valid',(0,))
  reset(1);call('rt_build',(p,view));top=bytes(u.mem_read(view+20,512));bottom=bytes(u.mem_read(view+532,384))
  call('rt_advance',(p,5,8,0));call('rt_build',(p,view));assert bytes(u.mem_read(view+20,512))!=top and bytes(u.mem_read(view+532,384))==bottom
+ reset(1);call('rt_advance',(p,0,0,16));call('rt_build',(p,view))
+ assert not word(view+14) and word(view+1060)<=2
+ scroll=struct.unpack('>448H',u.mem_read(view+20,896));assert len(set(scroll))==1,'Split-off left a second horizontal camera active'
  # Gate Array low word + full Work RAM vector, without bit opcodes on GA.
  handler=sym['raster_hint'];assert 0xFF0000<=handler<0xFFF700 and not handler&1
  put(0xA12006,0xFD0C);u.mem_write(0xFFFD0E,struct.pack('>I',0xFFABC0));call('raster_install')

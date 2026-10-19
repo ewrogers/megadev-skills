@@ -64,8 +64,10 @@ These observations qualify this workload, not an arbitrary game's CPU margin.
 ## Evidence limits
 
 The CPU harness models VDP status/scanlines and BIOS DMA. It proves contracts,
-not bus cycles or a rendered screen. Emulator observations must be recorded
-separately for PAL/NTSC presentation. Physical machines still need CRAM-dot,
+not bus cycles or a rendered screen. The user also confirmed PAL water controls, automatic sweeping, ball reflection
+and pause, with the display at 50 FPS and no increasing L/T counters. The user
+confirmed NTSC split controls/divider/HUD at 60 FPS, then PAL at 50 FPS including
+panning, selection, tour, pause and the divider-free single-view comparison. Physical machines still need CRAM-dot,
 FIFO/HBlank, short level-7 masking, VBlank budget, BIOS/model and combined
 CD/audio/ASIC contention checks. See the skill's testing reference for the
 manual sweep, tint, split-camera and pause checklist.

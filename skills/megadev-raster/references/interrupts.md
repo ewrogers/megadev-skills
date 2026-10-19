@@ -14,6 +14,9 @@ The audited container uses Megadev commit
   `BIOS_SET_HBLANK` and `BIOS_SET_HBLANK_WORK_RAM` have different dispatch paths.
   Check the entry/return contract; a direct interrupt handler returns with RTE.
 
+The Lab targets standard `TARGET=MEGACD` disc boot. Re-audit vectors and BIOS
+mapping for Mode 1, a custom bootstrap or another interrupt dispatcher.
+
 The Lab saves both the full RAM jump operand and the Gate Array word, installs
 an even Work RAM handler, and restores both on detach. Installation is idempotent.
 Disable interrupts and IE1 through the existing VDP owner before changing either

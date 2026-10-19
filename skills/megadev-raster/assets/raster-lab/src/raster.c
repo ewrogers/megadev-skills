@@ -50,14 +50,19 @@ void rt_build(RtWorld const *w,RtView *v){
  p->table=w->demo?0x8238:0x8220;p->wet0=0xE84;p->wet1=0xA42;p->enabled=w->demo?w->enabled:1;
  RtU cam0=camera_x(w->x[0]),cam1=camera_x(w->x[1]);
  for(RtU y=0;y<224;y++){
-  if(w->demo){RtU cam=y<128?cam0:cam1;v->scroll[y][0]=v->scroll[y][1]=(RtU)(0-cam)&1023;}
+  if(w->demo){RtU cam=(!w->enabled || y<128)?cam0:cam1;v->scroll[y][0]=v->scroll[y][1]=(RtU)(0-cam)&1023;}
   else {RtU cam=cam0;RtS displacement=(w->waves && y>=w->line)?wave[((y-w->line)*2+(w->tick>>1))&31]:0;v->scroll[y][0]=(RtU)(displacement-(RtS)cam)&1023;v->scroll[y][1]=(RtU)(0-cam)&1023;}
  }
  /* Opaque 32px strips exactly fill H40's 320px row budget. Put them first:
     the hero intentionally disappears behind the surface/divider for 8 rows. */
- for(RtU i=0;i<10;i++)sprite(v,(RtS)(i<<5),(RtS)(w->demo?128:w->line-2),0xC00,(RtU)(0x88+(w->demo?16:((w->tick>>3)&3)*4)),0);
+ if(!w->demo || w->enabled)for(RtU i=0;i<10;i++)sprite(v,(RtS)(i<<5),(RtS)(w->demo?128:w->line-2),0xC00,(RtU)(0x88+(w->demo?16:((w->tick>>3)&3)*4)),0);
  if(w->demo){
-  for(RtU i=0;i<2;i++){RtS y=(RtS)(w->y[i]-camera_y(w->y[i])+(i?136:32)-8);sprite(v,(RtS)(w->x[i]-camera_x(w->x[i])-8),y,0x500,(RtU)(0x80+i*4),3);}
+  for(RtU i=0;i<2;i++){
+   RtU camera=w->enabled?i:0;
+   RtS y=(RtS)(w->y[i]-camera_y(w->y[camera])+((w->enabled && i)?136:32)-8);
+   RtS x=(RtS)(w->x[i]-camera_x(w->x[camera])-8);
+   if(x>=0 && x+16<=320 && y>=32 && y+16<=224)sprite(v,x,y,0x500,(RtU)(0x80+i*4),3);
+  }
  }else {
   RtS x=(RtS)(w->x[0]-cam0-8),y=(RtS)(120+wave[(w->tick>>2)&31]/2);
   /* Split the actor into resident 8px cells at the full-width surface. Omit
