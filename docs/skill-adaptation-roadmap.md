@@ -157,7 +157,7 @@ created. None means the existing SGDK code is a drop-in Megadev dependency.
 | sgdk-collision | Adapt | collision | Sweeps, rays, sliding and executable geometry contracts largely transfer as portable C; recheck fixed-point/overflow conventions. |
 | sgdk-combat | Adapt | combat | Attack windows, guard rules, damage/knockback and optional co-op contracts transfer; art/tuning stay illustrative. |
 | sgdk-math | Adapt | math | Integer/fixed-point reasoning and geometry transfer; do not assume SGDK fix16/fix32, lookup tables or math function names. |
-| sgdk-ai | Adapt | ai | States, sensing and bounded pathfinding transfer; sub-CPU offload is a separately measured option with snapshot/result ownership. |
+| sgdk-ai | Delivered | ai | Main-owned states, wall-aware sensing and bounded shared BFS; Sub offload remains a separately measured optional design. |
 | sgdk-scenes | Rewrite | scenes | Game-flow patterns transfer, but scene lifetime must account for module loading, disc operations, shared RAM and audio handoffs. |
 | sgdk-audio | Rewrite | audio | Keep authoring/listening-test principles. Rebuild runtime guidance around CD-DA, Sega CD PCM and verified FM/PSG drivers, not SGDK XGM APIs. |
 | sgdk-save | Rewrite | save | Versioning, validation and recovery transfer; use BIOS backup-RAM file operations/capacity/errors instead of copying cartridge SRAM access. |
@@ -351,3 +351,12 @@ publication and audio services. It does not duplicate the compression skill or
 claim a general FMV codec. Native Cinema Lab art is illustrative; photographic
 footage conversion, changed-tile codecs and audio-clock playback are extensions
 that need their own measured bounds and tests.
+
+## AI milestone
+
+`megadev-ai` adds enemy decisions, staggered sensing, bounded routes and stale
+result checks. Gameplay/collision retain movement and geometry; system retains
+Main/Sub ownership. Enemy Lab uses a small Main-owned uniform-cost BFS with an
+independent shortest-path oracle and executed 68000 publication tests. The Lab's
+courtyard, enemy roles, controls and art/music are illustrative. Optional Sub AI
+is guidance, not a claimed tested service. See [AI validation](ai-validation.md).

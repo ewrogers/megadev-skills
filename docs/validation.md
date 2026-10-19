@@ -891,3 +891,8 @@ failure tests, target CPU execution, regional builds and font/layout limits.
 
 [Video validation](video-validation.md) records Cinema Lab's format, Main/Sub
 pipeline, VDP table separation, regional matrices and remaining hardware checks.
+
+## AI
+
+[AI validation](ai-validation.md) records Enemy Lab state/sensing contracts,
+bounded searches, independent shortest-path checks and native publication tests.

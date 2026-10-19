@@ -163,6 +163,12 @@ jobs:
             skill: megadev-animation
           - arch: arm64
             runner: ubuntu-24.04-arm
+            skill: megadev-ai
+          - arch: amd64
+            runner: ubuntu-24.04
+            skill: megadev-ai
+          - arch: arm64
+            runner: ubuntu-24.04-arm
             skill: megadev-collision
           - arch: amd64
             runner: ubuntu-24.04
@@ -267,6 +273,7 @@ jobs:
       - run: python tests/compare_reports.py build/reports/target-megadev-dialogue-arm64/report.json build/reports/target-megadev-dialogue-amd64/report.json
       - run: python tests/compare_reports.py build/reports/target-megadev-gameplay-arm64/report.json build/reports/target-megadev-gameplay-amd64/report.json
       - run: python tests/compare_reports.py build/reports/target-megadev-animation-arm64/report.json build/reports/target-megadev-animation-amd64/report.json
+      - run: python tests/compare_reports.py build/reports/target-megadev-ai-arm64/report.json build/reports/target-megadev-ai-amd64/report.json
       - run: python tests/compare_reports.py build/reports/target-megadev-collision-arm64/report.json build/reports/target-megadev-collision-amd64/report.json
       - run: python tests/compare_reports.py build/reports/target-megadev-levels-arm64/report.json build/reports/target-megadev-levels-amd64/report.json
       - run: python tests/compare_reports.py build/reports/target-megadev-math-arm64/report.json build/reports/target-megadev-math-amd64/report.json
