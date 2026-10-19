@@ -32,6 +32,7 @@
         "megadev-dialogue",
         "megadev-gameplay",
         "megadev-ai",
+        "megadev-combat",
         "megadev-animation",
         "megadev-collision",
         "megadev-levels",
