@@ -25,7 +25,8 @@
         "megadev-audio",
         "megadev-scenes",
         "megadev-save",
-        "megadev-ui"
+        "megadev-ui",
+        "megadev-dialogue"
       ]
     },
     {

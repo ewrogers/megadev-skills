@@ -32,6 +32,7 @@ and build conventions; these skills do not require SGDK.
 | [megadev-assets](skills/megadev-assets/SKILL.md) | Prepare native art, palettes, patterns and sprite sheets with validated disc assets. |
 | [megadev-graphics](skills/megadev-graphics/SKILL.md) | Scroll backgrounds, add parallax, animate sprites and use palette effects. |
 | [megadev-ui](skills/megadev-ui/SKILL.md) | Build fonts, panels, menus and HUDs with bounded redraws. Includes Menu Lab. |
+| [megadev-dialogue](skills/megadev-dialogue/SKILL.md) | Add portrait conversations, timed styled text, choices and safe optional PCM voice. Includes Dialogue Lab. |
 | [megadev-input](skills/megadev-input/SKILL.md) | Handle pads, mouse, multitaps and joining with explicit device-validation limits. |
 | [megadev-audio](skills/megadev-audio/SKILL.md) | Play CD music and PCM effects, manage voices and coordinate music with data loading. |
 | [megadev-scenes](skills/megadev-scenes/SKILL.md) | Connect game flow, transitions, preloads and cleanup, including failed-load recovery. |
@@ -88,6 +89,7 @@ Ask for the task you want, and name a skill when you want to be explicit:
 - "Use megadev-project to create a bootable disc in a new folder."
 - "Use megadev-planning to budget an exploration game with voice and large backgrounds."
 - "Use megadev-ui to build a readable pause menu and inventory for my game's style."
+- "Use megadev-dialogue to add branching portrait conversations with optional voice."
 - "Check this Main/Sub handoff with megadev-system and megadev-best-practices."
 - "Use megadev-release to validate and package this mixed-mode disc."
 

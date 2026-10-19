@@ -272,3 +272,16 @@ Host and original-68000 execution cover invalid states, lifetime/late-publicatio
 regressions and PAL/NTSC logic. Native ARM64/AMD64 compare the complete matrix.
 Localized shaping, full dialogue and physical-console qualification remain
 separate work rather than implicit claims of this bitmap-font example.
+
+## Dialogue milestone
+
+`megadev-dialogue` builds on UI with bounded script spans, timed/styled text,
+branches, portrait changes, paired panels and optional voice coordination.
+Dialogue Lab reuses the audio policy/mailbox/PCM owner and extends its resident
+profile with speech-only play/stop. It does not introduce another renderer,
+disc reader or mixer. A delayed start must retire and stop before newer speech;
+subtitles remain usable if audio becomes unavailable.
+
+Preloaded voice demonstrates the coordination boundary. Long-form streamed
+voice, localization/shaping and gameplay/level systems remain separate work.
+The Lab's story, art, pacing and controls remain illustrative.

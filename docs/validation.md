@@ -606,3 +606,24 @@ The user confirmed NTSC and PAL navigation and steady display in ares, including
 Details/Character, focus restoration, Settings and pause. Host/CPU tests do not
 emulate the VDP or certify transfer timing, safe video margins, input latency or
 physical-console/BIOS compatibility. Those remain separate checks.
+
+## Dialogue milestone
+
+Dialogue Lab adds bounded spans, wrapping/paging, styled reveals, choices and
+paired portrait panels over the established UI primitives/publisher. Host O0/O3
+checks cover overflow without partial output, input edges, ready generations,
+PAL/NTSC reveal timing, both branches and stale voice intent. Source art/PCM
+conversion is reproducible, and C-rendered native previews cover thirteen states.
+
+Original-MC68000 tests execute script/view policy and the compiled tour. Paired
+Main/Sub audio tests retain existing driver/BIOS coverage while checking the new
+resident speech slots, finite lifetime, speech-only stop, independent effects,
+invalid requests and cancellation before an old start's acknowledgement. Lost
+acknowledgements retain the request rather than freeing it.
+
+US/JP NTSC, EU PAL, debug and tour builds run on ARM64/AMD64 with payload matching.
+Installation covers twenty skills with telemetry disabled. The user confirmed
+NTSC and final PAL dialogue, branches, paired panels, voice and controls in ares.
+The Lab preloads
+short PCM excerpts; it does not prove runtime voice CD reads, optical timing,
+real PCM acoustics or physical-console behavior.

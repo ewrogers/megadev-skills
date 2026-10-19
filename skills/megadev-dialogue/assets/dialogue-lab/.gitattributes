@@ -1,0 +1,3 @@
+res/*.bin binary
+res/*.pcm binary
+res/*.wav binary
