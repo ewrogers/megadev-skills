@@ -1,77 +1,128 @@
 # Megadev Skills
 
-Agent skills for building Sega CD / Mega CD games with [Megadev](https://github.com/drojaazu/megadev).
-They teach practical hardware and SDK techniques, backed by executable examples and tests.
+[![skills.sh](https://skills.sh/b/ewrogers/megadev-skills)](https://skills.sh/ewrogers/megadev-skills)
 
-Use our [Megadev Docker toolchain](https://github.com/ewrogers/megadev-docker) on macOS, Linux or Windows with Linux containers. Images support ARM64 and AMD64.
+Practical agent skills for making Sega CD and Mega CD games with
+[Megadev](https://github.com/drojaazu/megadev). Build through the
+[Megadev Docker toolchain](https://github.com/ewrogers/megadev-docker), keep your
+project on your computer, and use an agent to help with setup, assets and debugging.
 
-## Install
+The playable Labs demonstrate techniques, not designs to copy. Your game's
+rules, flow, controls, art and music come from your brief. Use a Lab to examine
+a specific solution; building a new game does not mean starting from its code.
 
-```sh
-npx skills add ewrogers/megadev-skills --skill megadev-project
-```
-
-Ask your agent to use `megadev-project` to create or troubleshoot a project.
-The skill includes a standalone starter and instructions for building a disc with `ewrogers/megadev:latest`.
+For cartridge games using SGDK, see [SGDK Docker](https://github.com/ewrogers/sgdk-docker)
+and [SGDK Skills](https://github.com/ewrogers/sgdk-skills). Megadev has its own APIs
+and build conventions; these skills do not require SGDK.
 
 ## Skills
 
-| Group | Skill | What it covers |
-| --- | --- | --- |
-| Foundations | [megadev-project](skills/megadev-project/SKILL.md) | Toolchain setup, Main/Sub startup, memory layouts, module loading and a bootable disc. |
-| Foundations | [megadev-planning](skills/megadev-planning/SKILL.md) | CPU responsibilities, memory lifetimes, Word RAM ownership and loading plans, with an editable budget checker. |
-| Foundations | [megadev-best-practices](skills/megadev-best-practices/SKILL.md) | C/assembly contracts, code boundaries and safe cross-system integration, with a checkpoint journey example. |
-| Foundations | [megadev-hardware](skills/megadev-hardware/SKILL.md) | CPU memory views, ownership and safe diagnostic checks, with a Hardware Lab disc. |
-| Foundations | [megadev-assets](skills/megadev-assets/SKILL.md) | Native PNG preparation, palettes, patterns and sprite sheets, with validated disc assets and Word RAM uploads. |
-| Foundations | [megadev-input](skills/megadev-input/SKILL.md) | Pad, mouse and multitap protocols, stable input snapshots and joining, with explicit device-validation limits. |
-| Foundations | [megadev-graphics](skills/megadev-graphics/SKILL.md) | Scrolling, parallax, sprites, animation frames and palette effects, with bounded frame submission. |
-| Systems | [megadev-audio](skills/megadev-audio/SKILL.md) | CD music, PCM samples, voice priorities and safe music/data loading handoffs. |
-| Systems | [megadev-memory](skills/megadev-memory/SKILL.md) | Linked RAM budgets, allocation lifetimes, buffer leases and safe 1M/2M Word RAM handling. |
-| Systems | [megadev-save](skills/megadev-save/SKILL.md) | Internal and cartridge backup RAM, versioned records, verified writes and corruption recovery. |
-| Systems | [megadev-scenes](skills/megadev-scenes/SKILL.md) | Game flow, fades, safe scene cleanup, preloads and failed-transition recovery. |
-| Systems | [megadev-streaming](skills/megadev-streaming/SKILL.md) | Safe CD loads, preloading, resident art and bounded uploads with Word RAM handoffs. |
-| Systems | [megadev-system](skills/megadev-system/SKILL.md) | Main/Sub command lifetimes, bounded work, safe Word RAM handoffs, cancellation and late-reply recovery. |
-| Advanced | [megadev-scaling](skills/megadev-scaling/SKILL.md) | Graphics ASIC rotation, zoom and perspective floors, with checked Word RAM handoffs and staged VRAM publication. |
-| Debugging and Testing | [megadev-debug](skills/megadev-debug/SKILL.md) | CPU/module-aware symbols, bounded traces and first-fault evidence for crashes and stalled jobs. |
-| Debugging and Testing | [megadev-testing](skills/megadev-testing/SKILL.md) | Deterministic replay, PAL/NTSC checks and integration regressions for loading/audio handoffs. |
-| Debugging and Testing | [megadev-performance](skills/megadev-performance/SKILL.md) | Bounded timing, workload/transfer accounting and controlled PAL/NTSC performance comparisons. |
-| Release | [megadev-release](skills/megadev-release/SKILL.md) | Disc contracts, mixed-mode track validation, portable packages and qualified release acceptance. |
+### Get started
 
-More skills will follow in foundations, systems, advanced techniques, debugging/testing and release. See the [adaptation roadmap](docs/skill-adaptation-roadmap.md).
-For cartridge games using SGDK, see [SGDK Skills](https://github.com/ewrogers/sgdk-skills).
-Megadev has its own APIs and build conventions; these skills do not require SGDK.
+| Skill | What to ask it for |
+| --- | --- |
+| [megadev-project](skills/megadev-project/SKILL.md) | Start a project, build a bootable disc and check the actual SDK API. |
+| [megadev-planning](skills/megadev-planning/SKILL.md) | Turn a game idea into a first milestone, CPU responsibilities, memory budgets and loading plans. |
+| [megadev-best-practices](skills/megadev-best-practices/SKILL.md) | Write or review C/assembly contracts, module boundaries and safe integration between services. Includes Harbor Relay. |
 
-## Examples and validation
+### Build your game
 
-[Project Lab](skills/megadev-project/assets/project-lab/README.md) is a small interactive disc that checks startup, communication and module loading.
-[Hardware Lab](skills/megadev-hardware/assets/hardware-lab/README.md) adds safe scratch-buffer checks and a Word RAM handoff test, with an optional automatic runtime tour.
-[Asset Lab](skills/megadev-assets/assets/asset-lab/README.md) reloads two original PixelLab backgrounds from disc while keeping a shared animated sprite and UI resident.
-[Graphics Lab](skills/megadev-graphics/assets/graphics-lab/README.md) adds a scrolling harbor, animated airships, foreground occlusion and palette effects.
-[Input Lab](skills/megadev-input/assets/input-lab/README.md) shows live device snapshots and a separately labeled scripted peripheral tour.
-[System Lab](skills/megadev-system/assets/system-lab/README.md) demonstrates bounded Sub work, rejected requests and safe cancellation/timeout recovery while Main keeps running.
-[Memory Lab](skills/megadev-memory/assets/memory-lab/README.md) visualizes RAM reservations, leased allocation lifetimes and verified 1M bank exchanges.
-[Streaming Lab](skills/megadev-streaming/assets/streaming-lab/README.md) preloads a second area while the current view stays resident, then travels through a fade with safe cancellation and missing-file recovery.
-[Audio Lab](skills/megadev-audio/assets/audio-lab/README.md) auditions original CD tracks and PCM effects, with stereo panning and explicit music/data drive handoffs.
-[Transition Lab](skills/megadev-scenes/assets/transition-lab/README.md) brings title, options, two areas, pause, results and credits together with safe preload cancellation and recovery.
-[Scaling Lab](skills/megadev-scaling/assets/scaling-lab/README.md) rotates and scales a native mosaic and samples it as a perspective floor through the actual graphics ASIC.
+| Skill | What to ask it for |
+| --- | --- |
+| [megadev-assets](skills/megadev-assets/SKILL.md) | Prepare native art, palettes, patterns and sprite sheets with validated disc assets. |
+| [megadev-graphics](skills/megadev-graphics/SKILL.md) | Scroll backgrounds, add parallax, animate sprites and use palette effects. |
+| [megadev-ui](skills/megadev-ui/SKILL.md) | Build fonts, panels, menus and HUDs with bounded redraws. Includes Menu Lab. |
+| [megadev-input](skills/megadev-input/SKILL.md) | Handle pads, mouse, multitaps and joining with explicit device-validation limits. |
+| [megadev-audio](skills/megadev-audio/SKILL.md) | Play CD music and PCM effects, manage voices and coordinate music with data loading. |
+| [megadev-scenes](skills/megadev-scenes/SKILL.md) | Connect game flow, transitions, preloads and cleanup, including failed-load recovery. |
+| [megadev-save](skills/megadev-save/SKILL.md) | Save to internal or cartridge backup RAM, version records and recover corrupted saves. |
 
-[Debug Lab](skills/megadev-debug/assets/debug-lab/README.md) freezes first-fault evidence while delayed work drains safely, with exact-build symbol lookup.
+### Work with Mega CD hardware
 
-[Test Lab](skills/megadev-testing/assets/test-lab/README.md) records/replays a small course, detects an intentional bug and runs live CD/audio recovery checks.
+| Skill | What to ask it for |
+| --- | --- |
+| [megadev-hardware](skills/megadev-hardware/SKILL.md) | Understand CPU memory views, ownership and safe hardware diagnostics. |
+| [megadev-system](skills/megadev-system/SKILL.md) | Coordinate Main/Sub work, cancellation, timeouts and late replies. |
+| [megadev-memory](skills/megadev-memory/SKILL.md) | Account for RAM, allocation lifetimes and safe 1M/2M Word RAM handling. |
+| [megadev-streaming](skills/megadev-streaming/SKILL.md) | Load and preload CD content with resident art and bounded uploads. |
+| [megadev-scaling](skills/megadev-scaling/SKILL.md) | Use the graphics ASIC for rotation, scaling and a perspective floor, with measured limits. |
 
-[Performance Lab](skills/megadev-performance/assets/performance-lab/README.md) compares Main CPU, VRAM and ASIC workloads with HUD/timer overhead controls and explicit measurement limits.
+### Test, debug and optimize
 
-[Harbor Relay](skills/megadev-best-practices/assets/harbor-relay/README.md) joins scene travel, CD/audio, preloading and explicit checkpoint saves while preserving existing service owners.
+| Skill | What to ask it for |
+| --- | --- |
+| [megadev-testing](skills/megadev-testing/SKILL.md) | Record deterministic input replays, compare PAL/NTSC and check loading/audio integration. |
+| [megadev-debug](skills/megadev-debug/SKILL.md) | Diagnose faults and stalled jobs using exact-build symbols, bounded traces and first-fault evidence. |
+| [megadev-performance](skills/megadev-performance/SKILL.md) | Compare CPU, VRAM and ASIC workloads while accounting for measurement overhead and timing limits. |
 
-[Save Lab](skills/megadev-save/assets/save-lab/README.md) saves versioned BIOS files, verifies readback and recovers an older record after an explicit corruption test.
-Labs demonstrate implementation techniques. Their appearance, controls and game design are examples, not requirements for your game.
+### Ship your game
 
-[Validation notes](docs/validation.md) explain the host tests, executed 68000 startup checks, architecture comparison and emulator checks. Emulator success does not replace real-console testing.
+| Skill | What to ask it for |
+| --- | --- |
+| [megadev-release](skills/megadev-release/SKILL.md) | Validate disc contents and mixed-mode tracks, build portable packages and qualify a release. |
 
-Release validation reuses the existing [Audio Lab](skills/megadev-audio/assets/audio-lab/README.md), packaging its data track and two music tracks without adding another runtime. See the [release workflow](skills/megadev-release/references/workflow.md).
+## Install
 
-## License and disclaimer
+Use [Skills CLI](https://github.com/vercel-labs/skills) to choose the skills and
+agents you want to install them for:
 
-Our code and documentation are [MIT licensed](LICENSE). Upstream material retains its own notices, including the starter's `LICENSE.megadev`.
+```sh
+npx skills add ewrogers/megadev-skills
+```
 
-This is an independent community project, not affiliated with, endorsed by or sponsored by Sega. Sega, Mega Drive, Genesis, Sega CD and Mega CD are trademarks of their respective owners. No Sega BIOS files or commercial games are included.
+To list the collection or install just one:
+
+```sh
+npx skills add ewrogers/megadev-skills --list
+npx skills add ewrogers/megadev-skills --skill megadev-project
+```
+
+Building discs needs Docker and the [Megadev image](https://github.com/ewrogers/megadev-docker).
+Planning and many validation helpers work without Docker. Each installed skill
+includes the references and resources it needs; related skills can be added as useful.
+
+## Use
+
+Ask for the task you want, and name a skill when you want to be explicit:
+
+- "Use megadev-project to create a bootable disc in a new folder."
+- "Use megadev-planning to budget an exploration game with voice and large backgrounds."
+- "Use megadev-ui to build a readable pause menu and inventory for my game's style."
+- "Check this Main/Sub handoff with megadev-system and megadev-best-practices."
+- "Use megadev-release to validate and package this mixed-mode disc."
+
+The guidance accounts for both CPUs, RAM ownership, interrupts, the shared VDP,
+CD loading, PCM/CD music and backup RAM. More disc space is not more VRAM or
+unlimited background CPU time. APIs and hardware contracts are checked against
+the selected Megadev source rather than borrowed from SGDK.
+
+## Tested support
+
+Host helpers are tested on Windows, macOS and Linux. Disc examples are built on
+native Linux ARM64 and AMD64; Docker Desktop supplies the Linux environment on
+other hosts. Windows Docker runtime testing is separate from host helper checks.
+
+Build and CPU-model tests check interfaces, resources and failure handling. They
+do not prove correct visuals, sound, drive timing or physical-console behavior.
+Those need emulator or hardware checks. See [validation notes](docs/validation.md)
+for the evidence and its limits, and the [roadmap](docs/skill-adaptation-roadmap.md)
+for ownership boundaries and remaining areas.
+
+[Harbor Relay](skills/megadev-best-practices/assets/harbor-relay/README.md) checks
+scene travel, loading, audio, checkpoint saves and release packaging together.
+The [Audio Lab](skills/megadev-audio/assets/audio-lab/README.md) also proves mixed-mode
+release validation without adding a second audio implementation.
+
+The skills and original examples are MIT licensed. Megadev and third-party
+materials retain their own licenses and notices.
+
+## Disclaimer
+
+Megadev Skills is an independent community project. It is not affiliated with,
+endorsed by or sponsored by SEGA CORPORATION or SEGA SAMMY HOLDINGS INC.
+SEGA and related names, logos and trademarks belong to their respective owners.
+They are used here to identify the hardware and tools this project supports.
+No Sega BIOS files or commercial games are included.
+
+This repository's original work is available under the [MIT License](LICENSE).
+Third-party software and materials retain their own licenses and notices.

@@ -243,9 +243,8 @@ payload matching from whole-ISO timestamp reproducibility. Native ARM64/AMD64
 audio matrices retain runtime regressions and require release round-trip/failure
 evidence. Physical-media qualification remains explicit.
 
-With release covered, a cross-skill integration milestone is the next useful
-platform-wide check. Further best-practice/UI/gameplay guidance should build on
-these owners rather than introducing parallel services.
+The later best-practices integration milestone joins these services. UI and
+gameplay guidance should reuse their owners rather than add parallel services.
 
 ## Best-practices integration milestone
 
@@ -259,3 +258,17 @@ require explicit user saves; automatic tours never write backup RAM.
 Validation joins original-68000 protocol/BIOS execution, host O0/O3 examples,
 PAL/NTSC and native ARM64/AMD64 matrices, plus actual mixed-mode packaging. Timing,
 real save/drive latency and hardware acceptance remain qualified separately.
+
+## UI milestone
+
+`megadev-ui` owns presentation and menu navigation: native fonts, nine-slice
+panels, field bounds, focus/history, directional repeat and coherent redraws.
+Menu Lab demonstrates immutable row publication and atomic hidden-map switching.
+These join the graphics owner in a game; they do not add another renderer,
+input driver, allocator, scene/resource manager, dialogue or audio system.
+The courier/item art and flow are illustrative, not prescribed game design.
+
+Host and original-68000 execution cover invalid states, lifetime/late-publication
+regressions and PAL/NTSC logic. Native ARM64/AMD64 compare the complete matrix.
+Localized shaping, full dialogue and physical-console qualification remain
+separate work rather than implicit claims of this bitmap-font example.
