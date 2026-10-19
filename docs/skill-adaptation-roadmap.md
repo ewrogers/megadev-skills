@@ -246,3 +246,16 @@ evidence. Physical-media qualification remains explicit.
 With release covered, a cross-skill integration milestone is the next useful
 platform-wide check. Further best-practice/UI/gameplay guidance should build on
 these owners rather than introducing parallel services.
+
+## Best-practices integration milestone
+
+`megadev-best-practices` covers C/assembly correctness and ownership seams rather
+than re-teaching graphics, loading, sound or persistence. Harbor Relay reuses the
+scene/stream/audio owners, the save codec/ABI wrapper and the release helper. A
+small checkpoint adapter serializes the existing mailbox, preserves scene leases
+and discards stale Continue intent after safe retirement. Its own named records
+require explicit user saves; automatic tours never write backup RAM.
+
+Validation joins original-68000 protocol/BIOS execution, host O0/O3 examples,
+PAL/NTSC and native ARM64/AMD64 matrices, plus actual mixed-mode packaging. Timing,
+real save/drive latency and hardware acceptance remain qualified separately.

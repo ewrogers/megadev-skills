@@ -287,3 +287,25 @@ class ReportTests(unittest.TestCase):
                            lambda q:q['cases']['eu-release']['startup']['sub'].pop('asic_execution')]:
                 bad=copy.deepcopy(b);mutate(bad)
                 with self.assertRaises(ValueError):run(bad)
+
+    def test_practices_reports_require_scene_checkpoint_and_release_evidence(self):
+        case={'disc':{'files':{'IPX.MMD':'ipx','GARDEN.MDA':'garden','CAVERN.MDA':'cavern'}},'boot_payloads':{'sp.bin':'sp'},
+              'audio_tracks':{'2':'two','3':'three'},'sub_callback':True,
+              'startup':{'main':{'probe_execution':True,'scene_execution':True,'practice_execution':True},'sub':{'probe_execution':True,'checkpoint_execution':True},'room':{}},
+              'release':{'profile':'megadev-multifile-v1','round_trip':True,'reproducible_package':True,'tracks':[1,2,3],
+                         'negative_cases':['missing_track','changed_audio','changed_pregap','wrong_track_path','security_damage','damaged_package']}}
+        a={'passed':True,'skill':'megadev-best-practices','platform':'linux/arm64','cases':{k:copy.deepcopy(case) for k in CASES|{'us-tour'}}}
+        b=copy.deepcopy(a);b['platform']='linux/amd64'
+        with tempfile.TemporaryDirectory() as folder:
+            paths=[Path(folder)/'a.json',Path(folder)/'b.json']
+            def run(right):
+                for p,r in zip(paths,[a,right]):p.write_text(json.dumps(r))
+                return compare(paths)
+            self.assertTrue(run(b))
+            for mutate in [lambda q:q['cases'].pop('eu-release'),
+                           lambda q:q['cases']['us-debug']['startup']['main'].pop('practice_execution'),
+                           lambda q:q['cases']['us-tour']['startup']['sub'].pop('checkpoint_execution'),
+                           lambda q:q['cases']['us-release'].pop('release'),
+                           lambda q:q['cases']['jp-release']['startup']['main'].pop('scene_execution')]:
+                bad=copy.deepcopy(b);mutate(bad)
+                with self.assertRaises(ValueError):run(bad)
