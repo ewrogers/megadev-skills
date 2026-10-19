@@ -1,0 +1,6 @@
+#include <macros.s>
+GLOBAL MODULE_ROM_ORIGIN 0x10000
+GLOBAL MODULE_ROM_LENGTH 0xC000
+GLOBAL MODULE_RAM_ORIGIN 0x1C000
+GLOBAL MODULE_RAM_LENGTH 0x1000
+/* Sub stack: 0x1E000..0x20000, outside the module's code/data reservations. */
