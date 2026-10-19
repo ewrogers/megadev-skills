@@ -92,7 +92,7 @@ SGDK's TSK API is not assumed to exist.
 
 ### 4. Debugging and testing
 
-Implemented: `megadev-debug` and `megadev-testing`. Add `megadev-performance` next.
+Implemented: `megadev-debug`, `megadev-testing` and `megadev-performance`.
 Cover both CPU symbol/module views, command/ownership tracing, deterministic
 models/replay, failures and timeouts, PAL/NTSC, CD latency and audio contention.
 Publish a precise emulator-versus-console validation checklist. A base-68000
@@ -226,4 +226,11 @@ performance guidance and release/disc qualification.
 first-divergence reports and live CD/audio integration qualification. It reuses
 existing adapters and adds a reproduced committed-reply/ownership race regression
 across streaming/audio/scenes. Physical timing remains a separate acceptance step.
-Performance and release/disc qualification are the next major platform gaps.
+Release/disc qualification is the next major platform gap.
+
+## Performance milestone
+
+`megadev-performance` adds bounded stopwatch samples, completed-work/transfer
+accounting and controlled HUD/timer/region comparisons. It preserves the scaling
+pipeline and clearly separates elapsed time, waits, throughput and utilization.
+Release/disc packaging and physical-console acceptance remain the next major gaps.

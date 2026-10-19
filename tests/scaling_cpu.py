@@ -22,7 +22,7 @@ def render(ram):
             out[pos]|=c<<(0 if x&1 else 4)
     return out
 
-def check_scaling(project,hz):
+def check_scaling(project,hz,performance=False):
     from unicorn import UC_HOOK_CODE,UC_HOOK_MEM_READ,UC_HOOK_MEM_WRITE
     from unicorn.m68k_const import UC_M68K_REG_A7,UC_M68K_REG_PC,UC_M68K_REG_SR,UC_M68K_REG_D0,UC_M68K_REG_D1,UC_M68K_REG_D2
     contexts={}
@@ -195,8 +195,13 @@ def check_scaling(project,hz):
         call('main','scaling_publish');call('main','vblank_user')
     call('main','scaling_draw');call('main','scaling_publish')
     call('main','scaling_draw');assert not word(main,ms['dirty_count'])
-    put(main,ms['request'],0);call('main','scaling_draw')
-    assert word(main,ms['desired']+(5*40+5)*2)&255==32,'Short label left old trailing glyph'
+    if performance:
+        put(main,ms['perf_case'],3);put(main,ms['case_dirty'],1);call('main','scaling_draw')
+        put(main,ms['perf_case'],0);put(main,ms['case_dirty'],1);call('main','scaling_draw')
+        assert word(main,ms['desired']+(1*40+10)*2)&255==32,'Short case name left a stale glyph'
+    else:
+        put(main,ms['request'],0);call('main','scaling_draw')
+        assert word(main,ms['desired']+(5*40+5)*2)&255==32,'Short label left old trailing glyph'
     assert not word(main,ms['video_fault'])
     # A grant that never confirms times out without touching RAM or freeing it.
     grants=False;main.mem_write(request,struct.pack('>4H',1,0,2,0));before=bytes(ram)

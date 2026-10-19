@@ -533,3 +533,19 @@ integration evidence, audio-track hashes and matching target payloads. Distribut
 checks include all fifteen skills with telemetry disabled. The course uses scripted
 service outcomes; real CD timing is tested separately, not claimed deterministic.
 Ares/physical-console evidence remains distinct from host and CPU models.
+
+
+## Performance milestone
+
+`megadev-performance` adds reference/incremental work equivalence (1,200 host
+phase/load combinations), independent original-68000 output checks, twelve-bit
+stopwatch wrap/coherence rejection, timer-off/no-reset checks, bounded windows,
+HUD-off and drain/warm-up policy tests. The real compiled Main/Sub ASIC pipeline
+keeps the existing image/ownership/early-blank publication regressions.
+
+US/JP NTSC, EU PAL, debug and tour matrices run on native ARM64/AMD64 CI with
+matching payloads/results. Distribution includes sixteen skills, telemetry off.
+Model-injected timer values are not hardware timing. The Lab reports serviced
+callbacks, elapsed samples and completed work, never fabricated CPU utilization;
+shared clock ownership, interrupt masking, real drive/PCM contention and physical
+console/BIOS timing remain explicit qualification limits.

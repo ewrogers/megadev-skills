@@ -38,7 +38,8 @@
       "description": "Diagnose failures with reproducible evidence and qualified checks.",
       "skills": [
         "megadev-debug",
-        "megadev-testing"
+        "megadev-testing",
+        "megadev-performance"
       ]
     }
   ]

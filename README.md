@@ -33,6 +33,7 @@ The skill includes a standalone starter and instructions for building a disc wit
 | Advanced | [megadev-scaling](skills/megadev-scaling/SKILL.md) | Graphics ASIC rotation, zoom and perspective floors, with checked Word RAM handoffs and staged VRAM publication. |
 | Debugging and Testing | [megadev-debug](skills/megadev-debug/SKILL.md) | CPU/module-aware symbols, bounded traces and first-fault evidence for crashes and stalled jobs. |
 | Debugging and Testing | [megadev-testing](skills/megadev-testing/SKILL.md) | Deterministic replay, PAL/NTSC checks and integration regressions for loading/audio handoffs. |
+| Debugging and Testing | [megadev-performance](skills/megadev-performance/SKILL.md) | Bounded timing, workload/transfer accounting and controlled PAL/NTSC performance comparisons. |
 
 More skills will follow in foundations, systems, advanced techniques, debugging/testing and release. See the [adaptation roadmap](docs/skill-adaptation-roadmap.md).
 For cartridge games using SGDK, see [SGDK Skills](https://github.com/ewrogers/sgdk-skills).
@@ -55,6 +56,8 @@ Megadev has its own APIs and build conventions; these skills do not require SGDK
 [Debug Lab](skills/megadev-debug/assets/debug-lab/README.md) freezes first-fault evidence while delayed work drains safely, with exact-build symbol lookup.
 
 [Test Lab](skills/megadev-testing/assets/test-lab/README.md) records/replays a small course, detects an intentional bug and runs live CD/audio recovery checks.
+
+[Performance Lab](skills/megadev-performance/assets/performance-lab/README.md) compares Main CPU, VRAM and ASIC workloads with HUD/timer overhead controls and explicit measurement limits.
 
 [Save Lab](skills/megadev-save/assets/save-lab/README.md) saves versioned BIOS files, verifies readback and recovers an older record after an explicit corruption test.
 Labs demonstrate implementation techniques. Their appearance, controls and game design are examples, not requirements for your game.
