@@ -665,3 +665,34 @@ The observed NTSC screen also reached all twelve collected gems. Small resident
 maps switch with display disabled; no live CD streaming is claimed. MMIO capture,
 model timing and emulator acceptance do not certify physical frame deadlines,
 stack high-water, CD/audio contention, BIOS variants or controller hardware.
+
+## Animation milestone
+
+Animation Lab adds immutable named clips, positive frame holds, entry events,
+non-looping completion, terminal poses and explicit restarts. The controller
+consumes every crossed simulation step, matches sword poses to active hitboxes,
+latches damage once per swing, removes abandoned windows on interruption and
+requires a fresh action to rise after death. Its standalone fixed-step clock
+follows the gameplay timing contract rather than giving every actor a timer.
+
+The 107-test host suite passes, including O0/O3/UBSan timeline/controller checks,
+mirrored boxes, boundary arithmetic, invalid selections, pause, queued modifiers,
+slow motion and equal-time PAL/NTSC state. Native art regenerates exactly and
+RGB/BGR packing/debug-outline dimensions have executable checks. Graphics
+admission and the established IRQ bridge remain unchanged.
+
+Original-68000 tests execute model/controller behavior and the actual automatic
+tour, plus immutable publication, exact SAT/HUD words, late-blank deferral,
+invalid counts and no normal-frame CRAM writes. US/JP NTSC, EU PAL, debug and tour
+matrices pass locally on native ARM64 and emulated AMD64, with matching complete
+payloads. Native CI repeats them. Containers use two CPUs and the selected latest
+image reports GCC 16.2.0 and Megadev
+`7a7246c14b845ad2f1bd3c7d73afb04cf67d83ef`.
+
+The first ares review exposed an overly yellow/olive courtyard ramp. The revised
+source uses explicit RGB channel triples encoded into VDP BGR words, with cool
+stone, blue/white clothing and warm dummy/blade accents; it no longer relies on
+visually ambiguous packed-color literals. Art and tuning remain illustrative.
+Interactive PAL/NTSC acceptance is tracked separately from CPU/model evidence.
+Physical raster/FIFO margin, BIOS/controller variants, sustained mixed services,
+stack high-water and console frame cadence remain unqualified.

@@ -155,6 +155,12 @@ jobs:
           - arch: amd64
             runner: ubuntu-24.04
             skill: megadev-gameplay
+          - arch: arm64
+            runner: ubuntu-24.04-arm
+            skill: megadev-animation
+          - arch: amd64
+            runner: ubuntu-24.04
+            skill: megadev-animation
     runs-on: ${{ matrix.runner }}
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
@@ -206,3 +212,4 @@ jobs:
       - run: python tests/compare_reports.py build/reports/target-megadev-ui-arm64/report.json build/reports/target-megadev-ui-amd64/report.json
       - run: python tests/compare_reports.py build/reports/target-megadev-dialogue-arm64/report.json build/reports/target-megadev-dialogue-amd64/report.json
       - run: python tests/compare_reports.py build/reports/target-megadev-gameplay-arm64/report.json build/reports/target-megadev-gameplay-amd64/report.json
+      - run: python tests/compare_reports.py build/reports/target-megadev-animation-arm64/report.json build/reports/target-megadev-animation-amd64/report.json
