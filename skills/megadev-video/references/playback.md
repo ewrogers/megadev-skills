@@ -11,7 +11,7 @@ assumed naturally aligned C struct. Publish parameters before `access_op` while
 interrupts are masked; do not copy the inline wrapper's ordering blindly into
 an asynchronous request. BIOS INT2/CD processing must remain serviced.
 
-Main uses a single project VBlank owner calling `BIOS_TRIGGER_IFL2` and
+Main uses a single project VBlank owner. It uploads before BIOS polling, then calls `BIOS_TRIGGER_IFL2` and
 `BIOS_READ_JOYPAD`. `BIOS_DMA_XFER` is wrapped with preserved C callee-saved
 registers. Source pointers are Main Work RAM, never stale Word RAM addresses.
 PCM uses the actual `sub/pcm.h` register macros. All `ci_*`/`cinema_*` functions,
@@ -24,8 +24,8 @@ Public build commands follow `ewrogers/megadev:latest`; record its actual revisi
 ## Fixed producers and consumers
 
 The Sub CPU reads into one of two fixed PRG groups, validates its header, then
-copies a requested frame into Sub-owned 2M Word RAM and checks its sum. Once the
-second frame of a group is copied it can read ahead into the *other* PRG group.
+copies a requested frame into Sub-owned 2M Word RAM and checks its sum. As soon as the
+current group is validated it can read ahead into the *other* PRG group.
 CDC never writes the group currently supplying a frame. In-flight prefetch is
 reported separately and must drain even if the frame mailbox has already retired.
 
@@ -34,7 +34,15 @@ then publishes result/frame/checksum/echo before the reply token. Main observes
 the token, confirms ownership and metadata, copies/checks into its private frame,
 then clears the request. No new request reuses that channel until the reply is
 zero. A returned next frame may wait in Word RAM while the current frame's
-copied upload packets finish. No pointers outlive their ownership grant.
+copied upload packets finish. Once the final packet owns its own copy, Main
+can receive the next frame into the same private frame buffer while that packet
+retires. The next frame becomes current only after the previous flip is acknowledged.
+No pointers outlive their ownership grant. A cached next frame also suppresses
+further requests until the current page flips; mailbox retirement alone does
+not mean the consumer needs another frame. Otherwise it can request the same
+frame twice and later reject its duplicate as out of order. If VBlank acknowledges a packet
+during a foreground copy, retire that acknowledgement before publishing from
+the old timeline state. Otherwise the producer can queue the same flip twice.
 
 The publisher copies at most 4,096 image bytes and one HUD row per early VBlank.
 Packets are immutable until acknowledgement. A late or active-display callback
@@ -70,3 +78,11 @@ for matching replies, Word RAM handback and any prefetch CDC operation before
 replay can start. No timeout forcibly steals ownership. An indefinitely stalled
 reader stays unavailable; production recovery needs an explicit verified reset
 path rather than pretending cancellation completed.
+
+The checked copy kernel uses only original-68000 instructions, handles exactly
+7,680 aligned bytes and returns a big-endian 16-bit word sum. Sub uses the same
+sum before handback; Main compares after copying. The C geometry assertion and
+executed guard/ABI tests protect its fixed unrolled bound. This avoids thousands
+of per-word helper calls and byte-extraction shifts. Main also consumes VBlanks
+that arrived during foreground work before sleeping again; it does not wait an
+extra refresh when acknowledgement work is already pending.

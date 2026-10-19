@@ -51,10 +51,10 @@ with video data reads; periodic cues follow presented-frame events.
 ## Bounds and tests
 
 One Main frame (7,680 bytes), one copied DMA packet (at most 4,096 bytes), two
-Sub PRG groups (65,536 bytes) and two VRAM image slots (15,360 bytes) are reserved.
+Sub PRG groups (126,976 bytes) and two VRAM image slots (15,360 bytes) are reserved.
 Code, font/poster/audio constants, stacks, HUD and state are additional costs.
-Each disc file holds four frames and occupies exactly 16 data sectors. The full
-movie payload is 393,216 bytes. Header checks and sums reject accidental damage;
+Each disc file holds eight frames and occupies exactly 31 data sectors. The full
+movie payload is 380,928 bytes. Header checks and sums reject accidental damage;
 sum16 is not a cryptographic integrity mechanism.
 
 `python tools/check_cinema.py` runs portable C17 O0/O3 timeline/packet tests with

@@ -495,7 +495,7 @@ class ReportTests(unittest.TestCase):
                 with self.assertRaises(ValueError):run(bad)
 
     def test_video_requires_paired_execution_and_all_frame_groups(self):
-        case={'disc':{'files':{f'C{i:02}.CIN':'frame' for i in range(12)}},'boot_payloads':{'sp.bin':'sp'},'sub_callback':True,
+        case={'disc':{'files':{f'C{i:02}.CIN':'frame' for i in range(6)}},'boot_payloads':{'sp.bin':'sp'},'sub_callback':True,
               'startup':{'main':{'video_execution':True,'probe_execution':True},'sub':{'video_execution':True,'probe_execution':True},'room':{}}}
         a={'passed':True,'skill':'megadev-video','platform':'linux/arm64','cases':{k:copy.deepcopy(case) for k in CASES|{'us-tour'}}}
         b=copy.deepcopy(a);b['platform']='linux/amd64'
@@ -508,6 +508,6 @@ class ReportTests(unittest.TestCase):
             for mutate in [lambda q:q['cases'].pop('us-tour'),
                            lambda q:q['cases']['us-debug']['startup']['sub'].pop('video_execution'),
                            lambda q:q['cases']['eu-release']['startup']['main'].pop('probe_execution'),
-                           lambda q:q['cases']['us-release']['disc']['files'].pop('C11.CIN')]:
+                           lambda q:q['cases']['us-release']['disc']['files'].pop('C05.CIN')]:
                 bad=copy.deepcopy(b);mutate(bad)
                 with self.assertRaises(ValueError):run(bad)

@@ -24,12 +24,12 @@ class VideoTests(unittest.TestCase):
    f=getattr(cls.lib,name);f.argtypes=[c.POINTER(State)]+([c.c_ushort] if name in ['ci_begin','ci_upload','ci_tick'] else []);f.restype=c.c_ushort if name not in ['ci_init','ci_tick'] else None
  def test_disc_groups_native_pixels_and_palette(self):
   root=self.root/'assets';root.mkdir();movie.generate(root)
-  self.assertEqual(len(list((root/'disc').glob('*.CIN'))),12)
-  for first in range(0,48,4):
-   wire=(root/'disc'/f'C{first//4:02}.CIN').read_bytes();self.assertEqual(len(wire),32768)
+  self.assertEqual(len(list((root/'disc').glob('*.CIN'))),6)
+  for first in range(0,48,8):
+   wire=(root/'disc'/f'C{first//8:02}.CIN').read_bytes();self.assertEqual(len(wire),63488)
    b=c.create_string_buffer(wire);self.assertTrue(self.lib.ci_header(b,len(wire),first))
-   for i in range(4):
-    raw=wire[2048+i*7680:2048+(i+1)*7680];self.assertEqual(raw,movie.frame(first+i));self.assertEqual(sum(raw)&65535,struct.unpack_from('>H',wire,32+i*2)[0])
+   for i in range(8):
+    raw=wire[2048+i*7680:2048+(i+1)*7680];self.assertEqual(raw,movie.frame(first+i));self.assertEqual(sum(struct.unpack(">3840H",raw))&65535,struct.unpack_from('>H',wire,32+i*2)[0])
   self.assertEqual(len({movie.frame(n) for n in range(48)}),48)
   colors=struct.unpack('>16H',(root/'res/palette.bin').read_bytes());self.assertTrue(all(v&~0xeee==0 for v in colors))
   self.assertEqual((root/'res/poster.bin').read_bytes(),movie.frame(0))
@@ -40,7 +40,7 @@ class VideoTests(unittest.TestCase):
   for at in list(range(20)):
    changed=bytearray(raw);changed[at]^=1
    self.assertFalse(self.lib.ci_header(c.create_string_buffer(bytes(changed)),len(raw),0),at)
-  for size in [0,2048,32767,32769]:self.assertFalse(self.lib.ci_header(c.create_string_buffer(raw),size,0))
+  for size in [0,2048,63487,63489]:self.assertFalse(self.lib.ci_header(c.create_string_buffer(raw),size,0))
   for first in [1,3,4,48,65535]:self.assertFalse(self.lib.ci_header(c.create_string_buffer(raw),len(raw),first))
  def test_target_independent_timing_pause_and_late_holds(self):
   for hz,dt in [(60,5),(50,6)]:

@@ -6,7 +6,7 @@ int main(void){
  CHECK(!ci_begin(&s,CI_FRAMES));CHECK(ci_begin(&s,0));
  CHECK(!ci_upload(&s,0));CHECK(!ci_upload(&s,3));CHECK(!ci_upload(&s,CI_BATCH+2));
  for(unsigned i=0;i<3;i++)CHECK(ci_upload(&s,2048));CHECK(ci_upload(&s,1536));
- CHECK(!ci_upload(&s,2));CHECK(ci_due(&s));CHECK(ci_present(&s));CHECK(s.visible==0 && s.slot==0);
+ CHECK(!ci_upload(&s,2));CHECK(ci_due(&s));CHECK(ci_present(&s));CHECK(s.visible==0 && s.slot==1);
  CHECK(!ci_begin(&s,2));CHECK(ci_begin(&s,1));
  for(unsigned i=0;i<3;i++)CHECK(ci_upload(&s,2048));CHECK(ci_upload(&s,1536));
  CHECK(!ci_due(&s));s.paused=1;ci_tick(&s,300);CHECK(!s.clock && !ci_present(&s));

@@ -83,7 +83,7 @@ def main():
         image=project/'project_lab.iso'
         expected_files=['IPX.MMD','SPX.SMD','ROOM.MMD']
         if args.skill in ('megadev-assets','megadev-streaming','megadev-audio','megadev-scenes','megadev-testing','megadev-best-practices','cross-skill-validation'):expected_files+=['GARDEN.MDA','CAVERN.MDA']
-        if args.skill=='megadev-video':expected_files += [f'C{i:02}.CIN' for i in range(12)]
+        if args.skill=='megadev-video':expected_files += [f'C{i:02}.CIN' for i in range(6)]
         if args.skill=='megadev-compression':expected_files+=['GARDEN.MDA','CAVERN.MDA','NOISE.MDA','GARDEN.KOS','CAVERN.KOS','NOISE.KOS']
         if args.skill=='megadev-graphics':expected_files+=['SKY.MDA','QUAY.MDA']
         got=inspect(image,region,expected_files)

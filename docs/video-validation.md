@@ -1,7 +1,7 @@
 # Video validation
 
 Cinema Lab's original Lantern Flight is a native 160×96 tile animation, not a
-photographic FMV decoder. It streams 48 full 4bpp frames from 12 sector-aligned
+photographic FMV decoder. It streams 48 full 4bpp frames from 6 sector-aligned
 CIN1 files. Nominal presentation is 10 images/sec; actual page-flip counts and
 late-frame holds are displayed. The Lab never equates 60 Hz refresh with 60
 new images/sec. Its art, music and controls are illustrative.
@@ -17,7 +17,7 @@ presentation timeline.
 Original-68000 tests execute both compiled processors: Sub file lookup, direct
 CDC completion, two PRG cache groups, bounded Word RAM copies, checksums and
 Main's token/ownership/copy/retirement. All 48 frames must match disc payloads,
-and only 12 group reads may occur. Mutated headers, pixel sums, missing files and
+and only 6 group reads may occur. Mutated headers, pixel sums, missing files and
 short files fail. A timeout does not clear a still-live request.
 
 VDP tests execute initial table setup, capture exact Main RAM DMA bytes, reject
@@ -26,9 +26,21 @@ The first emulator prototype exposed a table alias: default Plane B occupied
 E000, also used by the second Plane A page. Plane B now uses A000, separate from
 both image pages. This is tested through actual register writes, not source text.
 
+The producer regression reproduces the image-4 failure: a cached next frame
+must suppress a duplicate request even after its mailbox retires. It fails on
+the faulty compiled player and passes with the cache guard.
+The producer regression also covers a flip acknowledged during foreground
+work: no duplicate packet may publish before that acknowledgement is retired.
+The checked original-68000 copy preserves callee-saved registers and writes
+exactly one frame between guard bytes. A longer simulated CDC delay exercises
+cache use while the other staging group is still loading.
+
 The loading pipeline initially lacked sufficient read-ahead. It now prefetches
 into the other fixed Sub PRG group while the current one remains available,
-without changing the Main frame reservation. Normal packets allow 4 KiB uploads;
+without changing the Main frame reservation. Eight images per group amortize
+file access while the two staging groups reserve 126,976 bytes of Sub PRG RAM.
+The corrected NTSC emulator build completed all 48 images and reported 10
+images/sec; this is not a physical-drive latency guarantee. Normal packets allow 4 KiB uploads;
 256-byte mode deliberately demonstrates slower complete-frame presentation.
 
 ## Matrix and limits

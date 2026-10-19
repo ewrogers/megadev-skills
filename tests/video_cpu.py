@@ -6,6 +6,8 @@ measure physical drive latency, pixel output, PCM quality or DMA bus timing.
 from startup import check,symbols
 
 def check_video(project,hz):
+ import struct
+ from unicorn import m68k_const as mc
  from unicorn import UC_HOOK_CODE,UC_HOOK_MEM_READ,UC_HOOK_MEM_WRITE
  from unicorn.m68k_const import UC_M68K_REG_A7 as SP,UC_M68K_REG_PC as PC,UC_M68K_REG_SR as SR,UC_M68K_REG_D0 as D0
  contexts={}
@@ -42,22 +44,38 @@ def check_video(project,hz):
    sp=u.reg_read(SP);src=get(u,sp+4,4);command=get(u,sp+8,4);words=get(u,sp+12,4)
    dma.append((src,command,bytes(u.mem_read(src,words*2))));ret(u)
  main.hook_add(UC_HOOK_CODE,main_code)
+ # Fixed kernel reads/writes exactly one frame and preserves the C ABI.
+ raw=(project/'disc/C00.CIN').read_bytes()[2048:2048+7680]
+ main.mem_write(0x200000,raw)
+ area=ms['image'];saved=bytes(main.mem_read(area-4,7688))
+ main.mem_write(area-4,b'GUAR'+b'\xa5'*7680+b'TAIL')
+ callee={getattr(mc,'UC_M68K_REG_'+n):0x13570000+i for i,n in enumerate(['D2','D3','D4','D5','D6','D7','A2','A3','A4','A5','A6'])}
+ for register,value in callee.items():main.reg_write(register,value)
+ assert call('main','cinema_copy_checked',(0x200000,area))==sum(struct.unpack('>3840H',raw))&65535
+ assert all(main.reg_read(register)==value for register,value in callee.items())
+ assert bytes(main.mem_read(area-4,7688))==b'GUAR'+raw+b'TAIL'
+ main.mem_write(area-4,saved)
  # This regression executes setup: E000 may be a second A page only if B moves.
  call('main','cinema_initialize')
  assert 0x8405 in regs and 0x8230 in regs,('wrong VDP table selection',regs)
  assert any(len(v)==7680 for _,_,v in dma),'poster not uploaded'
  assert ms['_BSS_ORIGIN']+ms['_BSS_LENGTH']<=0xffd000
  assert ss['_BSS_ORIGIN']+ss['_BSS_LENGTH']<0x1e000
+ assert boot['_BSS_ORIGIN']+boot['_BSS_LENGTH']<0x28000
+ assert 0x28000+2*63488<=0x80000
  # Publisher executes DMA only in early VBlank and flips only an explicit final packet.
  data=bytes((i*37)&255 for i in range(4096));batch=ms['batch'];payload=batch+8
  main.mem_write(payload,data)
- put(main,batch,2048);put(main,batch+2,0x2000);put(main,batch+4,1);put(main,batch+6,0);put(main,ms['published'],1)
+ put(main,batch,2048);put(main,batch+2,0x4000);put(main,batch+4,1);put(main,batch+6,1);put(main,ms['published'],1)
  before=len(dma)
  for line,state in [(223,0),(232,8),(224,0)]:
   vertical[0]=line;blank[0]=state;call('main','vblank_user');assert len(dma)==before and get(main,ms['published'])==1
  vertical[0]=224;blank[0]=8;call('main','vblank_user');assert dma[-1][2]==data and not get(main,ms['published'])
+ call('main','cinema_acknowledge',(1,))
+ put(main,batch,1792);put(main,batch+2,0x5000);put(main,ms['published'],1);call('main','vblank_user');call('main','cinema_acknowledge',(1,))
  before_regs=len(regs);put(main,batch,0);put(main,batch+4,2);put(main,batch+6,1);put(main,ms['published'],1);call('main','vblank_user')
  assert regs[-1]==0x8238 and len(regs)==before_regs+1
+ call('main','cinema_acknowledge',(2,))
  for words,addr,kind,slot in [(2049,0x2000,1,0),(1,0x1ffe,1,0),(2048,0x3800,1,0),(1,0x2000,2,0),(0,0x2000,3,0),(0,0,2,2)]:
   for off,value in [(0,words),(2,addr),(4,kind),(6,slot)]:put(main,batch+off,value)
   put(main,ms['published'],1);before=len(dma);call('main','vblank_user');assert get(main,ms['video_fault']) and len(dma)==before
@@ -72,14 +90,16 @@ def check_video(project,hz):
   if a==ss['stream_file_size']:
    name=cstring(u,get(u,u.reg_read(SP)+4,4));active_read[0]=files.get(name);reads_count[0]+=1;ret(u,len(active_read[0] or b''))
  sub.hook_add(UC_HOOK_CODE,sub_code)
- # Simulated CDC finishes after two ticks, asynchronously into PRG, never Word RAM.
+ # Simulated CDC stays busy for twenty service ticks. Current cached frames
+ # must remain usable while read-ahead targets the other PRG buffer. This is
+ # a scheduling/ownership stress case, not measured physical drive timing.
  waiting=[0]
  def sub_tick():
   tick[0]+=1
   if get(sub,boot['access_op']):
    waiting[0]+=1
-   if waiting[0]>=2:
-    raw=active_read[0];dest=get(sub,boot['filebuff'],4);assert 0x28000<=dest<0x38000
+   if waiting[0]>=20:
+    raw=active_read[0];dest=get(sub,boot['filebuff'],4);assert 0x28000<=dest<0x47000
     sub.mem_write(dest,raw);put(sub,boot['filesize'],len(raw),4);put(sub,boot['access_op_result'],0x64);put(sub,boot['access_op'],0);waiting[0]=0
   call('sub','cinema_sub_tick',(tick[0],))
  # Reset Main after publisher negative probes; run every disc frame through both adapters.
@@ -100,7 +120,7 @@ def check_video(project,hz):
    if get(sub,0xff8020)==token:break
   else:raise AssertionError('Sub did not deliver '+str(frame))
   assert get(sub,0xff8022)==1,(frame,get(sub,0xff8022))
-  raw=bytes(sub.mem_read(0x80000,7680));wanted=files[f'C{frame//4:02}.CIN;1'][2048+(frame%4)*7680:2048+(frame%4+1)*7680]
+  raw=bytes(sub.mem_read(0x80000,7680));wanted=files[f'C{frame//8:02}.CIN;1'][2048+(frame%8)*7680:2048+(frame%8+1)*7680]
   assert raw==wanted
   main.mem_write(0x200000,raw);put(main,0xa12002,1)
   for off in [0,2,4,10,12,14]:put(main,0xa12020+off,get(sub,0xff8020+off))
@@ -112,7 +132,36 @@ def check_video(project,hz):
   call('main','ci_tick',(ms['cinema'],30));assert call('main','ci_present',(ms['cinema'],))
   put(main,ms['loaded'],0)
  assert get(main,ms['cinema']+12)==48 and get(main,ms['cinema']+14)==1
- assert reads_count[0]==12,'read-ahead must read each group once'
+ assert reads_count[0]==6,'read-ahead must read each group once'
+ # Receiving the next frame can overlap the final immutable upload packet.
+ call('main','ci_init',(ms['cinema'],));assert call('main','ci_begin',(ms['cinema'],0))
+ assert call('main','ci_upload',(ms['cinema'],4096))
+ frame1=files['C00.CIN;1'][2048+7680:2048+15360]
+ put(main,ms['loaded'],1);put(main,ms['prefetched'],0);put(main,ms['link'],2);put(main,ms['token'],200);put(main,ms['requested'],1)
+ put(main,0xa12002,1);put(main,0xa12020,200);put(main,0xa12022,1);put(main,0xa12024,1);put(main,0xa1202c,200)
+ put(main,0xa1202a,sum(struct.unpack('>3840H',frame1))&65535);main.mem_write(0x200000,frame1)
+ tail=files['C00.CIN;1'][2048+4096:2048+7680]
+ put(main,batch,1792);put(main,batch+2,0x5000);put(main,batch+4,1);put(main,batch+6,1);main.mem_write(batch+8,tail);put(main,ms['published'],1)
+ call('main','cinema_receive',(5,))
+ assert get(main,ms['prefetched'])==2 and get(main,ms['cinema'])==0
+ assert bytes(main.mem_read(ms['image'],7680))==frame1 and bytes(main.mem_read(batch+8,3584))==tail
+ vertical[0]=224;blank[0]=8;call('main','vblank_user');call('main','cinema_acknowledge',(1,))
+ # The next image is already prefetched. Retiring the mailbox before the
+ # current flip must not request that same image again.
+ put(main,ms['ack'],0);put(main,0xa12020,0);call('main','cinema_receive',(5,))
+ assert not get(main,ms['link'])
+ put(main,ms['playing'],1);put(main,ms['stopping'],0)
+ call('main','ci_tick',(ms['cinema'],30));call('main','cinema_publish')
+ assert not get(main,ms['link']) and get(main,ms['published']) and get(main,batch+4)==2
+ call('main','vblank_user')
+ # VBlank may have flipped during a foreground copy. The producer must wait
+ # for that pending acknowledgement, rather than queue the same flip twice.
+ put(main,ms['playing'],1);put(main,ms['stopping'],0)
+ assert get(main,ms['ack'])==2 and not get(main,ms['published'])
+ call('main','cinema_publish');assert not get(main,ms['published'])
+ put(main,ms['ack'],0);call('main','cinema_acknowledge',(2,))
+ assert get(main,ms['cinema'])==1 and get(main,ms['cinema']+2)==0 and get(main,ms['loaded'])==1 and not get(main,ms['prefetched'])
+ put(main,0xa12020,0);call('main','cinema_receive',(5,));assert not get(main,ms['link'])
  # Real Sub rejects wrong headers, corrupt frame bytes, missing/short files.
  original=files['C00.CIN;1']
  for defect,wanted_result in [('header',4),('pixels',4),('missing',2),('short',4)]:

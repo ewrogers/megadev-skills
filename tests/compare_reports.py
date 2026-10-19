@@ -86,7 +86,7 @@ def compare(paths):
                 if any(case['startup'][k].get('compression_execution') is not True for k in ('main','sub')) or not {'GARDEN.MDA','CAVERN.MDA','NOISE.MDA','GARDEN.KOS','CAVERN.KOS','NOISE.KOS'} <= case.get('disc',{}).get('files',{}).keys():
                     raise ValueError('Missing executed compression adapters or raw/packed samples')
             if 'megadev-video' in kinds:
-                if any(case['startup'][kind].get(marker) is not True for kind in ('main','sub') for marker in ('video_execution','probe_execution')) or not {f'C{i:02}.CIN' for i in range(12)} <= case.get('disc',{}).get('files',{}).keys():
+                if any(case['startup'][kind].get(marker) is not True for kind in ('main','sub') for marker in ('video_execution','probe_execution')) or not {f'C{i:02}.CIN' for i in range(6)} <= case.get('disc',{}).get('files',{}).keys():
                     raise ValueError('Missing executed video pipeline or streamed frame groups')
             if 'megadev-localization' in kinds and any(case['startup']['main'].get(k) is not True for k in ('localization_execution','publication_execution','probe_execution')):
                 raise ValueError('Localization catalog/layout/publication was not executed')

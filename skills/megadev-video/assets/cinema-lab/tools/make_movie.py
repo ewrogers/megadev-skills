@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Original native-resolution Lantern Flight animation. No resampling/AI assets.
 
-The fixed CIN1 example uses 4 packed VDP frames per 16-sector file, a one-sector
+The fixed CIN1 example uses 8 packed VDP frames per 31-sector file, a one-sector
 header and per-frame sum16. This is a teaching format, not an SDK video codec.
 """
 from pathlib import Path
@@ -76,11 +76,11 @@ def pcm(v):
 def generate(root):
  root=Path(root);(root/'disc').mkdir(exist_ok=True);(root/'res').mkdir(exist_ok=True)
  frames=[frame(n) for n in range(N)];assert all(len(f)==7680 for f in frames)
- for first in range(0,N,4):
-  header=bytearray(2048);header[:4]=b'CIN1';struct.pack_into('>8H',header,4,1,W,H,first,4,7680,30,N)
-  struct.pack_into('>4H',header,32,*(sum(f)&65535 for f in frames[first:first+4]))
-  data=header+b''.join(frames[first:first+4]);assert len(data)==32768
-  (root/'disc'/f'C{first//4:02}.CIN').write_bytes(data)
+ for first in range(0,N,8):
+  header=bytearray(2048);header[:4]=b'CIN1';struct.pack_into('>8H',header,4,1,W,H,first,8,7680,30,N)
+  struct.pack_into('>8H',header,32,*(sum(struct.unpack(">3840H",f))&65535 for f in frames[first:first+8]))
+  data=header+b''.join(frames[first:first+8]);assert len(data)==63488
+  (root/'disc'/f'C{first//8:02}.CIN').write_bytes(data)
  def md(c):r,g,b=c;return (b//34<<9)|(g//34<<5)|(r//34<<1)
  (root/'res/palette.bin').write_bytes(b''.join(struct.pack('>H',md(c)) for c in PALETTE))
  (root/'res/poster.bin').write_bytes(frames[0])
@@ -96,5 +96,5 @@ def generate(root):
  chime=bytes(pcm(72*math.exp(-i/560)*math.sin(math.tau*880*i/8192)) for i in range(4094))+b'\x80\xff'
  assert 255 not in score and 255 not in chime[:-1]
  (root/'res/score.pcm').write_bytes(score);(root/'res/chime.pcm').write_bytes(chime)
- (root/'res/movie-report.json').write_text(json.dumps({'width':W,'height':H,'frames':N,'nominal_images_per_second':10,'native_bytes_per_frame':7680,'chunk_bytes':32768,'chunks':12,'disc_payload_bytes':393216,'sub_staging_bytes':65536,'main_frame_bytes':7680,'upload_batch_bytes':4096,'vram_slots_bytes':15360,'palette':PALETTE},indent=2)+'\n')
+ (root/'res/movie-report.json').write_text(json.dumps({'width':W,'height':H,'frames':N,'nominal_images_per_second':10,'native_bytes_per_frame':7680,'chunk_bytes':63488,'chunks':6,'disc_payload_bytes':380928,'sub_staging_bytes':126976,'main_frame_bytes':7680,'upload_batch_bytes':4096,'vram_slots_bytes':15360,'palette':PALETTE},indent=2)+'\n')
 if __name__=='__main__':generate(Path(__file__).resolve().parents[1])

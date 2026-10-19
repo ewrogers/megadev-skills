@@ -28,9 +28,10 @@ lab_wait:
 stream_irq:
   movem.l d0-d7/a0-a6, -(sp)
   /* Keep the Sub INT2/CD access service alive without BIOS_COMM_SYNC polling. */
+  jsr vblank_user
   jsr BIOS_TRIGGER_IFL2
   jsr BIOS_READ_JOYPAD
-  jsr vblank_user
+  jsr cinema_input_latch
   movem.l (sp)+, d0-d7/a0-a6
 .global stream_irq_return
 stream_irq_return:

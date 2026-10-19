@@ -34,7 +34,7 @@ static void audio_tick(void){
 }
 static V16 cache(V16 group){for(V16 i=0;i<2;i++)if(cache_first[i]==group)return i;return 2;}
 static void begin_read(V16 group,V16 target){
- V16 n=group>>2;file[1]=(char)('0'+n/10u);file[2]=(char)('0'+n%10u);
+ V16 n=group/CI_GROUP;file[1]=(char)('0'+n/10u);file[2]=(char)('0'+n%10u);
  V32 size=stream_file_size(file);io_error=0;
  if(!size){io_error=CI_MISSING;return;}
  if(size!=CI_FILE_BYTES){io_error=CI_FORMAT;return;}
@@ -58,11 +58,15 @@ void cinema_sub_tick(V16 now){
   token=*ga_reg_comcmd0;if(!token || (*ga_reg_memmode&7u)!=2u)return;
   frame=*ga_reg_comcmd1;if(token!=*ga_reg_comcmd0)return;result=CI_OK;copy_at=0;sum=0;
   if(frame>=CI_FRAMES){result=CI_FORMAT;phase=3;}
-  else{first=(V16)(frame&~3u);phase=1;}
+  else{first=(V16)(frame&~(CI_GROUP-1u));phase=1;}
  }
  if(phase==1){
   bank=cache(first);
-  if(bank<2)phase=2;
+  if(bank<2){
+   phase=2;
+   V16 next=first+CI_GROUP;
+   if(next<CI_FRAMES && cache(next)==2 && !io && *ga_reg_comcmd4==1)begin_read(next,bank^1u);
+  }
   else if(!io){
    if(io_error){result=io_error;io_error=0;phase=3;}
    else begin_read(first,0);
@@ -73,18 +77,20 @@ void cinema_sub_tick(V16 now){
   copy_tick=now;
   if((*ga_reg_memmode&7u)!=2u)return;
   V32 base=CI_STAGE+bank*CI_FILE_BYTES;
-  volatile V8 const *src=(volatile V8 *)(base+2048u+(frame&3u)*CI_BYTES);
+  volatile V8 const *src=(volatile V8 *)(base+2048u+(frame&(CI_GROUP-1u))*CI_BYTES);
   volatile V8 *dst=(volatile V8 *)WORD_RAM_2M;
   V16 count=4096;if(count>CI_BYTES-copy_at)count=CI_BYTES-copy_at;
-  for(V16 i=0;i<count;i++){V8 value=src[copy_at+i];dst[copy_at+i]=value;sum=(V16)(sum+value);}
+  volatile V16 const *from=(volatile V16 const *)(src+copy_at);
+  volatile V16 *to=(volatile V16 *)(dst+copy_at);
+  for(V16 i=0;i<count/2u;i++){V16 word=from[i];to[i]=word;sum=(V16)(sum+word);}
   copy_at+=count;
   if(copy_at<CI_BYTES)return;
-  expected=ci_word((volatile V8 *)(base+32u+(frame&3u)*2u));
+  expected=ci_word((volatile V8 *)(base+32u+(frame&(CI_GROUP-1u))*2u));
   if(sum!=expected){result=CI_FORMAT;cache_first[bank]=0xffffu;}
   /* Two fixed PRG buffers: read ahead while this group still supplies frames.
      Never overwrite the group currently being copied or start reads after skip. */
   V16 next=first+CI_GROUP;
-  if(result==CI_OK && (frame&3u)>=1 && next<CI_FRAMES && cache(next)==2 && !io && *ga_reg_comcmd4==1)begin_read(next,bank^1u);
+  if(result==CI_OK && next<CI_FRAMES && cache(next)==2 && !io && *ga_reg_comcmd4==1)begin_read(next,bank^1u);
   phase=3;
  }
  if(phase==3){*(volatile V8 *)(GA_REG_MEMMODE+1)|=1u;phase=4;}
