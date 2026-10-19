@@ -41,6 +41,13 @@
         "megadev-testing",
         "megadev-performance"
       ]
+    },
+    {
+      "title": "Release",
+      "description": "Validate and deliver complete, qualified game discs.",
+      "skills": [
+        "megadev-release"
+      ]
     }
   ]
 }

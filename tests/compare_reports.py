@@ -41,6 +41,10 @@ def compare(paths):
             if kinds & {'megadev-audio','megadev-scenes','megadev-testing'}:
                 if any(case['startup'][kind].get('probe_execution') is not True for kind in ('main','sub')) or set(case.get('audio_tracks',{}))!={'2','3'} or not {'GARDEN.MDA','CAVERN.MDA'} <= case.get('disc',{}).get('files',{}).keys():
                     raise ValueError('Missing executed audio adapters, CD tracks or disc areas')
+            if 'megadev-audio' in kinds:
+                release=case.get('release',{})
+                if release.get('profile')!='megadev-multifile-v1' or release.get('round_trip') is not True or release.get('reproducible_package') is not True or set(release.get('negative_cases',[]))!={'missing_track','changed_audio','changed_pregap','wrong_track_path','security_damage','damaged_package'} or len(release.get('tracks',[]))!=3:
+                    raise ValueError('Missing mixed-mode release/package qualification')
             if 'megadev-scenes' in kinds and case['startup']['main'].get('scene_execution') is not True:
                 raise ValueError('Missing executed scene policy/coordinator checks')
             if 'megadev-save' in kinds and (any(case['startup'][kind].get('probe_execution') is not True for kind in ('main','sub')) or case['startup']['main'].get('cart_execution') is not True):

@@ -549,3 +549,21 @@ Model-injected timer values are not hardware timing. The Lab reports serviced
 callbacks, elapsed samples and completed work, never fabricated CPU utilization;
 shared clock ownership, interrupt masking, real drive/PCM contention and physical
 console/BIOS timing remain explicit qualification limits.
+
+## Release milestone
+
+`megadev-release` uses the unchanged Audio Lab rather than another target runtime.
+The standard-library helper checks the selected SDK boot/security layout, bounded
+ISO level-1 contents, exact compiled files and multi-file PCM WAV CUE semantics.
+Its explicit-file ZIP is verified against a pinned contract after packaging.
+
+Host regressions inject malformed extents/endian fields, security damage, broken
+tracks/indices, unsafe paths and incomplete/tampered packages. Native ARM64/AMD64
+audio jobs exercise US/JP NTSC, EU PAL, debug and tour archives with real regional
+blocks and restored-input failure tests. Same-input ZIP determinism is checked;
+whole-ISO reproducibility is not claimed because build timestamps may differ.
+Existing original-68000 reader/audio/callback tests remain in the matrix.
+
+Installation covers seventeen skills with telemetry disabled. Archive structure
+and CPU models do not certify BIOS compatibility, optical media or real drive/PCM
+timing. Interactive emulator and physical-console results remain separate evidence.

@@ -147,6 +147,9 @@ jobs:
           path: |
             build/target/report.json
             build/target/*.log
+            build/target/* game/release.zip
+            build/target/* game/release-contract.json
+            build/target/* game/release-provenance.json
           if-no-files-found: error
   compare:
     needs: target

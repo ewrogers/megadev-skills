@@ -12,8 +12,8 @@ def main():
     with tempfile.TemporaryDirectory(prefix='megadev skills install ') as folder:
         cwd=Path(folder);env={**os.environ,'DO_NOT_TRACK':'1','DISABLE_TELEMETRY':'1'}
         subprocess.run(['git','init','-q',str(cwd)],check=True)
-        subprocess.run(['npx','--yes','skills@1.7.2','add',str(ROOT),'--skill','megadev-project','megadev-planning','megadev-hardware','megadev-assets','megadev-graphics','megadev-input','megadev-system','megadev-memory','megadev-streaming','megadev-audio','megadev-scenes','megadev-save','megadev-scaling','megadev-debug','megadev-testing','megadev-performance','--agent','codex','--yes','--copy'],cwd=cwd,env=env,check=True,stdout=subprocess.PIPE,stderr=subprocess.STDOUT,text=True,timeout=180)
-        for skill_name in ['megadev-project', 'megadev-planning', 'megadev-hardware', 'megadev-assets', 'megadev-graphics', 'megadev-input', 'megadev-system', 'megadev-memory', 'megadev-streaming', 'megadev-audio', 'megadev-scenes', 'megadev-save', 'megadev-scaling','megadev-debug','megadev-testing','megadev-performance']:
+        subprocess.run(['npx','--yes','skills@1.7.2','add',str(ROOT),'--skill','megadev-project','megadev-planning','megadev-hardware','megadev-assets','megadev-graphics','megadev-input','megadev-system','megadev-memory','megadev-streaming','megadev-audio','megadev-scenes','megadev-save','megadev-scaling','megadev-debug','megadev-testing','megadev-performance','megadev-release','--agent','codex','--yes','--copy'],cwd=cwd,env=env,check=True,stdout=subprocess.PIPE,stderr=subprocess.STDOUT,text=True,timeout=180)
+        for skill_name in ['megadev-project', 'megadev-planning', 'megadev-hardware', 'megadev-assets', 'megadev-graphics', 'megadev-input', 'megadev-system', 'megadev-memory', 'megadev-streaming', 'megadev-audio', 'megadev-scenes', 'megadev-save', 'megadev-scaling','megadev-debug','megadev-testing','megadev-performance','megadev-release']:
             installed=cwd/'.agents/skills'/skill_name
             if not installed.exists():raise AssertionError('Installed skill missing: '+skill_name)
             source=ROOT/'skills'/skill_name
@@ -107,5 +107,20 @@ def main():
         subprocess.run([sys.executable,str(perf/'scripts/create_project.py'),str(game)],check=True,cwd=cwd,stdout=subprocess.PIPE)
         result=subprocess.run([sys.executable,str(game/'tools/check_work.py')],check=True,capture_output=True,text=True,cwd=cwd)
         assert json.loads(result.stdout)['passed'] is True
-        print('Telemetry-disabled install: all sixteen skills, standalone generators, planning checker and art/audio tools passed')
+        release=cwd/'.agents/skills/megadev-release'
+        subprocess.run([sys.executable,str(release/'scripts/release.py'),'--help'],check=True,cwd=cwd,stdout=subprocess.PIPE)
+        sys.path.insert(0,str(ROOT/'tests'))
+        from test_release import fixture
+        from test_project import load
+        import zlib
+        (cwd/'release-fixture').mkdir()
+        cue=fixture(cwd/'release-fixture')
+        api=load(release/'scripts/release.py','installed_release')
+        api.SIGNATURES={**api.SIGNATURES,'US':(8,zlib.crc32(b'SECURITY'))}
+        approved=api.contract(cue,'US','NTSC',cue.parent/'disc',cue.parent/'build')
+        provenance={'source_commit':'a'*40,'sdk_commit':'b'*40,'compiler':'distribution fixture','container_reference':'ewrogers/megadev:latest'}
+        archive=cwd/'installed-release.zip'
+        expected=api.package(cue,approved,provenance,archive)
+        assert api.verify(archive)==expected
+        print('Telemetry-disabled install: all seventeen skills, standalone generators, planning checker and art/audio tools passed')
 if __name__=='__main__':main()
