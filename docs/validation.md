@@ -722,7 +722,7 @@ latches damage once per swing, removes abandoned windows on interruption and
 requires a fresh action to rise after death. Its standalone fixed-step clock
 follows the gameplay timing contract rather than giving every actor a timer.
 
-The 107-test host suite passes, including O0/O3/UBSan timeline/controller checks,
+After integrating the merged EverDrive additions, the 135-test host suite passes, including O0/O3/UBSan timeline/controller checks,
 mirrored boxes, boundary arithmetic, invalid selections, pause, queued modifiers,
 slow motion and equal-time PAL/NTSC state. Native art regenerates exactly and
 RGB/BGR packing/debug-outline dimensions have executable checks. Graphics
@@ -740,6 +740,8 @@ The first ares review exposed an overly yellow/olive courtyard ramp. The revised
 source uses explicit RGB channel triples encoded into VDP BGR words, with cool
 stone, blue/white clothing and warm dummy/blade accents; it no longer relies on
 visually ambiguous packed-color literals. Art and tuning remain illustrative.
-Interactive PAL/NTSC acceptance is tracked separately from CPU/model evidence.
+The user confirmed the final PAL build in ares on 2026-10-19: the corrected
+colors look better and all animation controls/behaviors work. This acceptance
+is separate from compiled PAL/NTSC timing checks and CPU/model evidence.
 Physical raster/FIFO margin, BIOS/controller variants, sustained mixed services,
 stack high-water and console frame cadence remain unqualified.
