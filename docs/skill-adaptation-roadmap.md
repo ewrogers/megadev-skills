@@ -67,8 +67,9 @@ Implemented: `megadev-system` for command lifetimes and bounded Main/Sub work,
 Also implemented: `megadev-ui`, `megadev-dialogue` and `megadev-gameplay`.
 Gameplay owns timing, movement, collision/camera bounds and actor lifetimes;
 it connects existing platform owners without installing competing services.
-Next add deeper collision, animation, levels, localization and multiplayer
-patterns as needed.
+`megadev-animation` now adds clip timing, transitions, events and hitboxes on
+the existing simulation/rendering contracts.
+Next add deeper collision, levels, localization and multiplayer patterns as needed.
 
 This group is specifically about Mega CD integration, not just adding CD reads:
 main/sub command handshakes and BIOS responsibilities; Program RAM and Word RAM

@@ -4,3 +4,4 @@
 *.mda binary
 
 skills/megadev-gameplay/assets/adventure-lab/res/*.bin binary
+skills/megadev-animation/assets/animation-lab/res/*.bin binary
