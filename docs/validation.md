@@ -896,3 +896,10 @@ pipeline, VDP table separation, regional matrices and remaining hardware checks.
 
 [AI validation](ai-validation.md) records Enemy Lab state/sensing contracts,
 bounded searches, independent shortest-path checks and native publication tests.
+
+## Combat rules and publication
+
+See [combat validation](combat-validation.md) for the five-case ARM64/AMD64
+matrix, independent contact/guard oracles, original-M68000 execution and PAL/NTSC
+acceptance. The example connects existing ownership seams; it does not add a
+second combat clock, renderer, input scanner or Main/Sub protocol.
