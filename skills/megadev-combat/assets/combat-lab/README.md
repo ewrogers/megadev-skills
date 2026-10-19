@@ -7,7 +7,7 @@ that other projects should copy.
 - D-pad: move/face; A: sword; hold B: directional guard; C: bolt.
 - Start: begin/pause. Second configured pad: Start joins, same A/B/C actions.
 - Defeat the three opponents; B restarts after clear or defeat.
-- Amber pursues and swings; violet and pale opponents guard periodically, with
+- Violet pursues and swings; amber and pale opponents guard periodically, with
   vulnerable gaps. Pale also casts. Watch the ! windup before their swings.
 - Active blades reach roughly two tiles forward. A blocked or invulnerable
   contact consumes that swing's hit; friendly fire is off. Mutual active hits trade.
