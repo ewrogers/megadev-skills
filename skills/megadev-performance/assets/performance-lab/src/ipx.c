@@ -247,7 +247,9 @@ void perf_sample(u16 delta) {
         if(running) {
             u16 ticks=0,valid=pf_elapsed(start,end,(u16)(after_tick-before_tick),coherent,&ticks);
             u16 blocks=(perf_case==PF_CPU || perf_case==PF_COMBINED)?(u16)((last_count>>6)*last_repeats):0;
-            int result=pf_observe(&perf_window,main_ticks,delta?delta:1,blocks,ticks,valid,timed);
+            /* The first wake began during unmeasured preparation. */
+            u16 observed_delta=perf_window.loops?delta:(u16)(main_ticks-perf_window.start);
+            int result=pf_observe(&perf_window,main_ticks,observed_delta?observed_delta:1,blocks,ticks,valid,timed);
             report_images=(u16)(image_count-image_base);
             if(result<0)metric_fault=1;
             if(!perf_window.running){measure_uploads=0;perf_finish();}

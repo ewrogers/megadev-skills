@@ -49,7 +49,8 @@ def check_performance(project,hz):
         assert not address<=0xa1200c<address+size,'Observer reset the shared stopwatch'
     u.hook_add(UC_HOOK_MEM_READ,read);u.hook_add(UC_HOOK_MEM_WRITE,write)
     for name,value in [('hz',hz),('perf_case',0),('level',0),('method',1),('timer_on',1),('main_ticks',1)]:put(sy[name],value)
-    call('pf_begin',w,0,hz);call('perf_sample',1)
+    call('pf_begin',w,0,hz);call('perf_sample',12)
+    assert get(w+10)==0,'Warm-up wake entered late-blank accounting'
     assert get(w+14)==1 and get(w+18)==13 and len(reads)==4
     assert get(sy['work_checksum'],4)==oracle(0,64,1)
     race=True;call('perf_sample',1);assert get(w+16)==1,'Incoherent stamp was accepted'
