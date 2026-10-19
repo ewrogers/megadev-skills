@@ -31,7 +31,7 @@ void lab_hex(u16 v,u16 x,u16 y){char s[5];for(u16 i=0;i<4;i++)s[i]="0123456789AB
 void lab_screen(char const *s){lab_line(s,1,0);}
 void vblank_user(void){
  main_ticks++;*ga_reg_comcmd3=main_ticks;hits|=bios_joy1_hit;
- 
+
  V16 vertical=(V16)(*(volatile V16 *)0xc00008u>>8);
  if(!(vdp_ctrl_16&VDPSTAT_MASK_VBLANK_IN_PROGRESS) || vertical<224 || vertical>=232)return;
  cinema_hud_vblank();
