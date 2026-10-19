@@ -12,6 +12,7 @@ def compare(paths):
     if len(kinds)!=1 or not kinds <= {'megadev-project','megadev-hardware','megadev-assets','megadev-graphics','megadev-input','megadev-system','megadev-memory','megadev-streaming','megadev-audio','megadev-scenes','megadev-save','megadev-scaling','megadev-debug','megadev-testing','megadev-performance','megadev-best-practices','megadev-ui','megadev-dialogue','megadev-gameplay','megadev-animation'}:
         raise ValueError('Need matching supported skill reports')
     expected=CASES | ({'us-tour'} if kinds & {'megadev-hardware','megadev-assets','megadev-graphics','megadev-input','megadev-system','megadev-memory','megadev-streaming','megadev-audio','megadev-scenes','megadev-save','megadev-scaling','megadev-debug','megadev-testing','megadev-performance','megadev-best-practices','megadev-ui','megadev-dialogue','megadev-gameplay','megadev-animation'} else set())
+    if 'megadev-hardware' in kinds:expected|={'us-usb-off'}
     if 'megadev-input' in kinds:expected|={'us-ea'}
     for r in reports:
         if r.get('passed') is not True or set(r.get('cases',{}))!=expected:

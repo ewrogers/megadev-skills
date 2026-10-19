@@ -28,7 +28,7 @@ class ReportTests(unittest.TestCase):
     def test_hardware_reports_require_tour_and_executed_probes(self):
         case={'disc':{'files':{'IPX.MMD':'hash'}},'boot_payloads':{'sp.bin':'hash'},
               'startup':{'main':{'probe_execution':True},'sub':{'probe_execution':True},'room':{}},'sub_callback':True}
-        a={'passed':True,'skill':'megadev-hardware','platform':'linux/arm64','cases':{k:copy.deepcopy(case) for k in CASES|{'us-tour'}}}
+        a={'passed':True,'skill':'megadev-hardware','platform':'linux/arm64','cases':{k:copy.deepcopy(case) for k in CASES|{'us-tour','us-usb-off'}}}
         b=copy.deepcopy(a);b['platform']='linux/amd64'
         with tempfile.TemporaryDirectory() as folder:
             paths=[Path(folder)/'a.json',Path(folder)/'b.json']
