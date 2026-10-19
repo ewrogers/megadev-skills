@@ -321,3 +321,5 @@ Large-area residency and cancellation remain with `megadev-streaming`,
 `megadev-system` and `megadev-memory`; scene flow remains with `megadev-scenes`.
 The importer can be extended deliberately when a project needs other Tiled
 orientations, additional layers, animated tiles or larger budgets.
+
+`megadev-math` owns numeric formats, range and rounding proofs. Gameplay owns clocks, collision owns contact policy, and scaling owns ASIC image transforms.

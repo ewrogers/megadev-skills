@@ -826,3 +826,23 @@ and executed results. The user confirmed the final PAL build in ares on
 2026-10-19: scrolling, camera tour, collision view, connected travel and pause
 work without missing background rows. This acceptance is separate from the
 CPU-model and native CI evidence.
+
+
+## Math Lab
+
+`megadev-math` adds independent host integer oracles and original-M68000 execution
+of compiled fixed-point/vector/trig/interpolation helpers. Boundary checks cover
+minimum negatives, overflow preservation, zero division before DIVU, tiny
+normalization, dot overflow and full-range interpolation. All 1024 trig angles
+are checked against an independent sine oracle.
+
+US/JP/EU release, US debug and deterministic tour run on ARM64 and AMD64 with
+a two-CPU container limit. Report comparison requires executed math/publication
+evidence. Installed examples run at O0/O3, with UBSan outside Windows.
+Publication checks verify immutable buffers, late-blank deferral, corrupt
+metadata rejection, byte budgets and no ordinary CRAM writes.
+
+The audited SDK division/conversion wrappers have defects; the skill documents
+them and uses checked application replacements while executing the SDK's real
+word-multiply helpers. This does not patch upstream. The three views provide
+emulator motion checks, not cycle-accurate or hardware qualification.

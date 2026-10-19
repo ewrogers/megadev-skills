@@ -10,3 +10,5 @@ skills/megadev-levels/assets/level-lab/res/*.bin binary
 skills/megadev-levels/assets/level-lab/res/*.json text eol=lf
 skills/megadev-levels/assets/level-lab/res/*.tmj text eol=lf
 skills/megadev-levels/assets/level-lab/res/*.tsj text eol=lf
+
+skills/megadev-math/assets/math-lab/res/*.bin binary

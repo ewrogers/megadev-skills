@@ -12,8 +12,8 @@ def main():
     with tempfile.TemporaryDirectory(prefix='megadev skills install ') as folder:
         cwd=Path(folder);env={**os.environ,'DO_NOT_TRACK':'1','DISABLE_TELEMETRY':'1'}
         subprocess.run(['git','init','-q',str(cwd)],check=True)
-        subprocess.run(['npx','--yes','skills@1.7.2','add',str(ROOT),'--skill','megadev-project','megadev-planning','megadev-hardware','megadev-assets','megadev-graphics','megadev-input','megadev-system','megadev-memory','megadev-streaming','megadev-audio','megadev-scenes','megadev-save','megadev-scaling','megadev-debug','megadev-testing','megadev-performance','megadev-release','megadev-best-practices','megadev-ui','megadev-dialogue','megadev-gameplay','megadev-animation','megadev-collision','megadev-levels','--agent','codex','--yes','--copy'],cwd=cwd,env=env,check=True,stdout=subprocess.PIPE,stderr=subprocess.STDOUT,text=True,timeout=180)
-        for skill_name in ['megadev-project', 'megadev-planning', 'megadev-hardware', 'megadev-assets', 'megadev-graphics', 'megadev-input', 'megadev-system', 'megadev-memory', 'megadev-streaming', 'megadev-audio', 'megadev-scenes', 'megadev-save', 'megadev-scaling','megadev-debug','megadev-testing','megadev-performance','megadev-release','megadev-best-practices','megadev-ui','megadev-dialogue','megadev-gameplay','megadev-animation','megadev-collision','megadev-levels']:
+        subprocess.run(['npx','--yes','skills@1.7.2','add',str(ROOT),'--skill','megadev-project','megadev-planning','megadev-hardware','megadev-assets','megadev-graphics','megadev-input','megadev-system','megadev-memory','megadev-streaming','megadev-audio','megadev-scenes','megadev-save','megadev-scaling','megadev-debug','megadev-testing','megadev-performance','megadev-release','megadev-best-practices','megadev-ui','megadev-dialogue','megadev-gameplay','megadev-animation','megadev-collision','megadev-levels','megadev-math','--agent','codex','--yes','--copy'],cwd=cwd,env=env,check=True,stdout=subprocess.PIPE,stderr=subprocess.STDOUT,text=True,timeout=180)
+        for skill_name in ['megadev-project', 'megadev-planning', 'megadev-hardware', 'megadev-assets', 'megadev-graphics', 'megadev-input', 'megadev-system', 'megadev-memory', 'megadev-streaming', 'megadev-audio', 'megadev-scenes', 'megadev-save', 'megadev-scaling','megadev-debug','megadev-testing','megadev-performance','megadev-release','megadev-best-practices','megadev-ui','megadev-dialogue','megadev-gameplay','megadev-animation','megadev-collision','megadev-levels','megadev-math']:
             installed=cwd/'.agents/skills'/skill_name
             if not installed.exists():raise AssertionError('Installed skill missing: '+skill_name)
             source=ROOT/'skills'/skill_name
@@ -159,5 +159,9 @@ def main():
         assert json.loads(r.stdout)['passed'] is True
         r=subprocess.run([sys.executable,str(levels/'scripts/import_tiled.py'),str(game/'res/world.json'),str(game/'res/world.bin')],check=True,capture_output=True,text=True,cwd=cwd)
         assert json.loads(r.stdout)['areas']==2
-        print('Telemetry-disabled install: all twenty-four skills, standalone generators, planning checker and art/audio tools passed')
+        maths=cwd/'.agents/skills/megadev-math';game=cwd/'math game'
+        subprocess.run([sys.executable,str(maths/'scripts/create_project.py'),str(game)],check=True,cwd=cwd,stdout=subprocess.PIPE)
+        r=subprocess.run([sys.executable,str(game/'tools/check_math.py')],check=True,capture_output=True,text=True,cwd=cwd)
+        assert json.loads(r.stdout)['passed'] is True
+        print('Telemetry-disabled install: all twenty-five skills, standalone generators, planning checker and art/audio tools passed')
 if __name__=='__main__':main()

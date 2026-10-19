@@ -38,6 +38,7 @@ and build conventions; these skills do not require SGDK.
 | [megadev-gameplay](skills/megadev-gameplay/SKILL.md) | Build responsive movement, collision, cameras and bounded object lifetimes across PAL/NTSC. Includes Adventure Lab. |
 | [megadev-dialogue](skills/megadev-dialogue/SKILL.md) | Add portrait conversations, timed styled text, choices and safe optional PCM voice. Includes Dialogue Lab. |
 | [megadev-input](skills/megadev-input/SKILL.md) | Handle pads, mouse, multitaps and joining with explicit device-validation limits. |
+| [megadev-math](skills/megadev-math/SKILL.md) | Checked fixed-point math, vectors, trig and interpolation. Includes Math Lab. |
 | [megadev-audio](skills/megadev-audio/SKILL.md) | Play CD music and PCM effects, manage voices and coordinate music with data loading. |
 | [megadev-scenes](skills/megadev-scenes/SKILL.md) | Connect game flow, transitions, preloads and cleanup, including failed-load recovery. |
 | [megadev-save](skills/megadev-save/SKILL.md) | Save to internal or cartridge backup RAM, version records and recover corrupted saves. |
@@ -93,6 +94,7 @@ Ask for the task you want, and name a skill when you want to be explicit:
 - "Use megadev-project to create a bootable disc in a new folder."
 - "Use megadev-planning to budget an exploration game with voice and large backgrounds."
 - "Use megadev-ui to build a readable pause menu and inventory for my game's style."
+- "Use megadev-math to choose fixed-point formats and check overflow, trig and easing."
 - "Use megadev-animation to synchronize attack poses, events and hitboxes with my game clock."
 - "Use megadev-levels to import my Tiled areas and connect their cameras, collisions and exits."
 - "Use megadev-collision to stop fast shots tunneling and slide along walls."

@@ -12,7 +12,8 @@
         "megadev-hardware",
         "megadev-assets",
         "megadev-graphics",
-        "megadev-input"
+        "megadev-input",
+        "megadev-math"
       ]
     },
     {
