@@ -42,7 +42,8 @@
       "description": "Use Mega CD hardware features with explicit resource and timing budgets.",
       "skills": [
         "megadev-scaling",
-        "megadev-raster"
+        "megadev-raster",
+        "megadev-video"
       ]
     },
     {

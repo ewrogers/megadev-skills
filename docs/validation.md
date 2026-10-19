@@ -886,3 +886,8 @@ original-68000 interrupt tests, upload/RAM bounds and physical-hardware limits.
 
 [Localization validation](localization-validation.md) records catalog/compiler
 failure tests, target CPU execution, regional builds and font/layout limits.
+
+## Video milestone
+
+[Video validation](video-validation.md) records Cinema Lab's format, Main/Sub
+pipeline, VDP table separation, regional matrices and remaining hardware checks.

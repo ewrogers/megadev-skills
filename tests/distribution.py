@@ -12,8 +12,8 @@ def main():
     with tempfile.TemporaryDirectory(prefix='megadev skills install ') as folder:
         cwd=Path(folder);env={**os.environ,'DO_NOT_TRACK':'1','DISABLE_TELEMETRY':'1'}
         subprocess.run(['git','init','-q',str(cwd)],check=True)
-        subprocess.run(['npx','--yes','skills@1.7.2','add',str(ROOT),'--skill','megadev-project','megadev-planning','megadev-hardware','megadev-assets','megadev-graphics','megadev-input','megadev-system','megadev-memory','megadev-streaming','megadev-audio','megadev-scenes','megadev-save','megadev-scaling','megadev-debug','megadev-testing','megadev-performance','megadev-release','megadev-best-practices','megadev-ui','megadev-dialogue','megadev-gameplay','megadev-animation','megadev-collision','megadev-levels','megadev-math','megadev-compression','megadev-effects','megadev-raster','megadev-localization','--agent','codex','--yes','--copy'],cwd=cwd,env=env,check=True,stdout=subprocess.PIPE,stderr=subprocess.STDOUT,text=True,timeout=180)
-        for skill_name in ['megadev-project', 'megadev-planning', 'megadev-hardware', 'megadev-assets', 'megadev-graphics', 'megadev-input', 'megadev-system', 'megadev-memory', 'megadev-streaming', 'megadev-audio', 'megadev-scenes', 'megadev-save', 'megadev-scaling','megadev-debug','megadev-testing','megadev-performance','megadev-release','megadev-best-practices','megadev-ui','megadev-dialogue','megadev-gameplay','megadev-animation','megadev-collision','megadev-levels','megadev-math','megadev-compression','megadev-effects','megadev-raster','megadev-localization']:
+        subprocess.run(['npx','--yes','skills@1.7.2','add',str(ROOT),'--skill','megadev-project','megadev-planning','megadev-hardware','megadev-assets','megadev-graphics','megadev-input','megadev-system','megadev-memory','megadev-streaming','megadev-audio','megadev-scenes','megadev-save','megadev-scaling','megadev-debug','megadev-testing','megadev-performance','megadev-release','megadev-best-practices','megadev-ui','megadev-dialogue','megadev-gameplay','megadev-animation','megadev-collision','megadev-levels','megadev-math','megadev-compression','megadev-effects','megadev-raster','megadev-localization','megadev-video','--agent','codex','--yes','--copy'],cwd=cwd,env=env,check=True,stdout=subprocess.PIPE,stderr=subprocess.STDOUT,text=True,timeout=180)
+        for skill_name in ['megadev-project', 'megadev-planning', 'megadev-hardware', 'megadev-assets', 'megadev-graphics', 'megadev-input', 'megadev-system', 'megadev-memory', 'megadev-streaming', 'megadev-audio', 'megadev-scenes', 'megadev-save', 'megadev-scaling','megadev-debug','megadev-testing','megadev-performance','megadev-release','megadev-best-practices','megadev-ui','megadev-dialogue','megadev-gameplay','megadev-animation','megadev-collision','megadev-levels','megadev-math','megadev-compression','megadev-effects','megadev-raster','megadev-localization','megadev-video']:
             installed=cwd/'.agents/skills'/skill_name
             if not installed.exists():raise AssertionError('Installed skill missing: '+skill_name)
             source=ROOT/'skills'/skill_name
@@ -21,6 +21,12 @@ def main():
                 if path.is_file() and '__pycache__' not in path.parts:
                     target=installed/path.relative_to(source)
                     assert target.is_file() and target.read_bytes()==path.read_bytes(),str(path)
+        cinema=cwd/'.agents/skills/megadev-video'
+        game=cwd/'cinema game'
+        subprocess.run([sys.executable,str(cinema/'scripts/create_project.py'),str(game)],check=True,cwd=cwd,stdout=subprocess.PIPE)
+        subprocess.run([sys.executable,str(game/'tools/make_movie.py')],check=True,cwd=cwd,stdout=subprocess.PIPE)
+        subprocess.run([sys.executable,str(game/'tools/check_cinema.py')],check=True,cwd=cwd,stdout=subprocess.PIPE)
+        assert len(list((game/'disc').glob('*.CIN')))==12
         installed=cwd/'.agents/skills/megadev-project'
         subprocess.run([sys.executable,str(installed/'scripts/create_project.py'),str(cwd/'standalone game')],check=True,cwd=cwd,stdout=subprocess.PIPE)
         assert (cwd/'standalone game/src/spx.c').is_file()
@@ -186,5 +192,5 @@ def main():
         subprocess.run([sys.executable,str(game/'tools/catalog.py')],check=True,cwd=cwd,stdout=subprocess.PIPE)
         result=subprocess.run([sys.executable,str(game/'tools/check_language.py')],check=True,capture_output=True,text=True,cwd=cwd)
         assert json.loads(result.stdout)['passed'] is True
-        print('Telemetry-disabled install: all twenty-nine skills, standalone generators, planning checker and art/audio tools passed')
+        print('Telemetry-disabled install: all thirty skills, standalone generators, planning checker and art/audio tools passed')
 if __name__=='__main__':main()

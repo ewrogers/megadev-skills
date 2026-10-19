@@ -9,9 +9,9 @@ def compare(paths):
     if len(reports)!=2 or {r.get('platform') for r in reports}!={'linux/arm64','linux/amd64'}:
         raise ValueError('Need one ARM64 and one AMD64 report')
     kinds={r.get('skill','megadev-project') for r in reports}
-    if len(kinds)!=1 or not kinds <= {'megadev-project','megadev-hardware','megadev-assets','megadev-graphics','megadev-input','megadev-system','megadev-memory','megadev-streaming','megadev-audio','megadev-scenes','megadev-save','megadev-scaling','megadev-debug','megadev-testing','megadev-performance','megadev-best-practices','megadev-ui','megadev-dialogue','megadev-gameplay','megadev-animation','megadev-collision','megadev-levels','megadev-math','megadev-compression','megadev-effects','megadev-raster','megadev-localization','cross-skill-validation'}:
+    if len(kinds)!=1 or not kinds <= {'megadev-project','megadev-hardware','megadev-assets','megadev-graphics','megadev-input','megadev-system','megadev-memory','megadev-streaming','megadev-audio','megadev-scenes','megadev-save','megadev-scaling','megadev-debug','megadev-testing','megadev-performance','megadev-best-practices','megadev-ui','megadev-dialogue','megadev-gameplay','megadev-animation','megadev-collision','megadev-levels','megadev-math','megadev-compression','megadev-effects','megadev-raster','megadev-localization','megadev-video','cross-skill-validation'}:
         raise ValueError('Need matching supported skill reports')
-    expected=CASES | ({'us-tour'} if kinds & {'megadev-hardware','megadev-assets','megadev-graphics','megadev-input','megadev-system','megadev-memory','megadev-streaming','megadev-audio','megadev-scenes','megadev-save','megadev-scaling','megadev-debug','megadev-testing','megadev-performance','megadev-best-practices','megadev-ui','megadev-dialogue','megadev-gameplay','megadev-animation','megadev-collision','megadev-levels','megadev-math','megadev-compression','megadev-effects','megadev-raster','megadev-localization','cross-skill-validation'} else set())
+    expected=CASES | ({'us-tour'} if kinds & {'megadev-hardware','megadev-assets','megadev-graphics','megadev-input','megadev-system','megadev-memory','megadev-streaming','megadev-audio','megadev-scenes','megadev-save','megadev-scaling','megadev-debug','megadev-testing','megadev-performance','megadev-best-practices','megadev-ui','megadev-dialogue','megadev-gameplay','megadev-animation','megadev-collision','megadev-levels','megadev-math','megadev-compression','megadev-effects','megadev-raster','megadev-localization','megadev-video','cross-skill-validation'} else set())
     if 'megadev-hardware' in kinds:expected|={'us-usb-off'}
     if 'megadev-input' in kinds:expected|={'us-ea'}
     if 'megadev-raster' in kinds:expected|={'us-split','jp-split','eu-split','us-split-debug','us-split-tour'}
@@ -85,6 +85,9 @@ def compare(paths):
             if 'megadev-compression' in kinds:
                 if any(case['startup'][k].get('compression_execution') is not True for k in ('main','sub')) or not {'GARDEN.MDA','CAVERN.MDA','NOISE.MDA','GARDEN.KOS','CAVERN.KOS','NOISE.KOS'} <= case.get('disc',{}).get('files',{}).keys():
                     raise ValueError('Missing executed compression adapters or raw/packed samples')
+            if 'megadev-video' in kinds:
+                if any(case['startup'][kind].get(marker) is not True for kind in ('main','sub') for marker in ('video_execution','probe_execution')) or not {f'C{i:02}.CIN' for i in range(12)} <= case.get('disc',{}).get('files',{}).keys():
+                    raise ValueError('Missing executed video pipeline or streamed frame groups')
             if 'megadev-localization' in kinds and any(case['startup']['main'].get(k) is not True for k in ('localization_execution','publication_execution','probe_execution')):
                 raise ValueError('Localization catalog/layout/publication was not executed')
             if 'megadev-raster' in kinds and any(case['startup']['main'].get(k) is not True for k in ('raster_execution','hblank_execution','probe_execution')):
