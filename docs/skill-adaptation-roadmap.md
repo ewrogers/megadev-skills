@@ -101,7 +101,7 @@ interrupt timing merely because compiled arithmetic passes.
 
 ### 5. Release
 
-Finish `megadev-release`: boot/region and module validation, data versus mixed-mode
+Implemented `megadev-release`: boot/region and module validation, data versus mixed-mode
 disc layouts, audio track details, reproducible payload accounting, licenses and
 packaging, plus a real-hardware acceptance checklist where equipment is available.
 
@@ -217,8 +217,7 @@ created. None means the existing SGDK code is a drop-in Megadev dependency.
 explicit build/CPU/module symbol lookup and controlled fault diagnosis. It reuses
 the system protocol rather than teaching another one. Automated gameplay replay,
 full fatal-vector handling and physical-console debugger qualification remain
-separate future work. Testing now reuses these evidence conventions. Remaining candidates are
-performance guidance and release/disc qualification.
+separate future work. Testing now reuses these evidence conventions. Performance guidance and release/disc qualification are now covered by later milestones.
 
 ## Testing milestone
 
@@ -226,11 +225,24 @@ performance guidance and release/disc qualification.
 first-divergence reports and live CD/audio integration qualification. It reuses
 existing adapters and adds a reproduced committed-reply/ownership race regression
 across streaming/audio/scenes. Physical timing remains a separate acceptance step.
-Release/disc qualification is the next major platform gap.
+Release/disc qualification follows in the release milestone below.
 
 ## Performance milestone
 
 `megadev-performance` adds bounded stopwatch samples, completed-work/transfer
 accounting and controlled HUD/timer/region comparisons. It preserves the scaling
 pipeline and clearly separates elapsed time, waits, throughput and utilization.
-Release/disc packaging and physical-console acceptance remain the next major gaps.
+Release/disc packaging follows below; physical-console acceptance remains separate.
+
+## Release milestone
+
+`megadev-release` validates and packages the existing mixed-mode Audio Lab. It
+binds the current SDK boot layout and ISO contents to compiled payloads, pins
+external music tracks/indices, verifies explicit-file archives, and distinguishes
+payload matching from whole-ISO timestamp reproducibility. Native ARM64/AMD64
+audio matrices retain runtime regressions and require release round-trip/failure
+evidence. Physical-media qualification remains explicit.
+
+With release covered, a cross-skill integration milestone is the next useful
+platform-wide check. Further best-practice/UI/gameplay guidance should build on
+these owners rather than introducing parallel services.

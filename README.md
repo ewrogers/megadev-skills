@@ -34,6 +34,7 @@ The skill includes a standalone starter and instructions for building a disc wit
 | Debugging and Testing | [megadev-debug](skills/megadev-debug/SKILL.md) | CPU/module-aware symbols, bounded traces and first-fault evidence for crashes and stalled jobs. |
 | Debugging and Testing | [megadev-testing](skills/megadev-testing/SKILL.md) | Deterministic replay, PAL/NTSC checks and integration regressions for loading/audio handoffs. |
 | Debugging and Testing | [megadev-performance](skills/megadev-performance/SKILL.md) | Bounded timing, workload/transfer accounting and controlled PAL/NTSC performance comparisons. |
+| Release | [megadev-release](skills/megadev-release/SKILL.md) | Disc contracts, mixed-mode track validation, portable packages and qualified release acceptance. |
 
 More skills will follow in foundations, systems, advanced techniques, debugging/testing and release. See the [adaptation roadmap](docs/skill-adaptation-roadmap.md).
 For cartridge games using SGDK, see [SGDK Skills](https://github.com/ewrogers/sgdk-skills).
@@ -63,6 +64,8 @@ Megadev has its own APIs and build conventions; these skills do not require SGDK
 Labs demonstrate implementation techniques. Their appearance, controls and game design are examples, not requirements for your game.
 
 [Validation notes](docs/validation.md) explain the host tests, executed 68000 startup checks, architecture comparison and emulator checks. Emulator success does not replace real-console testing.
+
+Release validation reuses the existing [Audio Lab](skills/megadev-audio/assets/audio-lab/README.md), packaging its data track and two music tracks without adding another runtime. See the [release workflow](skills/megadev-release/references/workflow.md).
 
 ## License and disclaimer
 

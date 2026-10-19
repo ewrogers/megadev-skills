@@ -153,6 +153,8 @@ class ReportTests(unittest.TestCase):
         case={'disc':{'files':{'IPX.MMD':'hash','GARDEN.MDA':'garden','CAVERN.MDA':'cavern'}},
               'audio_tracks':{'2':{'sha256':'two'},'3':{'sha256':'three'}},
               'boot_payloads':{'sp.bin':'hash'},'startup':{'main':{'probe_execution':True},'sub':{'probe_execution':True},'room':{}},'sub_callback':True}
+        case['release']={'profile':'megadev-multifile-v1','round_trip':True,'reproducible_package':True,
+                         'tracks':[1,2,3],'negative_cases':['missing_track','changed_audio','changed_pregap','wrong_track_path','security_damage','damaged_package']}
         a={'passed':True,'skill':'megadev-audio','platform':'linux/arm64',
            'cases':{k:copy.deepcopy(case) for k in CASES|{'us-tour'}}}
         b=copy.deepcopy(a);b['platform']='linux/amd64'
@@ -165,7 +167,10 @@ class ReportTests(unittest.TestCase):
             for mutate in [lambda q:q['cases'].pop('us-tour'),
                            lambda q:q['cases']['us-debug']['startup']['sub'].pop('probe_execution'),
                            lambda q:q['cases']['eu-release']['audio_tracks'].pop('3'),
-                           lambda q:q['cases']['us-release']['audio_tracks']['2'].update(sha256='changed')]:
+                           lambda q:q['cases']['us-release']['audio_tracks']['2'].update(sha256='changed'),
+                           lambda q:q['cases']['us-release'].pop('release'),
+                           lambda q:q['cases']['eu-release']['release'].update(round_trip=False),
+                           lambda q:q['cases']['us-debug']['release']['negative_cases'].pop()]:
                 bad=copy.deepcopy(b);mutate(bad)
                 with self.assertRaises(ValueError):run(bad)
 

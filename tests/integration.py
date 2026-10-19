@@ -166,6 +166,9 @@ def main():
         cases[key]={'disc':got,'startup':startup,'sub_callback':True,
                     'boot_payloads':{file.name:digest(file.read_bytes()) for file in (project/'build').glob('*.bin')}}
         if tracks:cases[key]['audio_tracks']=tracks
+        if args.skill=='megadev-audio':
+            from release_integration import check_release
+            cases[key]['release']=check_release(project,region,video,doctor,args.image)
         shutil.copyfile(image,output/(key+'.iso'));(output/(key+'.cue')).write_text((project/'project_lab.cue').read_text().replace('project_lab.iso',key+'.iso'))
         # Keep one self-contained review directory; copied CUE still refers to
         # project_lab.iso within each original project folder.
