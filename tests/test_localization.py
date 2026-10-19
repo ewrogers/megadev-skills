@@ -40,6 +40,10 @@ class LanguageTests(unittest.TestCase):
   report=compiler.generate(LAB/'res/catalog.json',self.folder/'generated')
   self.assertEqual(report['pattern_bytes'],report['glyphs']*32);self.assertLessEqual(report['glyphs'],192)
   for n in ['catalog.c','catalog.h']:self.assertEqual((self.folder/'generated/src'/n).read_bytes(),(LAB/'src'/n).read_bytes())
+ def test_home_has_only_one_selection_highlight(self):
+  m=self.model();out=Canvas();self.assertTrue(self.lib.ui_draw(c.byref(out),c.byref(m),60))
+  self.assertTrue(all((out.cells[9*40+x]>>13)&3==1 for x in range(23,37)))
+  self.assertTrue(all((out.cells[(9+i*3)*40+3]>>13)&3==1 for i in range(1,4)))
  def test_catalog_rejects_missing_translation_tokens_controls_and_glyphs(self):
   changes=[lambda d:d['messages']['talk'].__setitem__(0,''),lambda d:d['messages']['talk'].__setitem__(0,'   '),lambda d:d['messages']['story'].__setitem__(1,'Missing name'),lambda d:d['messages']['story'].__setitem__(0,'{unknown}'),lambda d:d['messages']['story'].__setitem__(0,'{{name}'),lambda d:d['messages']['talk'].pop(),lambda d:d['messages']['talk'].__setitem__(0,'Bad\ttext'),lambda d:d['messages']['talk'].__setitem__(0,'Missing ☃'),lambda d:d['messages']['talk'].__setitem__(0,'W'*40),lambda d:d['ids'].append('talk')]
   for change in changes:

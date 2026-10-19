@@ -80,8 +80,8 @@ int ui_draw(UiCanvas *c,UiModel const *m,Ui16 hz){
  if(!message(c,m,LC_M_TITLE,3,4,28,1,0,1))return 0;
  Ui16 help=LC_M_BACK_HELP;
  if(m->page==UI_HOME){
-  ok &= message(c,m,LC_M_LANGUAGE,23,9,14,1,0,2);
-  for(Ui16 i=0;i<4;i++){raw(c,3,9+i*3,i==m->focus?">":" ",2);ok &= message(c,m,(Ui16)(LC_M_TALK+i),5,9+i*3,17,2,0,i==m->focus?2:1);}
+  ok &= message(c,m,LC_M_LANGUAGE,23,9,14,1,0,1);
+  for(Ui16 i=0;i<4;i++){raw(c,3,9+i*3,i==m->focus?">":" ",i==m->focus?2:1);ok &= message(c,m,(Ui16)(LC_M_TALK+i),5,9+i*3,17,2,0,i==m->focus?2:1);}
   for(Ui16 y=0;y<6;y++)for(Ui16 x=0;x<6;x++)c->cells[(11+y)*40+27+x]=tile(UI_PORTRAIT+y*6+x,3);
   ok &= message(c,m,LC_M_WELCOME,23,19,14,2,0,1);help=LC_M_HOME_HELP;
  }else if(m->page==UI_TALK){
