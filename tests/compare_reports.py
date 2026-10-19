@@ -9,9 +9,9 @@ def compare(paths):
     if len(reports)!=2 or {r.get('platform') for r in reports}!={'linux/arm64','linux/amd64'}:
         raise ValueError('Need one ARM64 and one AMD64 report')
     kinds={r.get('skill','megadev-project') for r in reports}
-    if len(kinds)!=1 or not kinds <= {'megadev-project','megadev-hardware','megadev-assets','megadev-graphics','megadev-input','megadev-system','megadev-memory','megadev-streaming','megadev-audio','megadev-scenes','megadev-save','megadev-scaling','megadev-debug','megadev-testing','megadev-performance','megadev-best-practices','megadev-ui','megadev-dialogue'}:
+    if len(kinds)!=1 or not kinds <= {'megadev-project','megadev-hardware','megadev-assets','megadev-graphics','megadev-input','megadev-system','megadev-memory','megadev-streaming','megadev-audio','megadev-scenes','megadev-save','megadev-scaling','megadev-debug','megadev-testing','megadev-performance','megadev-best-practices','megadev-ui','megadev-dialogue','megadev-gameplay'}:
         raise ValueError('Need matching supported skill reports')
-    expected=CASES | ({'us-tour'} if kinds & {'megadev-hardware','megadev-assets','megadev-graphics','megadev-input','megadev-system','megadev-memory','megadev-streaming','megadev-audio','megadev-scenes','megadev-save','megadev-scaling','megadev-debug','megadev-testing','megadev-performance','megadev-best-practices','megadev-ui','megadev-dialogue'} else set())
+    expected=CASES | ({'us-tour'} if kinds & {'megadev-hardware','megadev-assets','megadev-graphics','megadev-input','megadev-system','megadev-memory','megadev-streaming','megadev-audio','megadev-scenes','megadev-save','megadev-scaling','megadev-debug','megadev-testing','megadev-performance','megadev-best-practices','megadev-ui','megadev-dialogue','megadev-gameplay'} else set())
     if 'megadev-hardware' in kinds:expected|={'us-usb-off'}
     if 'megadev-input' in kinds:expected|={'us-ea'}
     for r in reports:
@@ -64,6 +64,8 @@ def compare(paths):
                 raise ValueError('Missing executed UI/publication qualification')
             if 'megadev-dialogue' in kinds and (case['startup']['main'].get('dialogue_execution') is not True or any(case['startup'][kind].get('voice_execution') is not True for kind in ('main','sub'))):
                 raise ValueError('Missing executed dialogue and paired PCM voice qualification')
+            if 'megadev-gameplay' in kinds and (case['startup']['main'].get('gameplay_execution') is not True or any(case['startup'][kind].get('probe_execution') is not True for kind in ('main','sub'))):
+                raise ValueError('Missing executed gameplay and paired service checks')
             if not case.get('boot_payloads') or not case.get('disc',{}).get('files'):
                 raise ValueError('Missing target payload hashes')
     if reports[0]['cases']!=reports[1]['cases']:
