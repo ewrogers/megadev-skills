@@ -860,3 +860,10 @@ header rebuild. It is not a new skill and does not prescribe its design.
 The Audio Lab now adds long voice/sample streaming to its existing single
 PCM/drive owner. See [streamed PCM validation](streamed-pcm-validation.md) for
 buffer budgets, failure tests, regional auditions and hardware limits.
+
+## Compression
+
+`megadev-compression` adds raw/Kosinski comparison, complete bounded preflight
+validation before the SDK decoder, and loading/preloading integration. See
+[compression validation](compression-validation.md) for the matrix, sector/RAM
+results, measurement boundaries and remaining console evidence.
