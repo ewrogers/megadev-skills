@@ -32,6 +32,17 @@ for char in 'ABCDEFGHIJKLMNOPQRSTUVWXYZ ':
     for ty in range(2):
         for tx in range(2):
             tiles.append([scaled[ty*8+y][tx*8+x] for y in range(8) for x in range(8)])
+# Complete panel perimeter. Append after the existing font/disc/title atlas so
+# their established tile indices stay unchanged.
+panel_right=len(tiles);tiles.append([2 if x==7 else 6 for y in range(8) for x in range(8)])
+panel_bottom=len(tiles);tiles.append([2 if y==7 else 6 for y in range(8) for x in range(8)])
+panel_corners=len(tiles)
+corner=[[0 if (7-x)**2+(7-y)**2>49 else 2 if (7-x)**2+(7-y)**2>=36 else 6
+         for x in range(8)] for y in range(8)]
+for flip_x,flip_y in ((False,False),(True,False),(False,True),(True,True)):
+    pixels=[row[::-1] if flip_x else row[:] for row in corner]
+    if flip_y:pixels.reverse()
+    tiles.append([pixel for row in pixels for pixel in row])
 words=[]
 for tile in tiles:
     for i in range(0,64,4):
@@ -39,6 +50,7 @@ for tile in tiles:
 out = root/'build/art.h'
 out.parent.mkdir(exist_ok=True)
 text = '#define LAB_BUILD_ID "'+digest.hexdigest()[:8].upper()+'"\n'
+text += f'#define LAB_PANEL_RIGHT {panel_right}\n#define LAB_PANEL_BOTTOM {panel_bottom}\n#define LAB_PANEL_CORNERS {panel_corners}\n'
 text += 'static const u16 lab_tiles[] = {\n'
 text += '\n'.join(','.join('0x%04x'%v for v in words[i:i+16])+',' for i in range(0,len(words),16))+'\n};\n'
 if not out.exists() or out.read_text() != text:

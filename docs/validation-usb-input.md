@@ -67,3 +67,29 @@ Stock BIOS Start remains physical. These observations qualify cooperative
 logical input on this updated EverDrive CD core, not native mouse/multitap
 hardware, a physical Sega CD/optical drive, stressed streaming/audio, saves,
 other firmware, electrical power cycling or arbitrary-ROM control.
+
+## Panel and navigation follow-up
+
+The input view now uses two separate padded panels. The renderer draws all four
+rounded corners plus the right and bottom edges on readiness, input and disc
+pages. Six appended tiles (192 VRAM bytes) complete the perimeter without moving
+the existing font/disc/title atlas. Pointer limits remain inside each panel;
+navigation hints sit outside the border. Bright Start hints identify the target
+page. A dynamic footer distinguishes physical-pad readiness from USB P1 override
+(PAD PAUSED), so a temporarily replaced physical Start is explained.
+
+Release build `0DE2785C`, ISO SHA-256
+`e42a23a98a75064287f0ae915714afeebe31fa6050343de0c95a3447191f6a7c`,
+was deployed with hard reset and inspected through HD60 X. Evidence is in
+ignored `build/input-ui-acceptance`: both pad masks, mixed devices, mouse
+pointers at both opposite limits, release, readiness, loaded disc module and
+return to input. Complete borders, padded fields, active/ready footer states and
+heartbeat changes were observed. The disc module still showed DATA/BSS PASS.
+The final status reported zero active overrides.
+
+The final source passed all six hardware target variants on ARM64 and locally
+emulated AMD64; complete payload/startup reports matched. Dynamic input rendering
+still makes at most two existing VBlank-safe text calls per iteration. Physical
+controller navigation retains Start between readiness/input and A/Start from the
+disc module. This visual follow-up does not expand the hardware qualification
+boundary above.

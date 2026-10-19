@@ -57,39 +57,44 @@ void lab_usb_poll(void) {
     }
 }
 static void input_open(void) {
-    input_phase=0;for(u16 i=0;i<2;i++){drawn_x[i]=3+i*18;drawn_y[i]=19;}
-    lab_screen("INPUT LAB");lab_clear_region(30,8,6,6);
-    lab_text("PORT 1",3,7,1);lab_text("PORT 2",21,7,1);
+    input_phase=0;for(u16 i=0;i<2;i++){drawn_x[i]=3+i*19;drawn_y[i]=19;}
+    lab_input_screen();
+    lab_text("PORT 1",3,7,1);lab_text("PORT 2",22,7,1);
     for(u16 i=0;i<2;i++) {
-        u16 x=3+i*18;
+        u16 x=3+i*19;
         lab_text("HELD",x,10,3);lab_text("PRESSED",x,11,3);lab_text("RELEASED",x,12,3);
         lab_text("DX",x,14,3);lab_text("DY",x+8,14,3);lab_text("XY",x,15,3);
     }
-    lab_text("LOCAL POINTERS",3,17,1);
-    lab_text("START RETURNS TO READINESS",3,22,3);
-    lab_text("USB OVERRIDES / PHYSICAL FALLBACK",3,24,3);lab_present();
+    lab_text("POINTER",3,17,1);lab_text("POINTER",22,17,1);
+    lab_text("START: HARDWARE LAB",3,24,1);
+    lab_text("PHYSICAL PAD READY",3,25,3);lab_present();
 }
 static void input_update(void) {
     /* At most two existing VBlank-safe text calls per input iteration. */
     const UiPort *a=&remote_input.port[0],*b=&remote_input.port[1];
     u16 phase=input_phase++%12;
     if(phase<2) {
-        const UiPort *p=phase?b:a;u16 x=3+phase*18;
+        const UiPort *p=phase?b:a;u16 x=3+phase*19;
         lab_text(p->remote?(p->kind==UI_MOUSE?"USB MOUSE     ":"USB PAD       "):"BIOS PAD      ",x,8,p->remote?2:3);
     }else if(phase<5) {
         u16 av=phase==2?a->held:phase==3?a->pressed:a->released;
         u16 bv=phase==2?b->held:phase==3?b->pressed:b->released;
-        lab_hex(av,12,8+phase);lab_hex(bv,30,8+phase);
+        lab_hex(av,12,8+phase);lab_hex(bv,31,8+phase);
     }else if(phase<7) {
-        const UiPort *p=phase==5?a:b;u16 x=phase==5?3:21;
+        const UiPort *p=phase==5?a:b;u16 x=phase==5?3:22;
         lab_hex((u16)p->dx,x+2,14);lab_hex((u16)p->dy,x+10,14);
     }else if(phase<9) {
-        u16 i=phase-7,x=3+i*18;lab_hex(pointer_x[i],x+2,15);lab_hex(pointer_y[i],x+9,15);
+        u16 i=phase-7,x=3+i*19;lab_hex(pointer_x[i],x+2,15);lab_hex(pointer_y[i],x+9,15);
     }else if(phase<11) {
         u16 i=phase-9;lab_text(" ",drawn_x[i],drawn_y[i],0);
-        drawn_x[i]=3+i*18+pointer_x[i]/8;drawn_y[i]=19+pointer_y[i]/8;
+        drawn_x[i]=3+i*19+pointer_x[i]/8;drawn_y[i]=19+pointer_y[i]/8;
         lab_text("+",drawn_x[i],drawn_y[i],i?1:2);
-    }else lab_heartbeat((u16)main_ticks);
+    }else {
+        lab_heartbeat((u16)main_ticks);
+        lab_text(a->remote?"USB P1 ACTIVE / PAD PAUSED       ":
+                 b->remote?"USB P2 ACTIVE / P1 READY         ":
+                           "PHYSICAL PAD READY              ",3,25,3);
+    }
 }
 static void result_line(char const *label,u16 good,u16 y) {
     lab_line(label,3,y);lab_text(probe_runs?(good?"PASS":"FAIL"):"----",25,y,good?2:0);
@@ -113,7 +118,8 @@ static void home(void) {
     lab_text("CHECKS     RELOADS    MAIN / SUB",3,18,3);
     lab_hex(probe_runs,3,19);lab_hex(room_runs,14,19);
     lab_line("A RAM     B PING     C DISC",3,22);
-    lab_text("START INPUT / SCRATCH BUFFERS ONLY",3,23,3);
+    lab_text("SCRATCH BUFFERS ONLY",3,23,3);
+    lab_text("START: INPUT LAB",3,25,1);
     lab_text(pal_hardware?"VIDEO PAL":"VIDEO NTSC",3,26,3);
     lab_present();
 
