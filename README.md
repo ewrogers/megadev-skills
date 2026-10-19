@@ -51,6 +51,7 @@ and build conventions; these skills do not require SGDK.
 | [megadev-system](skills/megadev-system/SKILL.md) | Coordinate Main/Sub work, cancellation, timeouts and late replies. |
 | [megadev-memory](skills/megadev-memory/SKILL.md) | Account for RAM, allocation lifetimes and safe 1M/2M Word RAM handling. |
 | [megadev-streaming](skills/megadev-streaming/SKILL.md) | Load and preload CD content with resident art and bounded uploads. |
+| [megadev-compression](skills/megadev-compression/SKILL.md) | Compare sector-rounded disc size, decode time and RAM; safely decode and preload compressed assets. Includes Compression Lab. |
 | [megadev-scaling](skills/megadev-scaling/SKILL.md) | Use the graphics ASIC for rotation, scaling and a perspective floor, with measured limits. |
 
 ### Test, debug and optimize
@@ -101,6 +102,7 @@ Ask for the task you want, and name a skill when you want to be explicit:
 - "Use megadev-gameplay to connect movement, collisions and cameras without blocking on Sub work."
 - "Use megadev-dialogue to add branching portrait conversations with optional voice."
 - "Check this Main/Sub handoff with megadev-system and megadev-best-practices."
+- "Use megadev-compression to compare raw and packed assets, decode safely and budget loading RAM."
 - "Use megadev-release to validate and package this mixed-mode disc."
 
 The guidance accounts for both CPUs, RAM ownership, interrupts, the shared VDP,

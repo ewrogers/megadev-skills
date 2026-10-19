@@ -418,3 +418,21 @@ class ReportTests(unittest.TestCase):
                            lambda q:q['cases']['us-debug'].pop('audio_tracks')]:
                 bad=copy.deepcopy(b);mutate(bad)
                 with self.assertRaises(ValueError):run(bad)
+
+    def test_compression_requires_actual_decoder_adapters_and_all_disc_samples(self):
+        case={'disc':{'files':{n:'hash' for n in ['IPX.MMD','GARDEN.MDA','CAVERN.MDA','NOISE.MDA','GARDEN.KOS','CAVERN.KOS','NOISE.KOS']}},
+              'boot_payloads':{'sp.bin':'hash'},'startup':{'main':{'compression_execution':True},'sub':{'compression_execution':True},'room':{}},'sub_callback':True}
+        a={'passed':True,'skill':'megadev-compression','platform':'linux/arm64','cases':{k:copy.deepcopy(case) for k in CASES|{'us-tour'}}}
+        b=copy.deepcopy(a);b['platform']='linux/amd64'
+        with tempfile.TemporaryDirectory() as folder:
+            paths=[Path(folder)/'a.json',Path(folder)/'b.json']
+            def run(right):
+                for p,r in zip(paths,[a,right]):p.write_text(json.dumps(r))
+                return compare(paths)
+            self.assertTrue(run(b))
+            for mutate in [lambda q:q['cases'].pop('us-tour'),
+                           lambda q:q['cases']['us-debug']['startup']['sub'].pop('compression_execution'),
+                           lambda q:q['cases']['eu-release']['startup']['main'].pop('compression_execution'),
+                           lambda q:q['cases']['us-release']['disc']['files'].pop('NOISE.KOS')]:
+                bad=copy.deepcopy(b);mutate(bad)
+                with self.assertRaises(ValueError):run(bad)

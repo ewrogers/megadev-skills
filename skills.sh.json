@@ -23,6 +23,7 @@
         "megadev-system",
         "megadev-memory",
         "megadev-streaming",
+        "megadev-compression",
         "megadev-audio",
         "megadev-scenes",
         "megadev-save",
