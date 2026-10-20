@@ -1,0 +1,11 @@
+{
+  "native_pixels": true,
+  "sprite_tiles": 368,
+  "ground_tiles": 272,
+  "map_tiles": [
+    64,
+    32
+  ],
+  "palettes": 4,
+  "source": "Original procedural Lab art; illustrative style"
+}

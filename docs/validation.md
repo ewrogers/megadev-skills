@@ -903,3 +903,10 @@ See [combat validation](combat-validation.md) for the five-case ARM64/AMD64
 matrix, independent contact/guard oracles, original-M68000 execution and PAL/NTSC
 acceptance. The example connects existing ownership seams; it does not add a
 second combat clock, renderer, input scanner or Main/Sub protocol.
+
+## Isometric projection and occlusion
+
+See [isometric validation](isometric-validation.md) for independent projected-hull
+and order checks, surface traversal, native asset decode/publication and the
+Word RAM DMA regression. The skill composes existing platform owners and keeps
+its garden, music and layout illustrative.

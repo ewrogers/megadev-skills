@@ -150,7 +150,7 @@ created. None means the existing SGDK code is a drop-in Megadev dependency.
 | sgdk-localization | Adapt | localization | Message IDs, glyph coverage, translated layout tests and paging transfer; rebuild font loading and text APIs. |
 | sgdk-dialogue | Adapt | dialogue | Branching, choices, portraits and reveal timing transfer; CD voice is an optional audio/streaming integration. |
 | sgdk-levels | Adapt | levels | Map/collision separation and camera models transfer; rewrite Tiled output/runtime integration that assumes SGDK MAP resources. |
-| sgdk-isometric | Adapt | isometric | Projection, sorting, elevation and occlusion transfer. ASIC scaling is optional and does not solve depth sorting. |
+| sgdk-isometric | Delivered | isometric | Portable projection/volume relations, bounded cached ordering and explicit support links, with Megadev-native SAT/scroll publication. ASIC scaling remains optional. |
 | sgdk-streaming | Rewrite | streaming | Make this CD-native: seek/read latency, sector/file layout, RAM staging, decode/upload deadlines and reusable resident art. |
 | sgdk-compression | Rewrite | compression | ROM/CPU/RAM trade-off methodology transfers; verify actual Megadev codecs and distinguish packed file size, disc layout and decode cost. |
 | sgdk-gameplay | Adapt | gameplay | Timing, movement, collision, cameras and bounded object pools transfer; replace framework calls/types. |
@@ -369,3 +369,12 @@ gameplay owns clocks/movement. Combat Lab demonstrates once-per-swing contacts,
 front/rear guards, mutual hits, interruption, stale owner rejection and optional
 second-pad joining. No competing input, audio, renderer or Main/Sub service is
 introduced. Style and combat balance remain illustrative.
+
+## Isometric milestone
+
+`megadev-isometric` owns projection, draw-order constraints, surface selection and
+occlusion policy. Existing collision, gameplay, graphics, memory and system owners
+remain in charge of their contracts. Lantern Conservatory uses resident native
+art, stairs/deck/underpass routes and an optional cutaway. A cached static relation
+graph reduces dynamic work; unresolved overlaps/cycles are reported. Art and
+layout stay illustrative, and the ASIC is not needed for this projection.
