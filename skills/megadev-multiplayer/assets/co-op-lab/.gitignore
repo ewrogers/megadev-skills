@@ -1,0 +1,6 @@
+/build/
+/disc/
+/*.iso
+/*.cue
+__pycache__/
+*.py[cod]

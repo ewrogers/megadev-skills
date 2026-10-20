@@ -31,6 +31,7 @@
         "megadev-localization",
         "megadev-dialogue",
         "megadev-gameplay",
+        "megadev-multiplayer",
         "megadev-ai",
         "megadev-combat",
         "megadev-animation",
