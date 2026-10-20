@@ -124,7 +124,12 @@ int coop_contract(void) {
   // Camera: map bounds and all joined living feet remain inside safe margins.
   mp_demo(&g);
   empty();
+  MpU16 saw_clear = 0, saw_restart = 0;
   for (MpU16 n = 0; n < 2400; n++) {
+    if (g.complete)
+      saw_clear = 1;
+    else if (saw_clear)
+      saw_restart = 1;
     mp_advance(&g, 5, samples, hits);
     CHECK(g.camera_x >= 0 && g.camera_x <= 192 && g.camera_y >= 0 &&
           g.camera_y <= 80);
@@ -137,6 +142,10 @@ int coop_contract(void) {
       }
     }
   }
+  CHECK(saw_clear && saw_restart);
+  for (MpU16 i = 0; i < 300; i++)
+    mp_advance(&g, 5, samples, hits);
+  CHECK(g.demo);
   // Held A doesn't re-trigger: only edges are admitted; overload is capped.
   mp_init(&g);
   empty();

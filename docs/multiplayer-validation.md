@@ -33,7 +33,7 @@ bug, fixed by updating the camera on lifecycle changes outside simulation steps.
 
 ## Target checks
 
-The linked original-68000 contract executes the same behaviors. Scripted MMIO
+The linked original-68000 contract executes the same behaviors, including complete-and-repeat autoplay. The demo uses an authored collision-safe circuit; it does not introduce a competing AI/pathfinding service. Qualification contracts run in the harness, not as a long blocking demo startup. Scripted MMIO
 also executes the actual copied input readers: pad-six extension, mouse axes,
 Team Player decoding, handshake timeout, EA mapping, bus timeout and restoring
 the caller's interrupt mask. The custom IRQ preserves registers/exception frame
@@ -55,8 +55,7 @@ still rejects too-small Main RAM. Installation tests disable telemetry.
 The user confirmed NTSC movement, stun/recharge, pause and independent returns.
 The initial clear state stopped its animation/audio clock and looked frozen;
 the corrected build keeps a celebration clock, finite fanfare and moving
-stars/coins with an explicit replay prompt. Revised celebration and final PAL
-acceptance are pending review at the time of this note.
+stars/coins with an explicit replay prompt. The user confirmed the revised celebration. Final PAL acceptance is pending review at the time of this note.
 
 Ares scripted/bot runs are not physical multi-controller or multitap evidence.
 Team Player/EA hardware, hot-plug electrical behavior, total frame-cycle margin,

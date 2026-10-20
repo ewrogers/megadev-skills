@@ -33,7 +33,7 @@ typedef struct {
   MpPlayer players[4];
   MpEnemy enemies[3];
   MpU16 ticks, remainder, paused, started, demo, events, coins, complete,
-      clamped;
+      clamped, demo_stage, demo_hold;
   MpS16 camera_x, camera_y;
 } MpGame;
 MP_API void mp_init(MpGame *g);

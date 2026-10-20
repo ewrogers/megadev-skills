@@ -45,6 +45,7 @@ void mp_init(MpGame *g) {
   }
   g->ticks = g->remainder = g->paused = g->started = g->demo = g->events =
       g->coins = g->complete = g->clamped = 0;
+  g->demo_stage = g->demo_hold = 0;
   g->camera_x = 0;
   g->camera_y = 32;
 }
@@ -342,16 +343,40 @@ void mp_advance(MpGame *g, MpU16 elapsed, InSample const samples[8],
             break;
           }
       }
-  } else
+  } else {
+    /* Illustrative authored tour, not a new pathfinding service. Four bots
+       follow a collision-safe circuit, light every lantern and repeat. */
+    static MpS16 const route[15][2] = {
+        {80, 64},   {112, 32},  {176, 32},  {176, 48},  {336, 48},
+        {336, 32},  {432, 32},  {432, 64},  {432, 208}, {432, 224},
+        {336, 224}, {176, 224}, {112, 224}, {80, 224},  {80, 208}};
+    MpU16 arrived = 1;
     for (MpU16 i = 0; i < 4; i++) {
-      MpU16 phase = (MpU16)(g->ticks + i * 37u) % 480u;
-      held[i] = phase < 120   ? IN_RIGHT
-                : phase < 240 ? IN_DOWN
-                : phase < 360 ? IN_LEFT
-                              : IN_UP;
-      if (!g->players[i].cooldown)
+      MpS16 tx = route[g->demo_stage][0] * 4 + (i & 1 ? 24 : -24);
+      MpS16 ty = route[g->demo_stage][1] * 4 + (i & 2 ? 24 : -24);
+      MpPlayer const *p = &g->players[i];
+      if (p->respawn)
+        continue;
+      MpS16 dx = tx - p->x, dy = ty - p->y;
+      if (abs16(dx) > 6)
+        held[i] |= dx < 0 ? IN_LEFT : IN_RIGHT;
+      if (abs16(dy) > 6)
+        held[i] |= dy < 0 ? IN_UP : IN_DOWN;
+      if (abs16(dx) > 30 || abs16(dy) > 30)
+        arrived = 0;
+      if (!p->cooldown)
         hits[i] = IN_A;
     }
+    if (arrived && g->demo_stage < 14)
+      g->demo_stage++;
+    if (g->complete) {
+      g->demo_hold += elapsed;
+      if (g->demo_hold >= 1200) {
+        mp_demo(g);
+        return;
+      }
+    }
+  }
   MpU16 any = 0;
   for (MpU16 i = 0; i < 4; i++)
     if (g->players[i].active)

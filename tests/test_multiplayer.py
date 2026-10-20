@@ -6,7 +6,7 @@ LAB=ROOT/'skills/megadev-multiplayer/assets/co-op-lab'
 create=load(LAB.parent.parent/'scripts/create_project.py','mp_create').create
 class Player(c.Structure):_fields_=[('x',c.c_short),('y',c.c_short)]+[(n,c.c_ushort) for n in 'socket kind active connected hp hurt respawn cooldown pulse face walk moving grace leave'.split()]
 class Enemy(c.Structure):_fields_=[('x',c.c_short),('y',c.c_short),('stun',c.c_ushort),('direction',c.c_ushort)]
-class Game(c.Structure):_fields_=[('players',Player*4),('enemies',Enemy*3)]+[(n,c.c_ushort) for n in 'ticks remainder paused started demo events coins complete clamped'.split()]+[('camera_x',c.c_short),('camera_y',c.c_short)]
+class Game(c.Structure):_fields_=[('players',Player*4),('enemies',Enemy*3)]+[(n,c.c_ushort) for n in 'ticks remainder paused started demo events coins complete clamped demo_stage demo_hold'.split()]+[('camera_x',c.c_short),('camera_y',c.c_short)]
 class Sample(c.Structure):_fields_=[(n,c.c_ushort) for n in ['kind','status','held']]+[('dx',c.c_short),('dy',c.c_short)]
 class MultiplayerTests(unittest.TestCase):
  @classmethod

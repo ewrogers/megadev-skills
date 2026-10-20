@@ -298,7 +298,7 @@ void main(void) {
   for (u16 i = 0; i < 8; i++)
     in_reset(&inputs[i]);
 #ifdef COOP_AUTOTEST
-  tour_result = coop_contract();
+  /* CPU tour is presentation; regression execution belongs to the harness. */
   mp_demo(&game);
 #endif
   coop_initialize();

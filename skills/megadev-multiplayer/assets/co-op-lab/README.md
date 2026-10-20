@@ -18,7 +18,7 @@ docker run --rm --cpus=2 --mount "type=bind,source=$PWD/build/co op,target=/work
 ```
 
 Use `REGION=EU VIDEO=PAL` for Europe. `EA=1` explicitly selects EA 4 Way Play;
-AUTO supports normal pads and Team Player. The reader is application code from
+AUTO supports normal pads and Team Player. Build `TOUR=1` to boot directly into the four-player autoplay (normal builds also offer it from the title). Use a clean generated project when changing build-time video/adapter/tour options. The reader is application code from
 Input Lab, not an SDK multitap API. At most four of eight detected socket
 positions can claim a keeper. Mice do not join this pad-controlled demonstration.
 Power/controller-adapter behavior still needs device testing on real hardware.
@@ -40,7 +40,7 @@ Do not distribute BIOS files with the project.
 - Each pad: Start joins. Once joined, Start pauses/resumes globally.
 - D-pad walks; A stuns, with a white three-second recharge bar.
 - Hold Start+B for one second to leave. Other keepers keep their player numbers.
-- C at the title starts a labeled four-CPU tour. C or Start leaves that tour.
+- C at the title starts a labeled four-CPU tour. It routes around obstacles, lights all eight lanterns, celebrates for four seconds and repeats. C or Start leaves that tour.
 - A after clearing restarts the garden. A fanfare and animated stars mark clear.
 
 In our configured ares profile J/K/L map to A/B/C. Use your own mapped Start.
