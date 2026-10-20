@@ -57,7 +57,7 @@ immunity. Pause freezes gameplay, but connection/leave service continues.
 ## Validation
 
 `python tools/check_coop.py` runs O0/O3 host behavior checks with undefined-behavior
-sanitization. Repository tests add randomized rosters, asset regeneration,
+sanitization on macOS/Linux. Repository tests add randomized rosters, asset regeneration,
 compiled original-68000 protocol/IRQ/model/publication and fanfare tests, and
 fresh US/JP/EU/debug/tour/EA container builds on ARM64/AMD64. Host models and
 scripted input do not prove peripheral timing or actual CPU headroom.

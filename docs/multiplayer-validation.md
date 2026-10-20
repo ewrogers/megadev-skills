@@ -26,7 +26,7 @@ aliasing. Actual report files retain `doctor` output.
   clear stopping gameplay while its celebration clock and fanfare continue.
 - Native asset regeneration, tile sizes and four valid Mega Drive palettes.
 
-Host tests compile portable rules at O0/O3 with undefined-behavior sanitization;
+Host tests compile portable rules at O0/O3 with undefined-behavior sanitization on macOS/Linux;
 6,000 seeded randomized roster updates independently assert identity uniqueness,
 valid positions and visible camera bounds. They found a real paused-join framing
 bug, fixed by updating the camera on lifecycle changes outside simulation steps.

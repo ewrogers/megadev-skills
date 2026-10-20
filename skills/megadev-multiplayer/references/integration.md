@@ -18,7 +18,7 @@ The software sprite list conservatively charges scanline widths and entries. For
 
 ## Evidence
 
-Run `python tools/check_coop.py` in a generated project for O0/O3 host checks with undefined-behavior sanitization. Repository tests add 6,000 randomized roster/camera steps, asset regeneration/palette checks and baseline-input checks. The linked original-68000 qualification executes the same contracts, real input/protocol/MMIO code, Z80 timeout handling, register-preserving IRQ, immutable publication, late-frame deferral and invalid frame rejection. MMIO models do not reproduce pixels, audio or peripheral timing.
+Run `python tools/check_coop.py` in a generated project for O0/O3 host checks with undefined-behavior sanitization on macOS/Linux. Repository tests add 6,000 randomized roster/camera steps, asset regeneration/palette checks and baseline-input checks. The linked original-68000 qualification executes the same contracts, real input/protocol/MMIO code, Z80 timeout handling, register-preserving IRQ, immutable publication, late-frame deferral and invalid frame rejection. MMIO models do not reproduce pixels, audio or peripheral timing.
 
 The container matrix builds fresh US/JP NTSC release, EU PAL release, US debug, CPU tour and explicit EA variants on ARM64/AMD64. It rejects oversized Main allocations and compares disc/module/boot payloads across architectures. PAL/NTSC simulation uses the gameplay clock's 300Hz units (five or six per VBlank), not different movement tuning. Keep Docker builds at two CPUs.
 
