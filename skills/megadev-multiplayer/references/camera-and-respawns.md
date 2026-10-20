@@ -1,0 +1,13 @@
+# Shared camera and independent recovery
+
+Compute camera targets from participants in world coordinates, then clamp to map bounds. In a shared view use the group's bounds or another deliberate subject policy rather than averaging away a separated player. Decide whether dead, disconnected, joining and spectating players participate. Re-evaluate the camera when the roster changes even during pause; otherwise a newly joined or reconnected player can appear outside the frozen camera.
+
+The Lab has a 320×176 play region below a fixed 48px HUD, in a 512×256 world. It frames the midpoint of connected living players' bounds. Proposed movement is rejected on an axis when it would exceed a 272×128px group span; collision still applies independently. This leaves room for actor silhouettes and the HUD. Players do not block each other. This simple tether can make one player wait for another and can deadlock a poorly designed corridor; choose a different regroup policy or adjust the map if that behavior does not fit the user's game.
+
+Treat respawning as a player lifecycle, not a whole-scene reset. Store independent HP, damage immunity, return delay, cooldowns and actor state. Teammates, collected items and world events continue. In the Lab a keeper with zero HP returns after three simulation seconds; global pause freezes that timer. If all players are down, that timer still advances. Reconnection does not restore missing HP or reset a return timer.
+
+The sample examines at most 25 candidates near the first connected living teammate, checking solid tiles, nearby unstunned enemies and framing bounds. If none fits it uses that teammate's already valid position; player overlap is permitted. With no living teammate it starts from a known valid shelter. Returning players get short immunity, so a fallback near an enemy does not cause an immediate death loop. In a game where actors block each other, use a reserved spawn point or an explicit waiting state instead of this overlap fallback. Validate the shelter when changing maps.
+
+Whether pickups are shared, assigned, or contested is a game rule. The Lab's eight lanterns and shared clear state do not prescribe a co-op economy. Save player identity and durable state through the save owner; do not persist raw pointers, socket offsets or the camera's temporary participants as player identity.
+
+Budget actors before cosmetics. Four characters, independent pulse rings, enemies and items still share H40's 80 hardware entries, 20 entries and 320 sprite pixels per scanline. Transparent widths also consume that budget. Bounds, hitboxes, timers and collectible state must not depend on successful sprite admission. Sprite culling does not remove gameplay collision.

@@ -145,7 +145,7 @@ created. None means the existing SGDK code is a drop-in Megadev dependency.
 | sgdk-effects | Adapt | effects | Bounded pools, priorities and particle selection transfer; remeasure submission/DMA costs in the new renderer. |
 | sgdk-raster | Rewrite | raster | Same base VDP effects; re-audit BIOS/interrupt handlers, palette timing, DMA and coexistence with sub-CPU work. |
 | sgdk-input | Rewrite | input | Control semantics transfer. Verify BIOS/direct input and each pad/mouse/multitap path rather than copying JOY APIs or promising unsupported devices. |
-| sgdk-multiplayer | Adapt | multiplayer | Joining, shared cameras and independent respawns transfer after input verification. Two CPUs do not imply one CPU per player. |
+| sgdk-multiplayer | Delivered | megadev-multiplayer | Stable player slots, joining, bounded shared cameras and independent returns, using the verified input owner. |
 | sgdk-ui | Adapt | ui | Layout, nine-slice panels, menus, glyph/tile budgets and HUD ownership transfer with a new text/graphics backend. |
 | sgdk-localization | Adapt | localization | Message IDs, glyph coverage, translated layout tests and paging transfer; rebuild font loading and text APIs. |
 | sgdk-dialogue | Adapt | dialogue | Branching, choices, portraits and reveal timing transfer; CD voice is an optional audio/streaming integration. |
@@ -378,3 +378,15 @@ remain in charge of their contracts. Lantern Conservatory uses resident native
 art, stairs/deck/underpass routes and an optional cutaway. A cached static relation
 graph reduces dynamic work; unresolved overlaps/cycles are reported. Art and
 layout stay illustrative, and the ASIC is not needed for this projection.
+
+## Multiplayer milestone
+
+`megadev-multiplayer` owns stable player claims, join/leave/disconnect policy,
+shared-camera participants and independent recovery. Device protocols stay with
+input; simulation timing with gameplay; contact math with collision; IRQ, VDP,
+audio and Main/Sub ownership with their existing services. The four-player
+Co-op Lab uses one Main-side input sampler and resident art. Host and actual
+68000 checks exercise roster boundaries, camera visibility, independent timers,
+protocol failures, publication and IRQ preservation. Its design is illustrative.
+ARM64/AMD64 matrices include explicit EA builds; a labeled CPU tour is not a
+multitap qualification. Emulator/physical results are recorded separately.

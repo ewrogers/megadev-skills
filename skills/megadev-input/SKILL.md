@@ -31,7 +31,7 @@ Poll once per display frame and share the result. Mouse motion is a per-packet d
 
 Follow [testing and evidence](references/testing.md): run host behavior/protocol tests, execute compiled original-68000 code, compare ARM64/AMD64 builds and test available devices in ares. The audited ares version has pads and mouse but no multitap device option. Team Player and EA paths need physical qualification; scripted traffic proves software behavior, not electrical timing or real compatibility.
 
-Project/boot setup belongs to `megadev-project`, hardware facts to `megadev-hardware`, rendering to `megadev-graphics`, and gameplay/multiplayer policy to the game. Main owns the base-console I/O ports; the Sub CPU receives snapshots through the game's communication contract rather than dereferencing Main RAM or those port addresses directly.
+Project/boot setup belongs to `megadev-project`, hardware facts to `megadev-hardware`, rendering to `megadev-graphics`, and gameplay policy to the game and optional `megadev-multiplayer` for stable party slots, shared cameras and independent recovery. Main owns the base-console I/O ports; the Sub CPU receives snapshots through the game's communication contract rather than dereferencing Main RAM or those port addresses directly.
 
 ## Optional remote test input
 

@@ -42,6 +42,7 @@ and build conventions; these skills do not require SGDK.
 | [megadev-combat](skills/megadev-combat/SKILL.md) | Resolve attacks, directional guards, damage and knockback with bounded contacts. Includes Combat Lab. |
 | [megadev-ai](skills/megadev-ai/SKILL.md) | Build enemy states, wall-aware detection and bounded pathfinding. Includes Enemy Lab. |
 | [megadev-gameplay](skills/megadev-gameplay/SKILL.md) | Build responsive movement, collision, cameras and bounded object lifetimes across PAL/NTSC. Includes Adventure Lab. |
+| [megadev-multiplayer](skills/megadev-multiplayer/SKILL.md) | Add joining during play, stable player slots, shared cameras and independent respawns. |
 | [megadev-dialogue](skills/megadev-dialogue/SKILL.md) | Add portrait conversations, timed styled text, choices and safe optional PCM voice. Includes Dialogue Lab. |
 | [megadev-input](skills/megadev-input/SKILL.md) | Handle pads, mouse, multitaps and joining with explicit device-validation limits. |
 | [megadev-math](skills/megadev-math/SKILL.md) | Checked fixed-point math, vectors, trig and interpolation. Includes Math Lab. |

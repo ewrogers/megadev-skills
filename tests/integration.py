@@ -16,7 +16,7 @@ from disc import digest
 
 def main():
     parser=argparse.ArgumentParser(description=__doc__)
-    parser.add_argument('--skill',default='megadev-project',choices=['megadev-project','megadev-hardware','megadev-assets','megadev-graphics','megadev-input','megadev-system','megadev-memory','megadev-streaming','megadev-audio','megadev-scenes','megadev-save','megadev-scaling','megadev-debug','megadev-testing','megadev-performance','megadev-best-practices','megadev-ui','megadev-dialogue','megadev-gameplay','megadev-animation','megadev-collision','megadev-ai','megadev-combat','megadev-isometric','megadev-levels','megadev-math','megadev-compression','megadev-effects','megadev-raster','megadev-localization','megadev-video','cross-skill-validation'])
+    parser.add_argument('--skill',default='megadev-project',choices=['megadev-project','megadev-hardware','megadev-assets','megadev-graphics','megadev-input','megadev-system','megadev-memory','megadev-streaming','megadev-audio','megadev-scenes','megadev-save','megadev-scaling','megadev-debug','megadev-testing','megadev-performance','megadev-best-practices','megadev-ui','megadev-dialogue','megadev-gameplay','megadev-animation','megadev-collision','megadev-ai','megadev-combat','megadev-isometric','megadev-multiplayer','megadev-levels','megadev-math','megadev-compression','megadev-effects','megadev-raster','megadev-localization','megadev-video','cross-skill-validation'])
     parser.add_argument('--image',default='ewrogers/megadev:latest')
     parser.add_argument('--platform',required=True,choices=['linux/arm64','linux/amd64'])
     parser.add_argument('--output',type=Path,required=True);args=parser.parse_args()
@@ -42,13 +42,14 @@ def main():
             os.utime(path,(946684800,946684800),follow_symlinks=False)
     matrix=[('us-release','US','NTSC',[]),('jp-release','JP','NTSC',[]),
                                   ('eu-release','EU','PAL',[]),('us-debug','US','NTSC',['OPT_FLAGS=-Og -g -fconserve-stack -fomit-frame-pointer','DEBUG=1'])]
-    if args.skill in ('megadev-hardware','megadev-assets','megadev-graphics','megadev-input','megadev-system','megadev-memory','megadev-streaming','megadev-audio','megadev-scenes','megadev-save','megadev-scaling','megadev-debug','megadev-testing','megadev-performance','megadev-best-practices','megadev-ui','megadev-dialogue','megadev-gameplay','megadev-animation','megadev-collision','megadev-ai','megadev-combat','megadev-isometric','megadev-levels','megadev-math','megadev-compression','megadev-effects','megadev-raster','megadev-localization','megadev-video','cross-skill-validation'):matrix.append(('us-tour','US','NTSC',['TOUR=1']))
+    if args.skill in ('megadev-hardware','megadev-assets','megadev-graphics','megadev-input','megadev-system','megadev-memory','megadev-streaming','megadev-audio','megadev-scenes','megadev-save','megadev-scaling','megadev-debug','megadev-testing','megadev-performance','megadev-best-practices','megadev-ui','megadev-dialogue','megadev-gameplay','megadev-animation','megadev-collision','megadev-ai','megadev-combat','megadev-isometric','megadev-multiplayer','megadev-levels','megadev-math','megadev-compression','megadev-effects','megadev-raster','megadev-localization','megadev-video','cross-skill-validation'):matrix.append(('us-tour','US','NTSC',['TOUR=1']))
     if args.skill=='megadev-raster':matrix += [
         ('us-split','US','NTSC',['DEMO=SPLIT']),('jp-split','JP','NTSC',['DEMO=SPLIT']),
         ('eu-split','EU','PAL',['DEMO=SPLIT']),
         ('us-split-debug','US','NTSC',['DEMO=SPLIT','OPT_FLAGS=-Og -g -fconserve-stack -fomit-frame-pointer','DEBUG=1']),
         ('us-split-tour','US','NTSC',['DEMO=SPLIT','TOUR=1'])]
     if args.skill=='megadev-hardware':matrix.append(('us-usb-off','US','NTSC',['USB_LAB=0']))
+    if args.skill=='megadev-multiplayer':matrix.append(('us-ea','US','NTSC',['EA=1']))
     if args.skill=='megadev-input':matrix.append(('us-ea','US','NTSC',['EA_MODE=1']))
     for key,region,video,flags in matrix:
         project=creator(output/(key+' game'),project_id='project_lab')
@@ -136,6 +137,9 @@ def main():
             if args.skill=='megadev-animation' and kind=='main':
                 from animation_cpu import check_animation
                 extra=check_animation
+            if args.skill=='megadev-multiplayer' and kind=='main':
+                from multiplayer_cpu import check_multiplayer
+                extra=lambda u,sym:check_multiplayer(u,sym,key=='us-ea')
             if args.skill=='megadev-isometric' and kind=='main':
                 from isometric_cpu import check_isometric
                 extra=lambda u,sym:check_isometric(u,sym,project/'res')
@@ -164,6 +168,7 @@ def main():
                 from levels_cpu import check_levels
                 extra=check_levels
             startup[kind]=check((project/'disc'/file).read_bytes(),table,kind,extra)
+        if args.skill=='megadev-multiplayer':startup['main']['multiplayer_execution']=True
         if args.skill=='megadev-ai':startup['main']['ai_execution']=True
         if args.skill=='megadev-combat':startup['main']['combat_execution']=True
         if args.skill=='megadev-isometric':startup['main']['isometric_execution']=True
