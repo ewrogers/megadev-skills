@@ -38,6 +38,7 @@ and build conventions; these skills do not require SGDK.
 | [megadev-effects](skills/megadev-effects/SKILL.md) | Add bounded particles, explosions, trails, weather and screen shake with effect priorities. Includes Effects Lab. |
 | [megadev-levels](skills/megadev-levels/SKILL.md) | Import Tiled maps, separate collision, scroll cameras and connect areas. Includes Level Lab. |
 | [megadev-collision](skills/megadev-collision/SKILL.md) | Test fast swept boxes, finite rays and bounded wall sliding. Includes Collision Lab. |
+| [megadev-isometric](skills/megadev-isometric/SKILL.md) | Project coordinates, sort depth, traverse elevation and handle occlusion. Includes Lantern Conservatory. |
 | [megadev-combat](skills/megadev-combat/SKILL.md) | Resolve attacks, directional guards, damage and knockback with bounded contacts. Includes Combat Lab. |
 | [megadev-ai](skills/megadev-ai/SKILL.md) | Build enemy states, wall-aware detection and bounded pathfinding. Includes Enemy Lab. |
 | [megadev-gameplay](skills/megadev-gameplay/SKILL.md) | Build responsive movement, collision, cameras and bounded object lifetimes across PAL/NTSC. Includes Adventure Lab. |
@@ -107,6 +108,7 @@ Ask for the task you want, and name a skill when you want to be explicit:
 - "Use megadev-animation to synchronize attack poses, events and hitboxes with my game clock."
 - "Use megadev-levels to import my Tiled areas and connect their cameras, collisions and exits."
 - "Use megadev-collision to stop fast shots tunneling and slide along walls."
+- "Use megadev-isometric for elevation, bridge underpasses and stable scenery ordering."
 - "Use megadev-combat to resolve attack windows, blocks and simultaneous hits consistently."
 - "Use megadev-ai for readable enemy detection, pursuit and shared bounded searches."
 - "Use megadev-gameplay to connect movement, collisions and cameras without blocking on Sub work."
